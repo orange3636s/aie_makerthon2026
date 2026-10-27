@@ -11,7 +11,7 @@ const catalog=JSON.parse(fs.readFileSync(path.join(root,'catalog.json'))),revers
 const jobs=new Map(),cache=new Map(),queue=[],limits=new Map(),waiters=new Map();let running=false,aiToday=0,aiDay='';
 const assets={'/':'index.html','/tutorial':'parameters.html','/challenge':'index.html'};
 for(const f of ['index.html','app.js','style.css','materials.js','parameters.html','tutorial.js','reverse.js','reverse.css','grading.js','recipe-state.js'])assets['/'+f]=f;
-if(host==='127.0.0.1')assets['/qa.html']='qa.html';
+if(host==='127.0.0.1'){assets['/qa.html']='qa.html';assets['/qa.js']='qa.js';}
 function send(res,status,data,type='application/json; charset=utf-8'){
  let body=Buffer.isBuffer(data)?data:Buffer.from(JSON.stringify(data));if(res.canGzip&&body.length>32000){body=zlib.gzipSync(body);res.setHeader('Content-Encoding','gzip');res.setHeader('Vary','Accept-Encoding')}
  res.writeHead(status,{'Content-Type':type,'Content-Length':body.length,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'same-origin','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'self'"});res.end(body);

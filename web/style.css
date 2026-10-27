@@ -47,3 +47,24 @@ main{padding:30px 34px;max-width:1700px}.page-heading{margin-bottom:24px}.page-h
 @media(max-width:1150px){.workspace-layout{grid-template-columns:205px minmax(0,1fr)}main{padding:24px}.lab-grid{grid-template-columns:minmax(0,1fr) 255px}.panel{padding:16px}.canvas-wrap canvas{height:360px}.brand{width:167px}}
 @media(max-width:950px){.lab-grid{grid-template-columns:1fr}.controls #fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px}.controls{order:0}.canvas-wrap canvas{height:380px}}
 @media(max-width:650px){.workspace-layout{display:block}.library{position:static;min-height:0;border-right:0;border-bottom:1px solid var(--line);padding:10px 16px}.library>small{display:none}.library nav{display:flex;flex-direction:column;overflow:visible;gap:0}.library .theme-toggle{width:100%;min-height:35px}.theme-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.library .nav-item{width:100%;white-space:normal}.app-header{height:auto;padding:14px 18px;gap:10px}.brand{width:auto;margin-right:auto}.app-header nav{gap:0}.app-header .button{padding:8px 10px;font-size:11px}main{padding:18px}.page-heading h1{font-size:23px}.canvas-wrap canvas{height:330px}.controls #fields{gap:0 15px}.viewer-heading{gap:8px}.toolbar{gap:4px}.panel-heading{gap:10px}.frame-card{flex:0 0 146px}}
+
+/* Shared legibility and overflow rules for long scientific labels. */
+.page-heading{flex-wrap:wrap}.page-heading>div{min-width:0}
+.page-heading h1,.nav-name,.frame-name{overflow-wrap:anywhere}
+.panel-heading{flex-wrap:wrap}.toolbar{flex-shrink:0}
+.library .nav-item{font-size:13px;color:#58647a;white-space:normal}
+.library .theme-toggle{font-size:14px}.theme-items,.theme-group{min-width:0}
+.field{min-width:0}.field label{font-size:13px;line-height:1.6}
+.field select{display:block;width:100%;margin-top:9px;min-height:42px;font-size:14px}
+.number-wrap{min-width:0}.number-wrap span{font-size:12px;flex-shrink:0}
+.controls #run-status,.range-labels,.section-caption,.frame-name,.result-tools,.legend{font-size:12px;color:#5f6c82}
+.section-caption{line-height:1.7;min-height:20px;margin:0 0 12px}
+.timeline{overscroll-behavior-x:contain;overflow-anchor:none}
+.doping-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0}
+.doping-tools label{display:flex;align-items:center;gap:5px;font-size:12px}
+.doping-tools select{min-height:34px;padding:5px 10px;font-size:12px}
+.table-scroll{max-width:100%;overflow-x:auto}.table-scroll table{min-width:540px}
+.tutorial-detail th,.tutorial-detail td{overflow-wrap:anywhere}
+@media(min-width:651px){.workspace-layout{display:grid}.library{max-height:calc(100dvh - 76px);min-height:0;overflow-y:auto;overscroll-behavior:contain}.library nav{flex-direction:column;overflow:visible}}
+@media(max-width:650px){.page-heading{flex-direction:column;align-items:stretch}.canvas-wrap canvas{height:320px}.toast{width:calc(100% - 32px);max-width:480px;overflow-wrap:anywhere}}
+@media(max-width:380px){.controls #fields{grid-template-columns:1fr}.app-header{flex-wrap:wrap}.brand{font-size:21px}}

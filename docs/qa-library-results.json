@@ -1,0 +1,439 @@
+{
+  "new_native": [
+    {
+      "name": "pvd:default",
+      "status": "PASS",
+      "seconds": 0.61
+    },
+    {
+      "name": "pvd:width:min",
+      "status": "PASS",
+      "seconds": 0.67
+    },
+    {
+      "name": "pvd:width:max",
+      "status": "PASS",
+      "seconds": 0.59
+    },
+    {
+      "name": "pvd:depth:min",
+      "status": "PASS",
+      "seconds": 0.55
+    },
+    {
+      "name": "pvd:depth:max",
+      "status": "PASS",
+      "seconds": 0.72
+    },
+    {
+      "name": "pvd:time:min",
+      "status": "PASS",
+      "seconds": 0.31
+    },
+    {
+      "name": "pvd:time:max",
+      "status": "PASS",
+      "seconds": 0.89
+    },
+    {
+      "name": "pvd:sticking:min",
+      "status": "PASS",
+      "seconds": 0.89
+    },
+    {
+      "name": "pvd:sticking:max",
+      "status": "PASS",
+      "seconds": 0.69
+    },
+    {
+      "name": "pvd:exponent:min",
+      "status": "PASS",
+      "seconds": 0.97
+    },
+    {
+      "name": "pvd:exponent:max",
+      "status": "PASS",
+      "seconds": 0.69
+    },
+    {
+      "name": "pvd:all-min",
+      "status": "PASS",
+      "seconds": 0.36
+    },
+    {
+      "name": "pvd:all-max",
+      "status": "PASS",
+      "seconds": 1.11
+    },
+    {
+      "name": "cvd:default",
+      "status": "PASS",
+      "seconds": 0.91
+    },
+    {
+      "name": "cvd:width:min",
+      "status": "PASS",
+      "seconds": 0.92
+    },
+    {
+      "name": "cvd:width:max",
+      "status": "PASS",
+      "seconds": 0.91
+    },
+    {
+      "name": "cvd:depth:min",
+      "status": "PASS",
+      "seconds": 0.84
+    },
+    {
+      "name": "cvd:depth:max",
+      "status": "PASS",
+      "seconds": 1.2
+    },
+    {
+      "name": "cvd:time:min",
+      "status": "PASS",
+      "seconds": 0.34
+    },
+    {
+      "name": "cvd:time:max",
+      "status": "PASS",
+      "seconds": 1.45
+    },
+    {
+      "name": "cvd:sticking:min",
+      "status": "PASS",
+      "seconds": 0.92
+    },
+    {
+      "name": "cvd:sticking:max",
+      "status": "PASS",
+      "seconds": 0.69
+    },
+    {
+      "name": "cvd:exponent:min",
+      "status": "PASS",
+      "seconds": 1.28
+    },
+    {
+      "name": "cvd:exponent:max",
+      "status": "PASS",
+      "seconds": 0.88
+    },
+    {
+      "name": "cvd:all-min",
+      "status": "PASS",
+      "seconds": 0.39
+    },
+    {
+      "name": "cvd:all-max",
+      "status": "PASS",
+      "seconds": 1.08
+    },
+    {
+      "name": "ald:default",
+      "status": "PASS",
+      "seconds": 1.69
+    },
+    {
+      "name": "ald:width:min",
+      "status": "PASS",
+      "seconds": 1.7
+    },
+    {
+      "name": "ald:width:max",
+      "status": "PASS",
+      "seconds": 1.62
+    },
+    {
+      "name": "ald:depth:min",
+      "status": "PASS",
+      "seconds": 1.22
+    },
+    {
+      "name": "ald:depth:max",
+      "status": "PASS",
+      "seconds": 2.06
+    },
+    {
+      "name": "ald:cycles:min",
+      "status": "PASS",
+      "seconds": 0.84
+    },
+    {
+      "name": "ald:cycles:max",
+      "status": "PASS",
+      "seconds": 1.61
+    },
+    {
+      "name": "ald:pulse:min",
+      "status": "PASS",
+      "seconds": 0.99
+    },
+    {
+      "name": "ald:pulse:max",
+      "status": "PASS",
+      "seconds": 6.0
+    },
+    {
+      "name": "ald:sticking:min",
+      "status": "PASS",
+      "seconds": 1.53
+    },
+    {
+      "name": "ald:sticking:max",
+      "status": "PASS",
+      "seconds": 1.56
+    },
+    {
+      "name": "ald:all-min",
+      "status": "PASS",
+      "seconds": 0.56
+    },
+    {
+      "name": "ald:all-max",
+      "status": "PASS",
+      "seconds": 8.01
+    },
+    {
+      "name": "implant:default",
+      "status": "PASS",
+      "seconds": 1.31
+    },
+    {
+      "name": "implant:species:0",
+      "status": "PASS",
+      "seconds": 1.34
+    },
+    {
+      "name": "implant:species:1",
+      "status": "PASS",
+      "seconds": 1.2
+    },
+    {
+      "name": "implant:energy:0",
+      "status": "PASS",
+      "seconds": 1.38
+    },
+    {
+      "name": "implant:energy:1",
+      "status": "PASS",
+      "seconds": 1.39
+    },
+    {
+      "name": "implant:energy:2",
+      "status": "PASS",
+      "seconds": 1.27
+    },
+    {
+      "name": "implant:energy:3",
+      "status": "PASS",
+      "seconds": 1.34
+    },
+    {
+      "name": "implant:energy:4",
+      "status": "PASS",
+      "seconds": 1.33
+    },
+    {
+      "name": "implant:energy:5",
+      "status": "PASS",
+      "seconds": 1.33
+    },
+    {
+      "name": "implant:energy:6",
+      "status": "PASS",
+      "seconds": 1.42
+    },
+    {
+      "name": "implant:dose:min",
+      "status": "PASS",
+      "seconds": 1.28
+    },
+    {
+      "name": "implant:dose:max",
+      "status": "PASS",
+      "seconds": 1.31
+    },
+    {
+      "name": "implant:width:min",
+      "status": "PASS",
+      "seconds": 1.26
+    },
+    {
+      "name": "implant:width:max",
+      "status": "PASS",
+      "seconds": 1.38
+    },
+    {
+      "name": "implant:all-min",
+      "status": "PASS",
+      "seconds": 1.25
+    },
+    {
+      "name": "implant:all-max",
+      "status": "PASS",
+      "seconds": 1.61
+    },
+    {
+      "name": "anneal:default",
+      "status": "PASS",
+      "seconds": 4.34
+    },
+    {
+      "name": "anneal:species:0",
+      "status": "PASS",
+      "seconds": 4.16
+    },
+    {
+      "name": "anneal:species:1",
+      "status": "PASS",
+      "seconds": 4.58
+    },
+    {
+      "name": "anneal:dose:min",
+      "status": "PASS",
+      "seconds": 4.06
+    },
+    {
+      "name": "anneal:dose:max",
+      "status": "PASS",
+      "seconds": 3.97
+    },
+    {
+      "name": "anneal:temperature:min",
+      "status": "PASS",
+      "seconds": 3.61
+    },
+    {
+      "name": "anneal:temperature:max",
+      "status": "PASS",
+      "seconds": 3.95
+    },
+    {
+      "name": "anneal:time:min",
+      "status": "PASS",
+      "seconds": 3.49
+    },
+    {
+      "name": "anneal:time:max",
+      "status": "PASS",
+      "seconds": 4.55
+    },
+    {
+      "name": "anneal:all-min",
+      "status": "PASS",
+      "seconds": 4.64
+    },
+    {
+      "name": "anneal:all-max",
+      "status": "PASS",
+      "seconds": 4.49
+    },
+    {
+      "name": "pn-junction:default",
+      "status": "PASS",
+      "seconds": 5.39
+    },
+    {
+      "name": "pn-junction:p_dose:min",
+      "status": "PASS",
+      "seconds": 5.25
+    },
+    {
+      "name": "pn-junction:p_dose:max",
+      "status": "PASS",
+      "seconds": 5.22
+    },
+    {
+      "name": "pn-junction:b_dose:min",
+      "status": "PASS",
+      "seconds": 5.23
+    },
+    {
+      "name": "pn-junction:b_dose:max",
+      "status": "PASS",
+      "seconds": 5.24
+    },
+    {
+      "name": "pn-junction:temperature:min",
+      "status": "PASS",
+      "seconds": 4.51
+    },
+    {
+      "name": "pn-junction:temperature:max",
+      "status": "PASS",
+      "seconds": 5.22
+    },
+    {
+      "name": "pn-junction:time:min",
+      "status": "PASS",
+      "seconds": 4.45
+    },
+    {
+      "name": "pn-junction:time:max",
+      "status": "PASS",
+      "seconds": 5.39
+    },
+    {
+      "name": "pn-junction:all-min",
+      "status": "PASS",
+      "seconds": 4.22
+    },
+    {
+      "name": "pn-junction:all-max",
+      "status": "PASS",
+      "seconds": 5.26
+    }
+  ],
+  "physical_trends": [
+    {
+      "name": "trend:repeated-dose-addition",
+      "status": "PASS",
+      "seconds": 1.75
+    },
+    {
+      "name": "trend:energy-depth",
+      "status": "PASS",
+      "seconds": 2.09
+    },
+    {
+      "name": "trend:B-P-compensation",
+      "status": "PASS",
+      "seconds": 3.69
+    },
+    {
+      "name": "trend:ALD-cycle-growth",
+      "status": "PASS",
+      "seconds": 2.0
+    },
+    {
+      "name": "trend:CVD-PVD-coverage",
+      "status": "PASS",
+      "seconds": 0.95
+    }
+  ],
+  "layout": [
+    {
+      "viewport": 375,
+      "page_horizontal_overflow": false,
+      "clipped_controls": 0
+    },
+    {
+      "viewport": 768,
+      "page_horizontal_overflow": false,
+      "clipped_controls": 0
+    },
+    {
+      "viewport": 1024,
+      "page_horizontal_overflow": false,
+      "clipped_controls": 0
+    }
+  ],
+  "autoplay": {
+    "before_scrollY": 0,
+    "after_scrollY": 0,
+    "final_step": "07 / 07",
+    "timeline_scrollLeft": 248.8
+  }
+}

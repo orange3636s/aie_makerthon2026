@@ -7,12 +7,12 @@ prior=json.loads((ROOT/'.runtime/qa/boundaries.json').read_text(encoding='utf-8'
 passed={r['name']:r for r in prior if r['status']=='PASS'}
 for example in json.loads((ROOT/'catalog.json').read_text(encoding='utf-8'))['examples']:
  for field in example['fields']:
-  for edge in ['min','max']:
+  for edge in (range(len(field['options'])) if 'options' in field else ['min','max']):
    name=f"{example['id']}:{field['key']}:{edge}";start=time.monotonic()
    if name in passed:
     report.append(passed[name]);continue
    try:
-    result=run(dict(example=example['id'],params={field['key']:field[edge]}),'engine.py')
+    result=run(dict(example=example['id'],params={field['key']:(field['options'][edge] if 'options' in field else field[edge])}),'engine.py')
     assert not result.get('failure'),str(result.get('failure'))
     assert len(result['frames'])>=2
     row=dict(name=name,status='PASS',seconds=round(time.monotonic()-start,2))

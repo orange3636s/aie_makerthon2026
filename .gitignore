@@ -9,3 +9,7 @@ __pycache__/
 .native/
 public/
 .vercel/
+
+# Local responsive browser fixture
+web/qa.html
+web/qa.js

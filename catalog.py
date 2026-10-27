@@ -17,6 +17,11 @@ def validate(data):
     params = {}
     for f in spec["fields"]:
         raw = given.get(f["key"], f["default"])
+        if 'options' in f:
+            if isinstance(raw, bool) or raw not in f['options']:
+                raise ValueError(f'{f["label"]}: 지원하지 않는 값입니다.')
+            params[f['key']] = raw
+            continue
         if isinstance(raw, bool):
             raise ValueError("숫자 조건을 입력해 주세요.")
         try: value = float(raw)

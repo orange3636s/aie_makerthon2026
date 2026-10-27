@@ -6,7 +6,7 @@ suite.REPORT='corners'
 for ex in json.loads((ROOT/'catalog.json').read_text(encoding='utf-8'))['examples']:
  for edge in ['min','max']:
   def test(ex=ex,edge=edge):
-   d=run({'example':ex['id'],'params':{f['key']:f[edge] for f in ex['fields']}},'engine.py')
+   d=run({'example':ex['id'],'params':{f['key']:(f['options'][0 if edge=='min' else -1] if 'options' in f else f[edge]) for f in ex['fields']}},'engine.py')
    assert not d.get('failure'),d.get('failure')
   check(ex['id']+':all-'+edge,test)
 sys.exit(any(r['status']=='FAIL' for r in report))

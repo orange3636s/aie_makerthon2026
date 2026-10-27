@@ -15,3 +15,11 @@
 .flow-remove:disabled{opacity:.35;cursor:wait}
 .flow-card .flow-step small{padding-right:22px}
 .step-actions #r-delete{width:auto;padding:6px 10px;font-size:12px;color:#a52a42}
+
+.heading-actions{flex-wrap:wrap;min-width:0}.heading-actions button{line-height:1.5}
+.reverse-controls select{font-family:inherit;font-size:13px;min-width:0}
+.reverse-controls label,.flow-step strong,.reverse-status,.flow-meta,.result-label{font-size:12px;line-height:1.6}
+.flow-step strong,.flow-step span{white-space:normal;overflow-wrap:anywhere}
+.flow-builder{overflow-anchor:none;overscroll-behavior-x:contain}
+@media(max-width:650px){.heading-actions{max-width:none;justify-content:flex-start}.reverse-view footer{gap:10px}.reverse-toolbar{flex-wrap:wrap}.flow-header-actions{justify-content:flex-start}}
+@media(max-width:380px){.reverse-controls #reverse-fields{grid-template-columns:1fr}.dual-view canvas{height:260px}}

@@ -64,6 +64,9 @@ def contour_mesh(mesh, default_material=10, force_material=False, x_bounds=None,
 
 def run(data):
     spec, p = validate(data)
+    from learning_examples import IDS as learning_ids, run as run_learning
+    if spec['id'] in learning_ids:
+        return run_learning(spec, p)
     if spec['id'] in ('mosfet','finfet','mbcfet','sti','locos','fin'):
         from native_presets import run as run_preset
         return run_preset(spec,p)

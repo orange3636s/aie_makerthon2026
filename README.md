@@ -48,7 +48,7 @@ API 키가 없으면 이미지 미리보기 후 목표를 직접 선택합니다
 
 ## 검증
 
-[2026-10-28 엄격 시나리오 검증 기록](docs/QA-2026-10-28.md): 16개 예제, 경계값·조합·실패 복구·공정 편집과 채점.
+[2026-10-28 엄격 시나리오 검증 기록](docs/QA-2026-10-28.md): 22개 예제, 경계값·조합·실패 복구·공정 편집과 채점.
 
 `npm test`: 재료별 채점, 정답 100점, 기판만/누락 재료/위치 이동 감점.
 
@@ -64,3 +64,11 @@ Linux의 native 4.7 패키지는 공식 CI artifact를 checksum 검증 후 추�
 - [Arpelier](https://arpelier.com/): 단계와 단면을 연결하는 상호작용 참고. 코드·디자인 자산 복제 없음.
 
 엔진의 라이선스는 `LICENSE-ViennaPS.txt` 및 runtime 내부의 원본 라이선스를 확인하세요. 기존 Git history는 보존합니다.
+
+## 증착·확산 라이브러리 확장
+
+총 22개 관찰 예제. Deposition: PVD Trench Deposition, CVD Trench Fill, Atomic Layer Deposition. Diffusion: Masked Ion Implantation, Thermal Anneal, PN Junction. 구조·소자 역설계 목표 6종은 유지합니다.
+
+새 예제는 `learning_examples.py`에서 순차 native 공정을 실행합니다. PVD/CVD는 SingleParticleProcess의 유효 조건 프리셋, ALD는 SingleParticleALD, 주입·열처리는 native 4.7 worker입니다. PN Junction은 농도 분포 예제로 전류·전압 계산을 포함하지 않습니다. 계산 가정과 조절 변수는 tutorial에 있습니다.
+
+[확장·스크롤·반응형 검증 기록](docs/QA-library-2026-10-28.md). `python tests/learning_examples.py`로 77개 신규 계산 시나리오를 재실행할 수 있습니다. `--failed-only`는 이전 결과에서 실패한 조건만 다시 실행합니다.

@@ -10,3 +10,4 @@ __pycache__
 vendor/transport-windows-x64.zip
 web/qa.html
 *.png
+web/qa.js

@@ -734,6 +734,371 @@
       ],
       "description": "국부 평활화와 전체 평탄화를 비교합니다.",
       "note": "Gaussian smoothing·국부 높이 평균·목표 높이 절단의 교육용 형상 비교입니다. CMP 압력·연마제·제거율·재료 선택비를 계산하지 않습니다. 목표 높이가 초기 단차보다 낮으면 패턴도 잘립니다."
+    },
+    {
+      "id": "pvd",
+      "title": "PVD Trench Deposition",
+      "subtitle": "",
+      "group": "Deposition",
+      "model": "SingleParticleProcess",
+      "source": "https://viennatools.github.io/ViennaPS/models/prebuilt/singleParticle.html",
+      "description": "",
+      "fields": [
+        {
+          "key": "width",
+          "label": "트렌치 폭",
+          "default": 0.4,
+          "min": 0.2,
+          "max": 0.8,
+          "unit": "µm",
+          "step": 0.05,
+          "description": "개구 폭을 변경합니다. 좁을수록 입자 수송·측벽 차폐 영향이 커집니다."
+        },
+        {
+          "key": "depth",
+          "label": "트렌치 깊이",
+          "default": 0.3,
+          "min": 0.15,
+          "max": 0.5,
+          "unit": "µm",
+          "step": 0.05,
+          "description": "트렌치 깊이입니다. 깊이/폭 비율을 바꾸어 피복 차이를 비교합니다."
+        },
+        {
+          "key": "time",
+          "label": "총 증착 시간",
+          "default": 2.4,
+          "min": 0.3,
+          "max": 4.5,
+          "unit": "s",
+          "step": 0.3,
+          "description": "총 증착 시간입니다. 세 구간으로 나누어 계산합니다."
+        },
+        {
+          "key": "sticking",
+          "label": "부착 확률",
+          "default": 1.0,
+          "min": 0.01,
+          "max": 1.0,
+          "unit": "",
+          "step": 0.01,
+          "description": "표면에서 입자가 붙을 확률입니다. 작을수록 재방출·재입사의 영향이 커집니다."
+        },
+        {
+          "key": "exponent",
+          "label": "입사 방향성 지수",
+          "default": 20,
+          "min": 0,
+          "max": 30,
+          "unit": "",
+          "step": 1,
+          "description": "cosine-power 입사 분포 지수입니다. 커질수록 수직 입사 비중이 커집니다."
+        }
+      ],
+      "note": "SiO₂ 증착. 평면 속도 0.08 µm/s에서 입사각 분포와 재방출을 계산합니다. PVD/CVD는 같은 유효 입자 모델의 조건 프리셋이며 장비별 화학·압력을 직접 계산하지 않습니다. 높은 방향성에서 상부·바닥 증착과 측벽의 차이를 관찰합니다.",
+      "unit": "µm",
+      "mode": "effective",
+      "section": "트렌치 단면"
+    },
+    {
+      "id": "cvd",
+      "title": "CVD Trench Fill",
+      "subtitle": "",
+      "group": "Deposition",
+      "model": "SingleParticleProcess",
+      "source": "https://viennatools.github.io/ViennaPS/models/prebuilt/singleParticle.html",
+      "description": "",
+      "fields": [
+        {
+          "key": "width",
+          "label": "트렌치 폭",
+          "default": 0.4,
+          "min": 0.2,
+          "max": 0.8,
+          "unit": "µm",
+          "step": 0.05,
+          "description": "개구 폭을 변경합니다. 좁을수록 입자 수송·측벽 차폐 영향이 커집니다."
+        },
+        {
+          "key": "depth",
+          "label": "트렌치 깊이",
+          "default": 0.3,
+          "min": 0.15,
+          "max": 0.5,
+          "unit": "µm",
+          "step": 0.05,
+          "description": "트렌치 깊이입니다. 깊이/폭 비율을 바꾸어 피복 차이를 비교합니다."
+        },
+        {
+          "key": "time",
+          "label": "총 증착 시간",
+          "default": 2.4,
+          "min": 0.3,
+          "max": 4.5,
+          "unit": "s",
+          "step": 0.3,
+          "description": "총 증착 시간입니다. 세 구간으로 나누어 계산합니다."
+        },
+        {
+          "key": "sticking",
+          "label": "부착 확률",
+          "default": 0.15,
+          "min": 0.01,
+          "max": 1.0,
+          "unit": "",
+          "step": 0.01,
+          "description": "표면에서 입자가 붙을 확률입니다. 작을수록 재방출·재입사의 영향이 커집니다."
+        },
+        {
+          "key": "exponent",
+          "label": "입사 방향성 지수",
+          "default": 1,
+          "min": 0,
+          "max": 30,
+          "unit": "",
+          "step": 1,
+          "description": "cosine-power 입사 분포 지수입니다. 커질수록 수직 입사 비중이 커집니다."
+        }
+      ],
+      "note": "SiO₂ 증착. 평면 속도 0.08 µm/s에서 입사각 분포와 재방출을 계산합니다. PVD/CVD는 같은 유효 입자 모델의 조건 프리셋이며 장비별 화학·압력을 직접 계산하지 않습니다. 낮은 부착 확률에서 측벽 피복과 입구 폐쇄를 관찰합니다.",
+      "unit": "µm",
+      "mode": "effective",
+      "section": "트렌치 단면"
+    },
+    {
+      "id": "ald",
+      "title": "Atomic Layer Deposition",
+      "subtitle": "",
+      "group": "Deposition",
+      "model": "SingleParticleALD",
+      "source": "https://github.com/ViennaTools/ViennaPS/tree/master/examples/atomicLayerDeposition",
+      "description": "",
+      "fields": [
+        {
+          "key": "width",
+          "label": "트렌치 폭",
+          "default": 0.4,
+          "min": 0.2,
+          "max": 0.8,
+          "unit": "µm",
+          "step": 0.05,
+          "description": "개구 폭을 변경합니다. 좁을수록 입자 수송·측벽 차폐 영향이 커집니다."
+        },
+        {
+          "key": "depth",
+          "label": "트렌치 깊이",
+          "default": 0.3,
+          "min": 0.15,
+          "max": 0.5,
+          "unit": "µm",
+          "step": 0.05,
+          "description": "트렌치 깊이입니다. 깊이/폭 비율을 바꾸어 피복 차이를 비교합니다."
+        },
+        {
+          "key": "cycles",
+          "label": "ALD 사이클",
+          "default": 60,
+          "min": 5,
+          "max": 120,
+          "unit": "cycle",
+          "step": 1,
+          "description": "반복 횟수입니다. 1 nm/cycle 성장량을 사용합니다."
+        },
+        {
+          "key": "pulse",
+          "label": "전구체 펄스 시간",
+          "default": 0.1,
+          "min": 0.05,
+          "max": 0.5,
+          "unit": "s",
+          "step": 0.05,
+          "description": "한 전구체 펄스의 노출 시간입니다. 포화 피복에 영향을 줍니다."
+        },
+        {
+          "key": "sticking",
+          "label": "초기 부착 확률",
+          "default": 5e-05,
+          "min": 1e-05,
+          "max": 0.001,
+          "unit": "",
+          "step": 1e-05,
+          "description": "표면에서 입자가 붙을 확률입니다. 작을수록 재방출·재입사의 영향이 커집니다."
+        }
+      ],
+      "note": "SiO₂의 포화 흡착·표면 피복을 계산합니다. 성장량 1 nm/cycle, incomingFlux=2e6, s0=3.36, evaporationFlux=2.5, 무한 평균자유행로 고정. 공식 예제의 macro-cycle 가속을 사용하며 실제 전구체에 보정되지 않았습니다.",
+      "unit": "µm",
+      "mode": "physics",
+      "section": "트렌치 단면"
+    },
+    {
+      "id": "implant",
+      "title": "Masked Ion Implantation",
+      "subtitle": "",
+      "group": "Diffusion",
+      "model": "IonImplantation",
+      "source": "https://viennatools.github.io/ViennaPS/models/prebuilt/ionImplantation.html",
+      "description": "",
+      "fields": [
+        {
+          "key": "species",
+          "label": "도펀트",
+          "options": [
+            "P",
+            "B"
+          ],
+          "default": "P",
+          "description": "인 P는 n형, 붕소 B는 p형 도펀트입니다."
+        },
+        {
+          "key": "energy",
+          "label": "주입 에너지 (keV)",
+          "options": [
+            8,
+            10,
+            30,
+            50,
+            100,
+            130,
+            200
+          ],
+          "default": 30,
+          "description": "공개 데이터가 있는 에너지만 선택합니다. 에너지에 따라 평균 주입 깊이와 퍼짐이 변합니다."
+        },
+        {
+          "key": "dose",
+          "label": "주입량",
+          "default": 10000000000000.0,
+          "min": 100000000000.0,
+          "max": 1000000000000000.0,
+          "unit": "ions/cm²",
+          "step": 1000000000000.0,
+          "description": "단위 면적당 주입 이온 수입니다. 총 농도 크기에 영향을 줍니다."
+        },
+        {
+          "key": "width",
+          "label": "주입 창 폭",
+          "default": 0.5,
+          "min": 0.2,
+          "max": 1.0,
+          "unit": "µm",
+          "step": 0.05,
+          "description": "개구 폭을 변경합니다. 좁을수록 입자 수송·측벽 차폐 영향이 커집니다."
+        }
+      ],
+      "note": "공개 B/P dual-Pearson IV 데이터로 총 도핑 분포를 계산합니다. Si 이외 재료는 차폐, 입사각 7°. 열처리 전 활성 농도는 계산하지 않습니다. 10 nm 격자로 저에너지의 얇은 분포는 해상도 제한이 있습니다.",
+      "unit": "µm",
+      "mode": "physics",
+      "section": "주입·확산 단면"
+    },
+    {
+      "id": "anneal",
+      "title": "Thermal Anneal",
+      "subtitle": "",
+      "group": "Diffusion",
+      "model": "Anneal",
+      "source": "https://viennatools.github.io/ViennaPS/models/prebuilt/anneal.html",
+      "description": "",
+      "fields": [
+        {
+          "key": "species",
+          "label": "도펀트",
+          "options": [
+            "P",
+            "B"
+          ],
+          "default": "B",
+          "description": "인 P는 n형, 붕소 B는 p형 도펀트입니다."
+        },
+        {
+          "key": "dose",
+          "label": "주입량",
+          "default": 100000000000000.0,
+          "min": 100000000000.0,
+          "max": 1000000000000000.0,
+          "unit": "ions/cm²",
+          "step": 1000000000000.0,
+          "description": "단위 면적당 주입 이온 수입니다. 총 농도 크기에 영향을 줍니다."
+        },
+        {
+          "key": "temperature",
+          "label": "열처리 온도",
+          "default": 1100,
+          "min": 950,
+          "max": 1100,
+          "unit": "°C",
+          "step": 25,
+          "description": "Arrhenius 확산 계수와 고용도 활성화 한계를 바꿉니다."
+        },
+        {
+          "key": "time",
+          "label": "총 열처리 시간",
+          "default": 120,
+          "min": 4,
+          "max": 120,
+          "unit": "s",
+          "step": 4,
+          "description": "PR 제거 후의 총 열처리 시간입니다. 확산의 진행을 비교합니다."
+        }
+      ],
+      "note": "중앙 0.5 µm 창에 30 keV 주입 후 PR을 제거하고 총 시간의 25%, 50%, 100%에서 비교합니다. Si 내 Arrhenius 확산·고용도 활성화이며 TED·결함 동역학은 포함하지 않습니다. 총 농도를 선택하면 전후 같은 물리량을 비교합니다.",
+      "unit": "µm",
+      "mode": "physics",
+      "section": "주입·확산 단면"
+    },
+    {
+      "id": "pn-junction",
+      "title": "PN Junction",
+      "subtitle": "",
+      "group": "Diffusion",
+      "model": "IonImplantation + Anneal",
+      "source": "https://github.com/ViennaTools/ViennaPS/tree/master/examples/pnJunction",
+      "description": "",
+      "fields": [
+        {
+          "key": "p_dose",
+          "label": "P 주입량 (n형)",
+          "default": 100000000000000.0,
+          "min": 1000000000000.0,
+          "max": 1000000000000000.0,
+          "unit": "ions/cm²",
+          "step": 1000000000000.0,
+          "description": "왼쪽 창에 주입하는 인의 양입니다. 순 도핑 P−B를 비교합니다."
+        },
+        {
+          "key": "b_dose",
+          "label": "B 주입량 (p형)",
+          "default": 100000000000000.0,
+          "min": 1000000000000.0,
+          "max": 1000000000000000.0,
+          "unit": "ions/cm²",
+          "step": 1000000000000.0,
+          "description": "오른쪽 창에 주입하는 붕소의 양입니다. 순 도핑 P−B를 비교합니다."
+        },
+        {
+          "key": "temperature",
+          "label": "열처리 온도",
+          "default": 1100,
+          "min": 950,
+          "max": 1100,
+          "unit": "°C",
+          "step": 25,
+          "description": "Arrhenius 확산 계수와 고용도 활성화 한계를 바꿉니다."
+        },
+        {
+          "key": "time",
+          "label": "총 열처리 시간",
+          "default": 120,
+          "min": 4,
+          "max": 120,
+          "unit": "s",
+          "step": 4,
+          "description": "PR 제거 후의 총 열처리 시간입니다. 확산의 진행을 비교합니다."
+        }
+      ],
+      "note": "왼쪽 창에 P 30 keV, 오른쪽 창에 B 10 keV를 순서대로 주입하고 열처리합니다. 순 도핑 = P−B의 부호와 확산을 관찰합니다. 농도 접합 예제이며 공핍층·전압·전류는 계산하지 않습니다. 원 예제를 본 플랫폼의 격자·차폐 조건에 맞춰 구성했습니다.",
+      "unit": "µm",
+      "mode": "physics",
+      "section": "주입·확산 단면"
     }
   ],
   "engine": "local",
