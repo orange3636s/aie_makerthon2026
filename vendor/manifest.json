@@ -1,0 +1,13 @@
+{
+  "upstream": "https://github.com/ViennaTools/ViennaPS",
+  "commit": "7a8b17fba8f11f907cac96ae6e03ee0aa3c68948",
+  "workflow_run": 35322918342,
+  "artifacts": {
+    "windows": 10537079853,
+    "linux": 10538510111
+  },
+  "files": {
+    "transport-linux-x64.tar.gz": "aebf27a9e0398cc0568caa56fd540d378da70e0dae299fc4a2760d6a5ddd0a18",
+    "transport-windows-x64.zip": "2dba2dac3e832be698a56cdb0ebc4d5a6b898aab3da576b74390cbac4ebf19f9"
+  }
+}

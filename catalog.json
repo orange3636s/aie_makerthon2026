@@ -1,0 +1,741 @@
+{
+  "examples": [
+    {
+      "id": "wet",
+      "title": "Wet Etch",
+      "subtitle": "",
+      "group": "Etch",
+      "model": "WetEtching",
+      "source": "https://github.com/ViennaTools/ViennaPS/tree/v4.6.2/examples/cantileverWetEtching",
+      "description": "결정 방향별 식각 속도 차이로 생기는 경사면을 살펴봅니다. 마스크 개구와 시간을 바꿔 단면을 비교하세요.",
+      "fields": [
+        {
+          "key": "width",
+          "label": "마스크 개구 폭",
+          "unit": "µm",
+          "default": 1.5,
+          "min": 0.8,
+          "max": 2.5,
+          "step": 0.1
+        },
+        {
+          "key": "duration",
+          "label": "식각 시간",
+          "unit": "s",
+          "default": 45,
+          "min": 15,
+          "max": 90,
+          "step": 5
+        },
+        {
+          "key": "anisotropy",
+          "label": "(110) 식각률 배율",
+          "unit": "×",
+          "default": 1,
+          "min": 0.5,
+          "max": 4,
+          "step": 0.5
+        }
+      ],
+      "note": "결정 의존 습식 식각 모델을 2D (100)-(010) 단면에 적용합니다. (110) 기본 속도 1.455 µm/min의 배율을 변경합니다. (111) 면은 이 단면의 독립 조절 변수가 아닙니다. 온도·용액 농도는 고정 가정입니다.",
+      "unit": "µm",
+      "mode": "physics",
+      "section": "2D 단면"
+    },
+    {
+      "id": "rie",
+      "title": "RIE Etch",
+      "subtitle": "",
+      "group": "Etch",
+      "model": "DirectionalProcess",
+      "source": "https://viennatools.github.io/ViennaPS/examples/",
+      "description": "산화막의 식각 깊이와 언더컷을 비교합니다.",
+      "fields": [
+        {
+          "key": "width",
+          "label": "개구 폭",
+          "unit": "µm",
+          "default": 0.4,
+          "min": 0.2,
+          "max": 0.7,
+          "step": 0.05
+        },
+        {
+          "key": "duration",
+          "label": "식각 시간",
+          "unit": "s",
+          "default": 1.2,
+          "min": 0.3,
+          "max": 2,
+          "step": 0.1
+        },
+        {
+          "key": "rate",
+          "label": "수직 식각률",
+          "unit": "µm/s",
+          "default": 0.35,
+          "min": 0.15,
+          "max": 0.5,
+          "step": 0.05
+        },
+        {
+          "key": "lateral",
+          "label": "측방 / 수직 식각률",
+          "unit": "",
+          "default": 0.05,
+          "min": 0,
+          "max": 0.3,
+          "step": 0.01
+        }
+      ],
+      "note": "방향성·등방성 속도장의 level-set 계산입니다. 산화막 두께 0.7 µm, Si와 마스크는 비식각 재료입니다. 가스 반응·RF 전력은 계산하지 않습니다.",
+      "unit": "µm",
+      "mode": "effective",
+      "section": "2D 단면"
+    },
+    {
+      "id": "sf6",
+      "title": "SF₆/O₂ Etch",
+      "subtitle": "",
+      "group": "Etch",
+      "model": "SF6O2Etching",
+      "source": "https://github.com/ViennaTools/ViennaPS/tree/v4.6.2/examples/holeEtching",
+      "description": "산소 공급과 이온 에너지가 식각 단면에 주는 영향을 비교합니다. 원형 홀의 3D 해석 대신 2D 개구 단면을 계산합니다.",
+      "fields": [
+        {
+          "key": "width",
+          "label": "개구 폭",
+          "unit": "µm",
+          "default": 0.35,
+          "min": 0.25,
+          "max": 0.7,
+          "step": 0.05
+        },
+        {
+          "key": "oxygen",
+          "label": "산소 플럭스",
+          "unit": "×10¹⁵ cm⁻²s⁻¹",
+          "default": 800,
+          "min": 200,
+          "max": 1400,
+          "step": 100
+        },
+        {
+          "key": "energy",
+          "label": "평균 이온 에너지",
+          "unit": "eV",
+          "default": 100,
+          "min": 50,
+          "max": 180,
+          "step": 10
+        },
+        {
+          "key": "duration",
+          "label": "식각 시간",
+          "unit": "min",
+          "default": 0.05,
+          "min": 0.02,
+          "max": 0.15,
+          "step": 0.01
+        }
+      ],
+      "note": "공식 SF₆/O₂ 반응 모델, 고정 이온 플럭스 10·식각종 플럭스 4500, 100 rays/point. 입자 추적으로 재실행 시 미세 차이가 날 수 있습니다.",
+      "unit": "µm",
+      "mode": "physics",
+      "section": "2D 단면"
+    },
+    {
+      "id": "bosch",
+      "title": "Bosch Etch",
+      "subtitle": "",
+      "group": "Etch",
+      "model": "DirectionalProcess + SphereDistribution",
+      "source": "https://github.com/ViennaTools/ViennaPS/tree/v4.6.2/examples/boschProcess",
+      "description": "보호막을 쌓고 바닥을 연 뒤 식각합니다. 반복 횟수와 식각 시간을 바꾸며 측벽의 굴곡을 관찰하세요.",
+      "fields": [
+        {
+          "key": "width",
+          "label": "개구 폭",
+          "unit": "µm",
+          "default": 1.2,
+          "min": 0.6,
+          "max": 2,
+          "step": 0.1
+        },
+        {
+          "key": "cycles",
+          "label": "반복 횟수",
+          "unit": "cycle",
+          "default": 5,
+          "min": 2,
+          "max": 8,
+          "step": 1
+        },
+        {
+          "key": "etch_time",
+          "label": "회당 식각 시간",
+          "unit": "s",
+          "default": 0.8,
+          "min": 0.3,
+          "max": 1.5,
+          "step": 0.1
+        },
+        {
+          "key": "coating",
+          "label": "보호막 두께",
+          "unit": "µm",
+          "default": 0.08,
+          "min": 0.05,
+          "max": 0.15,
+          "step": 0.01
+        }
+      ],
+      "note": "공식 Bosch emulation을 2D·0.02 µm 격자로 축소했습니다. 초기 트렌치 식각 1회 후 지정 횟수만큼 반복합니다. 유효 식각 속도·비소모 마스크를 가정하며 플라즈마 반응을 직접 풀지는 않습니다.",
+      "unit": "µm",
+      "mode": "geometry",
+      "section": "2D 단면"
+    },
+    {
+      "id": "cryo",
+      "title": "Cryogenic Etch",
+      "subtitle": "",
+      "group": "Etch",
+      "model": "Constructive geometry",
+      "source": "https://viennatools.github.io/ViennaPS/examples/",
+      "description": "Bosch의 scallop과 매끈한 측벽을 비교합니다.",
+      "fields": [
+        {
+          "key": "width",
+          "label": "개구 폭",
+          "unit": "µm",
+          "default": 0.8,
+          "min": 0.4,
+          "max": 1.4,
+          "step": 0.1
+        },
+        {
+          "key": "duration",
+          "label": "식각 시간",
+          "unit": "s",
+          "default": 60,
+          "min": 20,
+          "max": 120,
+          "step": 10
+        },
+        {
+          "key": "rate",
+          "label": "유효 수직 식각률",
+          "unit": "µm/min",
+          "default": 1.5,
+          "min": 0.5,
+          "max": 2,
+          "step": 0.1
+        },
+        {
+          "key": "angle",
+          "label": "측벽 각도",
+          "unit": "°",
+          "default": 89,
+          "min": 85,
+          "max": 90,
+          "step": 0.5
+        }
+      ],
+      "note": "매끈한 저온 식각 단면의 유효 형상 모델입니다. 깊이 = 식각률 × 시간, 측벽 각도는 기판면 기준입니다. 온도·O₂ 농도·SiOₓFᵧ 반응을 계산하거나 실험 데이터로 보정한 모델이 아닙니다.",
+      "unit": "µm",
+      "mode": "geometry",
+      "section": "2D 단면"
+    },
+    {
+      "subtitle": "",
+      "mode": "geometry",
+      "model": "Constructive geometry",
+      "unit": "µm",
+      "section": "2D 단면",
+      "source": "https://viennatools.github.io/ViennaPS/examples/",
+      "id": "stack",
+      "title": "Stack Etching",
+      "group": "Etch",
+      "fields": [
+        {
+          "key": "width",
+          "label": "개구 폭",
+          "unit": "µm",
+          "default": 0.7,
+          "min": 0.4,
+          "max": 1.2,
+          "step": 0.1
+        },
+        {
+          "key": "layers",
+          "label": "적층 수",
+          "unit": "층",
+          "default": 6,
+          "min": 3,
+          "max": 8,
+          "step": 1
+        },
+        {
+          "key": "duration",
+          "label": "식각 시간",
+          "unit": "s",
+          "default": 2.8,
+          "min": 1,
+          "max": 5,
+          "step": 0.2
+        },
+        {
+          "key": "ratio",
+          "label": "질화막 / 산화막 식각률",
+          "unit": "",
+          "default": 0.8,
+          "min": 0.5,
+          "max": 1.5,
+          "step": 0.1
+        }
+      ],
+      "description": "교대로 쌓인 절연막을 수직으로 식각합니다.",
+      "note": "층별 식각률에 따른 깊이와 고정 테이퍼의 교육용 형상 모델입니다. 산화막 0.5 µm/s, 층 두께 0.25 µm. 측벽 반응·재증착·플라즈마 수송을 계산하지 않습니다."
+    },
+    {
+      "id": "regrowth",
+      "title": "Selective Etch & Redeposition",
+      "subtitle": "",
+      "group": "Etch",
+      "model": "OxideRegrowth",
+      "source": "https://github.com/ViennaTools/ViennaPS/tree/v4.6.2/examples/oxideRegrowth",
+      "description": "Si₃N₄/SiO₂ 적층의 선택 식각과 부산물 재증착을 함께 계산합니다. 재증착률과 시간을 비교하세요.",
+      "fields": [
+        {
+          "key": "layers",
+          "label": "적층 수",
+          "unit": "layer",
+          "default": 11,
+          "min": 5,
+          "max": 15,
+          "step": 1
+        },
+        {
+          "key": "duration",
+          "label": "공정 시간",
+          "unit": "s",
+          "default": 240,
+          "min": 60,
+          "max": 360,
+          "step": 30
+        },
+        {
+          "key": "redeposition",
+          "label": "재증착 계수",
+          "unit": "",
+          "default": 0.01,
+          "min": 0,
+          "max": 0.03,
+          "step": 0.005
+        }
+      ],
+      "note": "대류·확산/재증착 모델의 2D 축소 계산입니다. 4 nm 격자·160 nm 폭, 층 두께 20 nm, Si₃N₄ 식각률 6.5 nm/min입니다. 3D NAND 희생층 제거를 닮은 적층 공정이며 완성 소자나 실제 제조 레시피는 아닙니다.",
+      "unit": "nm",
+      "mode": "physics",
+      "section": "적층 측방 단면"
+    },
+    {
+      "id": "lele",
+      "title": "Litho-Etch-Litho-Etch",
+      "subtitle": "",
+      "group": "Photo",
+      "model": "Constructive geometry",
+      "source": "https://viennatools.github.io/ViennaPS/examples/",
+      "description": "두 번의 패터닝으로 간격을 절반으로 줄입니다.",
+      "fields": [
+        {
+          "key": "pitch",
+          "label": "첫 패턴 피치",
+          "unit": "µm",
+          "default": 0.4,
+          "min": 0.3,
+          "max": 0.6,
+          "step": 0.02
+        },
+        {
+          "key": "cd",
+          "label": "선폭",
+          "unit": "µm",
+          "default": 0.08,
+          "min": 0.04,
+          "max": 0.1,
+          "step": 0.01
+        },
+        {
+          "key": "overlay",
+          "label": "두 번째 패턴 정렬 오차",
+          "unit": "µm",
+          "default": 0,
+          "min": -0.04,
+          "max": 0.04,
+          "step": 0.005
+        }
+      ],
+      "note": "두 패턴의 Boolean 구성 모델입니다. 두 번째 패턴은 피치/2 + 정렬 오차만큼 이동합니다. 광학 노광·레지스트 화학은 계산하지 않습니다.",
+      "unit": "µm",
+      "mode": "geometry",
+      "section": "2D 단면"
+    },
+    {
+      "id": "sadp",
+      "title": "SADP",
+      "subtitle": "",
+      "group": "Photo",
+      "model": "Constructive geometry",
+      "source": "https://viennatools.github.io/ViennaPS/examples/",
+      "description": "스페이서 두께가 최종 선폭을 결정합니다.",
+      "fields": [
+        {
+          "key": "pitch",
+          "label": "Mandrel 피치",
+          "unit": "µm",
+          "default": 0.4,
+          "min": 0.3,
+          "max": 0.6,
+          "step": 0.02
+        },
+        {
+          "key": "mandrel",
+          "label": "Mandrel 선폭",
+          "unit": "µm",
+          "default": 0.12,
+          "min": 0.08,
+          "max": 0.16,
+          "step": 0.01
+        },
+        {
+          "key": "spacer",
+          "label": "스페이서 두께",
+          "unit": "µm",
+          "default": 0.04,
+          "min": 0.02,
+          "max": 0.06,
+          "step": 0.005
+        }
+      ],
+      "note": "등각 증착·수직 etch-back·선택 제거의 이상적 형상 모델입니다. 잔존 스페이서 폭은 입력 두께이며, 로딩·막질·선택비 변화는 포함하지 않습니다.",
+      "unit": "µm",
+      "mode": "geometry",
+      "section": "2D 단면"
+    },
+    {
+      "id": "sti",
+      "title": "STI",
+      "subtitle": "",
+      "group": "구조",
+      "model": "Native sequential process",
+      "source": "https://viennatools.github.io/ViennaPS/examples/",
+      "description": "트렌치를 절연막으로 채우고 표면을 평탄화합니다.",
+      "fields": [
+        {
+          "key": "width",
+          "label": "트렌치 개구 폭",
+          "default": 0.6,
+          "min": 0.3,
+          "max": 0.8,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "depth",
+          "label": "Si 식각 깊이",
+          "default": 0.22,
+          "min": 0.1,
+          "max": 0.45,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "fill_time",
+          "label": "CVD 충진 시간",
+          "default": 6.25,
+          "min": 3,
+          "max": 8,
+          "unit": "s",
+          "step": 0.25
+        }
+      ],
+      "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다.",
+      "unit": "µm",
+      "mode": "physics",
+      "section": "2D 단면"
+    },
+    {
+      "id": "locos",
+      "title": "LOCOS",
+      "subtitle": "",
+      "group": "구조",
+      "model": "Native sequential process",
+      "source": "https://github.com/ViennaTools/ViennaPS/tree/v4.6.2/examples/locosOxidation",
+      "description": "질화막 마스크 옆의 열린 영역에서 시작되는 산화를 계산합니다. 마스크와 산화막 경계의 변화를 관찰하세요.",
+      "fields": [
+        {
+          "key": "mask",
+          "label": "질화막 성장량",
+          "default": 0.075,
+          "min": 0.04,
+          "max": 0.12,
+          "unit": "µm",
+          "step": 0.005
+        },
+        {
+          "key": "temperature",
+          "label": "산화 온도",
+          "default": 1000,
+          "min": 950,
+          "max": 1100,
+          "unit": "°C",
+          "step": 25
+        },
+        {
+          "key": "duration",
+          "label": "산화 시간",
+          "default": 0.03,
+          "min": 0.01,
+          "max": 0.12,
+          "unit": "h",
+          "step": 0.01
+        }
+      ],
+      "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다. 대칭 반주기 0.4 µm를 계산하고 4회 반사해 표시합니다. Double 마스크의 pitch는 0.8 µm로 고정합니다.",
+      "unit": "µm",
+      "mode": "physics",
+      "section": "2D 단면"
+    },
+    {
+      "id": "fin",
+      "title": "Fin",
+      "subtitle": "",
+      "group": "구조",
+      "model": "Native sequential process",
+      "source": "https://viennatools.github.io/ViennaPS/examples/",
+      "description": "Fin을 식각하고 절연막 위로 노출합니다.",
+      "fields": [
+        {
+          "key": "width",
+          "label": "Fin 패턴 폭",
+          "default": 0.14,
+          "min": 0.08,
+          "max": 0.3,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "depth",
+          "label": "Si 식각 깊이",
+          "default": 0.35,
+          "min": 0.2,
+          "max": 0.5,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "exposed",
+          "label": "STI recess 비율",
+          "default": 0.6285714285714287,
+          "min": 0.3,
+          "max": 0.8,
+          "unit": "",
+          "step": 0.01
+        }
+      ],
+      "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다.",
+      "unit": "µm",
+      "mode": "physics",
+      "section": "2D 단면"
+    },
+    {
+      "id": "mosfet",
+      "title": "MOSFET",
+      "subtitle": "",
+      "group": "소자",
+      "model": "Native sequential process",
+      "source": "https://github.com/ViennaTools/ViennaPS/tree/v4.6.2/examples/emulation",
+      "description": "평면 MOSFET의 게이트 모듈을 제작합니다. 게이트 길이, 절연막과 스페이서 두께를 바꾸고 증착·패터닝·평탄화 단계를 비교하세요.",
+      "fields": [
+        {
+          "key": "length",
+          "label": "게이트 패턴 폭",
+          "default": 0.3,
+          "min": 0.16,
+          "max": 0.5,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "oxide",
+          "label": "게이트 산화막 성장량",
+          "default": 0.025,
+          "min": 0.015,
+          "max": 0.05,
+          "unit": "µm",
+          "step": 0.005
+        },
+        {
+          "key": "spacer",
+          "label": "스페이서 증착량",
+          "default": 0.04,
+          "min": 0.02,
+          "max": 0.08,
+          "unit": "µm",
+          "step": 0.01
+        }
+      ],
+      "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다.",
+      "unit": "µm",
+      "mode": "physics",
+      "section": "게이트 · 접촉부 단면"
+    },
+    {
+      "id": "finfet",
+      "title": "FINFET",
+      "subtitle": "",
+      "group": "소자",
+      "model": "Native sequential process",
+      "source": "https://github.com/ViennaTools/ViennaPS/tree/v4.6.2/examples/emulation/FinFET.py",
+      "description": "fin 패터닝부터 STI, high-k, 게이트 증착까지 단계를 살펴봅니다. 게이트 중앙을 가로지르는 횡단면으로 fin의 양쪽 측벽과 상부를 관찰합니다.",
+      "fields": [
+        {
+          "key": "width",
+          "label": "Fin 패턴 폭",
+          "default": 0.14,
+          "min": 0.08,
+          "max": 0.3,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "depth",
+          "label": "Si 식각 깊이",
+          "default": 0.35,
+          "min": 0.2,
+          "max": 0.5,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "oxide",
+          "label": "High-k 성장량",
+          "default": 0.02,
+          "min": 0.015,
+          "max": 0.04,
+          "unit": "µm",
+          "step": 0.005
+        },
+        {
+          "key": "gate",
+          "label": "게이트 성장량",
+          "default": 0.08,
+          "min": 0.03,
+          "max": 0.12,
+          "unit": "µm",
+          "step": 0.01
+        }
+      ],
+      "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다.",
+      "unit": "µm",
+      "mode": "physics",
+      "section": "게이트 중심 횡단면"
+    },
+    {
+      "id": "mbcfet",
+      "title": "MBCFET",
+      "subtitle": "",
+      "group": "소자",
+      "model": "Native sequential process",
+      "source": "https://viennatools.github.io/ViennaPS/examples/",
+      "description": "분리된 Si nanosheet를 게이트가 둘러싸는 구조입니다.",
+      "fields": [
+        {
+          "key": "sheets",
+          "label": "Si 채널 수",
+          "default": 3,
+          "min": 2,
+          "max": 4,
+          "unit": "층",
+          "step": 1
+        },
+        {
+          "key": "width",
+          "label": "적층 패턴 폭",
+          "default": 0.24,
+          "min": 0.14,
+          "max": 0.4,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "thickness",
+          "label": "Si 증착량",
+          "default": 0.035,
+          "min": 0.025,
+          "max": 0.06,
+          "unit": "µm",
+          "step": 0.005
+        },
+        {
+          "key": "gap",
+          "label": "SiGe 증착량",
+          "default": 0.05,
+          "min": 0.04,
+          "max": 0.08,
+          "unit": "µm",
+          "step": 0.01
+        }
+      ],
+      "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다.",
+      "unit": "µm",
+      "mode": "physics",
+      "section": "게이트 중심 횡단면"
+    },
+    {
+      "subtitle": "",
+      "mode": "geometry",
+      "model": "Constructive geometry",
+      "unit": "µm",
+      "section": "2D 단면",
+      "source": "https://viennatools.github.io/ViennaPS/examples/",
+      "id": "planarization",
+      "title": "Planarization",
+      "group": "C&C",
+      "fields": [
+        {
+          "key": "height",
+          "label": "초기 단차",
+          "unit": "µm",
+          "default": 0.18,
+          "min": 0.08,
+          "max": 0.3,
+          "step": 0.02
+        },
+        {
+          "key": "film",
+          "label": "증착막 두께",
+          "unit": "µm",
+          "default": 0.24,
+          "min": 0.15,
+          "max": 0.35,
+          "step": 0.01
+        },
+        {
+          "key": "target",
+          "label": "CMP 목표 높이",
+          "unit": "µm",
+          "default": 0.23,
+          "min": 0.1,
+          "max": 0.3,
+          "step": 0.01
+        }
+      ],
+      "description": "국부 평활화와 전체 평탄화를 비교합니다.",
+      "note": "Gaussian smoothing·국부 높이 평균·목표 높이 절단의 교육용 형상 비교입니다. CMP 압력·연마제·제거율·재료 선택비를 계산하지 않습니다. 목표 높이가 초기 단차보다 낮으면 패턴도 잘립니다."
+    }
+  ],
+  "engine": "local",
+  "revision": "unified-2026-10-27"
+}
