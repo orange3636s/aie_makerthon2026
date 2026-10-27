@@ -5,3 +5,5 @@
 @media(max-width:650px){.dual-view{grid-template-columns:1fr}.dual-view canvas{height:280px}.heading-actions{max-width:210px}.mode-switch button{font-size:11px;padding:6px 10px}.reverse-controls #reverse-fields{gap:0 12px}.flow-step{flex-basis:115px}.score-panel{align-items:flex-start}.flow-header-actions{flex-wrap:wrap;justify-content:flex-end}.reverse-view footer{flex-wrap:wrap}.reverse-view .panel-heading{align-items:flex-start}}
 
 @media(min-width:981px) and (max-height:800px){main{padding-top:20px}.page-heading{margin-bottom:18px}.dual-view canvas{height:255px}.reverse-view{padding:16px}.reverse-view footer{margin-top:10px;padding-top:10px}.reverse-controls{max-height:485px;overflow:auto}.process-panel{margin-top:16px}.flow-step{min-height:108px}.flow-step canvas{height:50px}}
+
+@media(min-width:981px) and (max-height:800px){.reverse-controls{overflow:hidden}.reverse-controls .panel-heading{flex-shrink:0}.reverse-controls form{display:flex;flex-direction:column;min-height:0}.reverse-controls #reverse-fields{overflow:auto;min-height:0;flex:1;padding-right:4px}.reverse-controls .primary,.reverse-controls .reverse-status{flex-shrink:0}}
