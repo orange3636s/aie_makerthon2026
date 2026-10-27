@@ -2,6 +2,8 @@
 
 반도체 공정 관찰 및 역설계 교육 플랫폼. 16종 예제, 6종 역설계 목표(MOSFET, FINFET, MBCFET, STI, Fin, LOCOS)를 제공합니다.
 
+공개 서비스: [aie-makerthon2026.vercel.app](https://aie-makerthon2026.vercel.app/)
+
 ## 로컬 실행 (Windows x64)
 
 1. Python 3.12 x64와 Node.js 22 이상을 설치합니다.
