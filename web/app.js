@@ -12,7 +12,7 @@ function toast(message){$('toast').textContent=message;$('toast').hidden=false;c
 function status(text,error=false){$('run-status').textContent=text;$('run-status').classList.toggle('error',error)}
 function stop(){clearInterval(timer);timer=null;$('play').textContent='▶ 과정 재생'}
 function setBusy(value){busy=value;for(const id of ['observe-mode','reverse-mode','upload-target'])if($(id))$(id).disabled=value;stop();document.querySelectorAll('#examples button,#condition-form input,#condition-form select,#reset,#run,#timeline button').forEach(e=>e.disabled=value);$('run').innerHTML=value?'<span>◌</span> 계산하고 있어요':'<span>▶</span> 시뮬레이션 실행';$('loading').hidden=!value;for(const id of ['play','pin-reference','export-json','download-image'])$(id).disabled=value||!current;}
-function shortNumber(v){return typeof v==='number'&&(Math.abs(v)>=1e6||(Math.abs(v)>0&&Math.abs(v)<.0001))?v.toExponential(2).replace(/\.?0+e/,'e').replace('e+','e'):String(v)}
+function shortNumber(v){return typeof v==='number'&&(Math.abs(v)>=1e6||(Math.abs(v)>0&&Math.abs(v)<.0001))?v.toExponential().replace('e+','e'):String(v)}
 function defaults(spec){return Object.fromEntries(spec.fields.map(f=>[f.key,f.default]))}
 function values(){return Object.fromEntries(selected.fields.map(f=>[f.key,f.options?f.options.find(v=>String(v)===$('number-'+f.key).value):Number($('number-'+f.key).value)]))}
 function dirty(){const changed=!!current&&JSON.stringify(values())!==JSON.stringify(current.params);$('pending').hidden=!changed;return changed}

@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node server.cjs",
     "build": "node scripts/build-web.cjs",
-    "test": "node tests/grading.cjs && node tests/recipe-state.cjs"
+    "test": "node tests/grading.cjs && node tests/recipe-state.cjs && node tests/display.cjs"
   },
   "engines": {
     "node": ">=22"
