@@ -10,7 +10,7 @@
 | `tests/scenarios.py` | 48/48 PASS | 29개 관찰 예제 전체 실행, PR 극성·패턴, 식각 방향성, PVD/CVD/ALD, 농도 보존, 잘못된 공정의 실패와 복구 |
 | `tests/native_flows.py` | 14개 flow PASS | 정답 recipe를 역설계 엔진으로 다시 계산, 단계 수·재료 경계·주입 데이터 확인 |
 | `tests/api.cjs` | 32/32 PASS | 8개 새 reference 경로, 하이픈 ID, 입력·횟수 범위, 캐시, 원점 검증, 실패 후 복구 |
-| `npm test` | PASS | 14개 정답 자기 비교 100점, 초기 기판/재료 누락/좌표 이동 감점, PN 극성·주입량 감점, draft 복원·라벨 보존, 7개 수치 표시 왕복 |
+| `npm test` | PASS | 14개 정답 자기 비교 100점, 초기 기판/재료 누락/좌표 이동 감점, PN 극성·주입량 감점, draft 복원·라벨 보존, 7개 수치 표시 왕복, 2.5D 가림 순서 |
 | `npm run build`, `git diff --check` | PASS | 정적 자산 빌드와 공백 오류 |
 
 원시 결과: [qa-device-results.json](qa-device-results.json). 75개 중 1개는 카탈로그 정합 검사이고 나머지는 native 계산이다. 경계값을 통과했다고 모든 임의 사용자 flow나 상용 공정 정확도가 검증된 것은 아니다.
@@ -24,6 +24,8 @@
 - **flow 이름 소실**: 서버 검증·draft 저장/복원·정답 적용에서 공정별 역할 이름을 보존한다. 이름 타입과 길이를 검증하고 UI에서 HTML escape한다.
 
 CFET는 상하 gate의 수직 분리 간격, GAAFET/CFET는 SiGe 제거 후 Si 채널의 잔존, SONOS는 tunnel / trap / blocking oxide 순서, RCAT는 Si 표면을 가로지르는 recess gate를 수치로 검사했다.
+
+- **2.5D 내부면 겹침**: 재료 열거 순서대로 측면을 그리면 CFET의 내부 gate가 상부 metal 위로 보였다. 관찰 방향의 깊이 순서로 면을 정렬했다. 재료 목록 순서를 뒤집어도 같은 그림이 나오는 회귀 테스트는 이전 코드에서 실패하고 수정본에서 통과한다. 2.5D는 표시용 돌출이며 3D 계산은 아니다.
 
 ## 실제 브라우저 시나리오
 

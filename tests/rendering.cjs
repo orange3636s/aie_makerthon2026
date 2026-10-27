@@ -15,6 +15,6 @@ function render(polygons){
  const pixels=[];for(let y=0;y<280;y+=2)for(let x=0;x<360;x+=2){let color='white';for(const f of fills){const hits=f.paths.filter(p=>inside(x+.5,y+.5,p)).length;if(f.rule==='evenodd'?hits%2:hits)color=f.color}pixels.push(color)}return pixels;
 }
 const rect=(material,x0,y0,x1,y1)=>({material,closed:true,points:[[x0,y0],[x1,y0],[x1,y1],[x0,y1],[x0,y0]]});
-const stacked=[rect(5,-.4,.45,.6,.7),rect(79,-1,0,1,.45)];
+const stacked=[rect(5,-1,.4,1,.5),rect(79,-.2,.1,.2,.3)];
 assert.deepEqual(render(stacked),render([...stacked].reverse()),'buried gate must not paint over upper metal when material enumeration changes');
 console.log('2.5D material-order-independent occlusion verified');
