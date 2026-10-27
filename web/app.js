@@ -70,14 +70,18 @@ function draw(canvas,data,bounds,options={}){
   // Draw the back section, then only exposed top/right surfaces. Internal
   // material interfaces must not become opaque walls covering the channels.
   for(const [id,polys] of grouped){c.fillStyle=shade(materialStyle(id).color,.82);c.beginPath();for(const poly of polys){poly.points.forEach((p,i)=>i?c.lineTo(px(p[0])+extra,py(p[1])-extra):c.moveTo(px(p[0])+extra,py(p[1])-extra));c.closePath()}c.fill('evenodd')}
-  const epsilon=(bounds[1]-bounds[0])*1e-6;
+  const epsilon=(bounds[1]-bounds[0])*1e-6,faces=[];
   for(const [id,polys] of grouped){for(const poly of polys){for(let i=0;i<poly.points.length-1;i++){
    const a=poly.points[i],b=poly.points[i+1],dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);if(len<epsilon)continue;
    const nx=-dy/len,ny=dx/len,mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;
    const plus=occupied([mx+nx*epsilon,my+ny*epsilon]),minus=occupied([mx-nx*epsilon,my-ny*epsilon]);if(plus===minus)continue;
    const sign=plus?-1:1;if(sign*(nx+ny)<=0)continue;
-   c.fillStyle=shade(materialStyle(id).color,sign*ny>0?.88:.64);c.beginPath();c.moveTo(px(a[0]),py(a[1]));c.lineTo(px(b[0]),py(b[1]));c.lineTo(px(b[0])+extra,py(b[1])-extra);c.lineTo(px(a[0])+extra,py(a[1])-extra);c.closePath();c.fill();
+   faces.push({id,a,b,light:sign*ny>0?.88:.64,depth:mx+my});
   }}}
+  // Painter order follows the viewing direction, not arbitrary material IDs.
+  // Otherwise buried high-ID gates paint over the low-ID top metal surface.
+  faces.sort((a,b)=>a.depth-b.depth);
+  for(const {id,a,b,light} of faces){c.fillStyle=shade(materialStyle(id).color,light);c.beginPath();c.moveTo(px(a[0]),py(a[1]));c.lineTo(px(b[0]),py(b[1]));c.lineTo(px(b[0])+extra,py(b[1])-extra);c.lineTo(px(a[0])+extra,py(a[1])-extra);c.closePath();c.fill();}
  }
 
  for(const [id,polys] of grouped){const densityVisible=options.doping&&data.concentration?.fields[options.dopingField||(data.concentration.fields.net_active?'net_active':'net_total')];const color=id===10&&(densityVisible||options.neutralSilicon)?'#edf1f6':materialStyle(id).color;c.fillStyle=color;c.strokeStyle=shade(color,.85);c.lineWidth=mini?.45:.7;c.beginPath();for(const poly of polys){poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));if(poly.closed)c.closePath()}c.fill('evenodd');c.stroke();}
