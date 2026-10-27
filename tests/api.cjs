@@ -7,8 +7,9 @@ async function call(path,body,expected=200,headers={}){
 }
 (async()=>{
  assert((await call('/api/health')).ok);
- assert.equal((await call('/api/catalog')).examples.length,22);
- assert.equal((await call('/api/reverse-catalog')).targets.length,6);
+ assert.equal((await call('/api/catalog')).examples.length,29);
+ assert.equal((await call('/api/reverse-catalog')).targets.length,14);
+ for(const id of ['pn-junction','charge-trap','fdsoi','pdsoi','rcat','bcat','gaafet','cfet']){const ref=await call('/api/reference/'+id);assert.equal(ref.failure,null);assert(ref.frames.length>5)}
  await call('/api/reference/missing',undefined,404);await call('/api/jobs/missing',undefined,404);
  await call('/api/reverse','{',400);
  await call('/api/reverse',null,400);

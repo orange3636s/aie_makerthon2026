@@ -1,0 +1,621 @@
+{
+  "advanced-devices": [
+    {
+      "name": "rcat:default",
+      "status": "PASS",
+      "seconds": 7.2
+    },
+    {
+      "name": "rcat:width:min",
+      "status": "PASS",
+      "seconds": 7.22
+    },
+    {
+      "name": "rcat:width:max",
+      "status": "PASS",
+      "seconds": 6.8
+    },
+    {
+      "name": "rcat:depth:min",
+      "status": "PASS",
+      "seconds": 6.42
+    },
+    {
+      "name": "rcat:depth:max",
+      "status": "PASS",
+      "seconds": 7.27
+    },
+    {
+      "name": "rcat:oxide:min",
+      "status": "PASS",
+      "seconds": 6.59
+    },
+    {
+      "name": "rcat:oxide:max",
+      "status": "PASS",
+      "seconds": 6.95
+    },
+    {
+      "name": "rcat:all-min",
+      "status": "PASS",
+      "seconds": 6.95
+    },
+    {
+      "name": "rcat:all-max",
+      "status": "PASS",
+      "seconds": 7.17
+    },
+    {
+      "name": "bcat:default",
+      "status": "PASS",
+      "seconds": 5.67
+    },
+    {
+      "name": "bcat:width:min",
+      "status": "PASS",
+      "seconds": 5.64
+    },
+    {
+      "name": "bcat:width:max",
+      "status": "PASS",
+      "seconds": 5.62
+    },
+    {
+      "name": "bcat:depth:min",
+      "status": "PASS",
+      "seconds": 5.48
+    },
+    {
+      "name": "bcat:depth:max",
+      "status": "PASS",
+      "seconds": 6.05
+    },
+    {
+      "name": "bcat:burial:min",
+      "status": "PASS",
+      "seconds": 5.69
+    },
+    {
+      "name": "bcat:burial:max",
+      "status": "PASS",
+      "seconds": 5.77
+    },
+    {
+      "name": "bcat:all-min",
+      "status": "PASS",
+      "seconds": 5.41
+    },
+    {
+      "name": "bcat:all-max",
+      "status": "PASS",
+      "seconds": 6.39
+    },
+    {
+      "name": "fdsoi:default",
+      "status": "PASS",
+      "seconds": 3.81
+    },
+    {
+      "name": "fdsoi:body:min",
+      "status": "PASS",
+      "seconds": 3.91
+    },
+    {
+      "name": "fdsoi:body:max",
+      "status": "PASS",
+      "seconds": 3.72
+    },
+    {
+      "name": "fdsoi:length:min",
+      "status": "PASS",
+      "seconds": 3.64
+    },
+    {
+      "name": "fdsoi:length:max",
+      "status": "PASS",
+      "seconds": 3.69
+    },
+    {
+      "name": "fdsoi:oxide:min",
+      "status": "PASS",
+      "seconds": 3.64
+    },
+    {
+      "name": "fdsoi:oxide:max",
+      "status": "PASS",
+      "seconds": 3.66
+    },
+    {
+      "name": "fdsoi:all-min",
+      "status": "PASS",
+      "seconds": 4.28
+    },
+    {
+      "name": "fdsoi:all-max",
+      "status": "PASS",
+      "seconds": 4.42
+    },
+    {
+      "name": "pdsoi:default",
+      "status": "PASS",
+      "seconds": 3.72
+    },
+    {
+      "name": "pdsoi:body:min",
+      "status": "PASS",
+      "seconds": 3.8
+    },
+    {
+      "name": "pdsoi:body:max",
+      "status": "PASS",
+      "seconds": 3.66
+    },
+    {
+      "name": "pdsoi:length:min",
+      "status": "PASS",
+      "seconds": 3.72
+    },
+    {
+      "name": "pdsoi:length:max",
+      "status": "PASS",
+      "seconds": 3.66
+    },
+    {
+      "name": "pdsoi:oxide:min",
+      "status": "PASS",
+      "seconds": 3.76
+    },
+    {
+      "name": "pdsoi:oxide:max",
+      "status": "PASS",
+      "seconds": 3.88
+    },
+    {
+      "name": "pdsoi:all-min",
+      "status": "PASS",
+      "seconds": 4.28
+    },
+    {
+      "name": "pdsoi:all-max",
+      "status": "PASS",
+      "seconds": 4.62
+    },
+    {
+      "name": "gaafet:default",
+      "status": "PASS",
+      "seconds": 2.83
+    },
+    {
+      "name": "gaafet:width:min",
+      "status": "PASS",
+      "seconds": 2.92
+    },
+    {
+      "name": "gaafet:width:max",
+      "status": "PASS",
+      "seconds": 3.64
+    },
+    {
+      "name": "gaafet:channel:min",
+      "status": "PASS",
+      "seconds": 3.14
+    },
+    {
+      "name": "gaafet:channel:max",
+      "status": "PASS",
+      "seconds": 3.47
+    },
+    {
+      "name": "gaafet:all-min",
+      "status": "PASS",
+      "seconds": 2.8
+    },
+    {
+      "name": "gaafet:all-max",
+      "status": "PASS",
+      "seconds": 3.94
+    },
+    {
+      "name": "cfet:default",
+      "status": "PASS",
+      "seconds": 9.14
+    },
+    {
+      "name": "cfet:width:min",
+      "status": "PASS",
+      "seconds": 9.49
+    },
+    {
+      "name": "cfet:width:max",
+      "status": "PASS",
+      "seconds": 9.66
+    },
+    {
+      "name": "cfet:channel:min",
+      "status": "PASS",
+      "seconds": 8.36
+    },
+    {
+      "name": "cfet:channel:max",
+      "status": "PASS",
+      "seconds": 10.09
+    },
+    {
+      "name": "cfet:isolation:min",
+      "status": "PASS",
+      "seconds": 10.98
+    },
+    {
+      "name": "cfet:isolation:max",
+      "status": "PASS",
+      "seconds": 8.75
+    },
+    {
+      "name": "cfet:all-min",
+      "status": "PASS",
+      "seconds": 7.34
+    },
+    {
+      "name": "cfet:all-max",
+      "status": "PASS",
+      "seconds": 10.09
+    },
+    {
+      "name": "charge-trap:default",
+      "status": "PASS",
+      "seconds": 5.47
+    },
+    {
+      "name": "charge-trap:tunnel:min",
+      "status": "PASS",
+      "seconds": 4.75
+    },
+    {
+      "name": "charge-trap:tunnel:max",
+      "status": "PASS",
+      "seconds": 4.38
+    },
+    {
+      "name": "charge-trap:trap:min",
+      "status": "PASS",
+      "seconds": 4.38
+    },
+    {
+      "name": "charge-trap:trap:max",
+      "status": "PASS",
+      "seconds": 4.76
+    },
+    {
+      "name": "charge-trap:block:min",
+      "status": "PASS",
+      "seconds": 5.45
+    },
+    {
+      "name": "charge-trap:block:max",
+      "status": "PASS",
+      "seconds": 4.36
+    },
+    {
+      "name": "charge-trap:length:min",
+      "status": "PASS",
+      "seconds": 4.72
+    },
+    {
+      "name": "charge-trap:length:max",
+      "status": "PASS",
+      "seconds": 4.36
+    },
+    {
+      "name": "charge-trap:all-min",
+      "status": "PASS",
+      "seconds": 4.55
+    },
+    {
+      "name": "charge-trap:all-max",
+      "status": "PASS",
+      "seconds": 4.38
+    },
+    {
+      "name": "pn-junction:default",
+      "status": "PASS",
+      "seconds": 4.52
+    },
+    {
+      "name": "pn-junction:donor_dose:min",
+      "status": "PASS",
+      "seconds": 4.51
+    },
+    {
+      "name": "pn-junction:donor_dose:max",
+      "status": "PASS",
+      "seconds": 4.31
+    },
+    {
+      "name": "pn-junction:acceptor_dose:min",
+      "status": "PASS",
+      "seconds": 4.34
+    },
+    {
+      "name": "pn-junction:acceptor_dose:max",
+      "status": "PASS",
+      "seconds": 4.33
+    },
+    {
+      "name": "pn-junction:temperature:min",
+      "status": "PASS",
+      "seconds": 4.38
+    },
+    {
+      "name": "pn-junction:temperature:max",
+      "status": "PASS",
+      "seconds": 4.53
+    },
+    {
+      "name": "pn-junction:time:min",
+      "status": "PASS",
+      "seconds": 4.26
+    },
+    {
+      "name": "pn-junction:time:max",
+      "status": "PASS",
+      "seconds": 4.84
+    },
+    {
+      "name": "pn-junction:all-min",
+      "status": "PASS",
+      "seconds": 4.27
+    },
+    {
+      "name": "pn-junction:all-max",
+      "status": "PASS",
+      "seconds": 5.42
+    },
+    {
+      "name": "reference / catalog consistency",
+      "status": "PASS",
+      "seconds": 0.44
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "observation:wet",
+      "status": "PASS",
+      "seconds": 0.3
+    },
+    {
+      "name": "observation:rie",
+      "status": "PASS",
+      "seconds": 0.28
+    },
+    {
+      "name": "observation:sf6",
+      "status": "PASS",
+      "seconds": 1.39
+    },
+    {
+      "name": "observation:bosch",
+      "status": "PASS",
+      "seconds": 0.52
+    },
+    {
+      "name": "observation:cryo",
+      "status": "PASS",
+      "seconds": 0.23
+    },
+    {
+      "name": "observation:stack",
+      "status": "PASS",
+      "seconds": 0.27
+    },
+    {
+      "name": "observation:regrowth",
+      "status": "PASS",
+      "seconds": 0.42
+    },
+    {
+      "name": "observation:lele",
+      "status": "PASS",
+      "seconds": 0.28
+    },
+    {
+      "name": "observation:sadp",
+      "status": "PASS",
+      "seconds": 0.28
+    },
+    {
+      "name": "observation:sti",
+      "status": "PASS",
+      "seconds": 4.44
+    },
+    {
+      "name": "observation:locos",
+      "status": "PASS",
+      "seconds": 0.84
+    },
+    {
+      "name": "observation:fin",
+      "status": "PASS",
+      "seconds": 1.95
+    },
+    {
+      "name": "observation:mosfet",
+      "status": "PASS",
+      "seconds": 16.48
+    },
+    {
+      "name": "observation:finfet",
+      "status": "PASS",
+      "seconds": 4.95
+    },
+    {
+      "name": "observation:mbcfet",
+      "status": "PASS",
+      "seconds": 8.86
+    },
+    {
+      "name": "observation:planarization",
+      "status": "PASS",
+      "seconds": 0.34
+    },
+    {
+      "name": "observation:pvd",
+      "status": "PASS",
+      "seconds": 1.05
+    },
+    {
+      "name": "observation:cvd",
+      "status": "PASS",
+      "seconds": 1.39
+    },
+    {
+      "name": "observation:ald",
+      "status": "PASS",
+      "seconds": 2.28
+    },
+    {
+      "name": "observation:implant",
+      "status": "PASS",
+      "seconds": 1.64
+    },
+    {
+      "name": "observation:anneal",
+      "status": "PASS",
+      "seconds": 4.67
+    },
+    {
+      "name": "observation:rcat",
+      "status": "PASS",
+      "seconds": 8.42
+    },
+    {
+      "name": "observation:bcat",
+      "status": "PASS",
+      "seconds": 7.27
+    },
+    {
+      "name": "observation:fdsoi",
+      "status": "PASS",
+      "seconds": 5.06
+    },
+    {
+      "name": "observation:pdsoi",
+      "status": "PASS",
+      "seconds": 5.25
+    },
+    {
+      "name": "observation:gaafet",
+      "status": "PASS",
+      "seconds": 3.64
+    },
+    {
+      "name": "observation:cfet",
+      "status": "PASS",
+      "seconds": 9.59
+    },
+    {
+      "name": "observation:charge-trap",
+      "status": "PASS",
+      "seconds": 5.19
+    },
+    {
+      "name": "observation:pn-junction",
+      "status": "PASS",
+      "seconds": 5.09
+    },
+    {
+      "name": "positive-negative PR",
+      "status": "PASS",
+      "seconds": 0.49
+    },
+    {
+      "name": "double-pattern PR",
+      "status": "PASS",
+      "seconds": 0.26
+    },
+    {
+      "name": "repeat-pattern PR",
+      "status": "PASS",
+      "seconds": 0.28
+    },
+    {
+      "name": "isotropic-directional change",
+      "status": "PASS",
+      "seconds": 0.62
+    },
+    {
+      "name": "deposition:PVD",
+      "status": "PASS",
+      "seconds": 0.36
+    },
+    {
+      "name": "deposition:CVD",
+      "status": "PASS",
+      "seconds": 0.44
+    },
+    {
+      "name": "deposition:ALD",
+      "status": "PASS",
+      "seconds": 1.74
+    },
+    {
+      "name": "implant-anneal-deposition conservation",
+      "status": "PASS",
+      "seconds": 3.45
+    },
+    {
+      "name": "masked implant",
+      "status": "PASS",
+      "seconds": 1.0
+    },
+    {
+      "name": "recovery:CMP before deposition",
+      "status": "PASS",
+      "seconds": 0.28
+    },
+    {
+      "name": "recovery:PR strip without PR",
+      "status": "PASS",
+      "seconds": 0.28
+    },
+    {
+      "name": "recovery:missing etch material",
+      "status": "PASS",
+      "seconds": 0.27
+    },
+    {
+      "name": "recovery:duplicate PR",
+      "status": "PASS",
+      "seconds": 0.25
+    },
+    {
+      "name": "recovery:oxidation without seed",
+      "status": "PASS",
+      "seconds": 0.25
+    },
+    {
+      "name": "recovery:anneal without implant",
+      "status": "PASS",
+      "seconds": 0.48
+    },
+    {
+      "name": "recovery:out-of-bounds etch",
+      "status": "PASS",
+      "seconds": 0.3
+    },
+    {
+      "name": "recovery:LOCOS implant boundary",
+      "status": "PASS",
+      "seconds": 0.28
+    },
+    {
+      "name": "recovery:oxidation after implant",
+      "status": "PASS",
+      "seconds": 2.58
+    },
+    {
+      "name": "recovery:anneal with PR",
+      "status": "PASS",
+      "seconds": 1.84
+    }
+  ]
+}

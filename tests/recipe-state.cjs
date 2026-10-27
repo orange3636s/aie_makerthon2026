@@ -1,7 +1,9 @@
 const assert=require('node:assert/strict'),fs=require('node:fs');
 const {restore,invalid}=require('../web/recipe-state.js');
 const {operations,targets}=require('../reverse-catalog.json');
-for(const t of targets)assert.equal(invalid(restore(t.recipe,operations),operations),null);
+for(const t of targets){const restored=restore(t.recipe,operations);assert.equal(invalid(restored,operations),null);assert.deepEqual(restored.map(s=>s.label),t.recipe.map(s=>s.label),'semantic step labels survive reload')}
+assert.throws(()=>restore([{op:'cmp',params:{},label:{}}],operations));
+assert.throws(()=>restore([{op:'cmp',params:{},label:'x'.repeat(81)}],operations));
 for(const rows of [null,[null],[{op:'unknown',params:{}}],[{op:'etch',params:[]}],[{op:'etch',params:{time:{}}}]])assert.throws(()=>restore(rows,operations));
 const rows=restore(targets.find(t=>t.id==='sti').recipe,operations);
 rows[0].params.cycles='';assert.equal(invalid(rows,operations).step,1);

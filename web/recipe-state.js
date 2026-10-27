@@ -8,7 +8,8 @@
    if(!op||!s.params||typeof s.params!=='object'||Array.isArray(s.params)||Object.keys(s.params).some(k=>!op.fields.some(f=>f.key===k)))throw Error('저장된 flow를 읽지 못했습니다.');
    const params=Object.fromEntries(op.fields.map(f=>[f.key,Object.hasOwn(s.params,f.key)?s.params[f.key]:f.default]));
    for(const f of op.fields){const v=params[f.key];if(f.options?!f.options.includes(v):!(typeof v==='number'||v===''||v===null))throw Error('저장된 조건을 읽지 못했습니다.');}
-   return {op:op.id,params};
+   if(s.label!==undefined&&(typeof s.label!=='string'||s.label.length>80))throw Error('공정 이름을 읽지 못했습니다.');
+   return {op:op.id,params,...(s.label?{label:s.label}:{})};
   });
  }
  function invalid(rows,operations){

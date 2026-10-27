@@ -1046,59 +1046,511 @@
       "section": "주입·확산 단면"
     },
     {
+      "id": "rcat",
+      "title": "RCAT",
+      "subtitle": "",
+      "group": "소자",
+      "mode": "physics",
+      "model": "Native process flow",
+      "source": "https://patents.google.com/patent/US7361537B2/en",
+      "description": "게이트 길이 방향 단면",
+      "note": "Recessed channel의 게이트 길이 방향 단면. 접촉·커패시터는 제외합니다.",
+      "fields": [
+        {
+          "key": "width",
+          "label": "Recess 개구 폭",
+          "default": 0.34,
+          "min": 0.26,
+          "max": 0.46,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "depth",
+          "label": "Recess 식각 깊이",
+          "default": 0.28,
+          "min": 0.18,
+          "max": 0.38,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "oxide",
+          "label": "게이트 절연막 두께",
+          "default": 0.02,
+          "min": 0.015,
+          "max": 0.035,
+          "unit": "µm",
+          "step": 0.005
+        }
+      ],
+      "flow": [
+        "Hardmask · Si₃N₄",
+        "Recess opening",
+        "Hardmask etch",
+        "Channel recess",
+        "PR strip",
+        "Gate dielectric",
+        "Recess gate fill",
+        "Gate thickness etchback",
+        "Gate pattern",
+        "Gate etch",
+        "PR strip",
+        "Exposed oxide removal",
+        "Hardmask removal",
+        "Spacer deposition",
+        "Spacer etchback",
+        "Source / drain implant",
+        "Dopant activation"
+      ],
+      "sources": [
+        {
+          "title": "Samsung · recessed channel",
+          "url": "https://patents.google.com/patent/US7361537B2/en",
+          "figure": "recess channel / gate cross-sections; Fig. 13 array"
+        }
+      ]
+    },
+    {
+      "id": "bcat",
+      "title": "BCAT",
+      "subtitle": "",
+      "group": "소자",
+      "mode": "physics",
+      "model": "Native process flow",
+      "source": "https://patents.google.com/patent/US20150221742A1/en",
+      "description": "게이트 길이 방향 단면",
+      "note": "Si 표면 아래의 게이트와 질화막 cap을 관찰합니다. DRAM 전체 셀·air gap은 제외합니다.",
+      "fields": [
+        {
+          "key": "width",
+          "label": "트렌치 개구 폭",
+          "default": 0.34,
+          "min": 0.28,
+          "max": 0.44,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "depth",
+          "label": "트렌치 식각 깊이",
+          "default": 0.28,
+          "min": 0.24,
+          "max": 0.38,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "burial",
+          "label": "게이트 etchback",
+          "default": 0.16,
+          "min": 0.12,
+          "max": 0.2,
+          "unit": "µm",
+          "step": 0.01
+        }
+      ],
+      "flow": [
+        "Hardmask · Si₃N₄",
+        "Recess opening",
+        "Hardmask etch",
+        "Channel recess",
+        "PR strip",
+        "Gate dielectric",
+        "Buried gate fill",
+        "Gate CMP",
+        "Gate recess etch",
+        "Nitride gate cap",
+        "Cap CMP",
+        "Exposed oxide removal",
+        "Cap / pad etchback",
+        "Source / drain implant",
+        "Dopant activation"
+      ],
+      "sources": [
+        {
+          "title": "Samsung · buried gate",
+          "url": "https://patents.google.com/patent/US20150221742A1/en",
+          "figure": "Fig. 1 · buried gate / capping cross-section"
+        }
+      ]
+    },
+    {
+      "id": "fdsoi",
+      "title": "FD-SOI FET",
+      "subtitle": "",
+      "group": "소자",
+      "mode": "physics",
+      "model": "Native process flow",
+      "source": "https://www.st.com/content/st_com/en/about/innovation-and-technology/fd-soi.html",
+      "description": "게이트 길이 방향 단면",
+      "note": "준비된 SOI 웨이퍼의 얇은 Si body. BOX 아래 handle은 수동 영역입니다. 실제 완전 공핍 여부는 바이어스·도핑에 의존하며 여기서는 계산하지 않습니다.",
+      "fields": [
+        {
+          "key": "body",
+          "label": "Si body 두께",
+          "default": 0.04,
+          "min": 0.03,
+          "max": 0.06,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "length",
+          "label": "게이트 패턴 폭",
+          "default": 0.32,
+          "min": 0.22,
+          "max": 0.5,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "oxide",
+          "label": "게이트 절연막",
+          "default": 0.02,
+          "min": 0.015,
+          "max": 0.035,
+          "unit": "µm",
+          "step": 0.005
+        }
+      ],
+      "flow": [
+        "Gate dielectric",
+        "Gate deposition",
+        "Gate pattern",
+        "Gate etch",
+        "PR strip",
+        "Exposed oxide removal",
+        "Spacer deposition",
+        "Spacer etchback",
+        "Source / drain implant",
+        "Activation anneal"
+      ],
+      "sources": [
+        {
+          "title": "STMicroelectronics · FD-SOI",
+          "url": "https://www.st.com/content/st_com/en/about/innovation-and-technology/fd-soi.html",
+          "figure": "FD-SOI transistor illustration"
+        }
+      ]
+    },
+    {
+      "id": "pdsoi",
+      "title": "PD-SOI FET",
+      "subtitle": "",
+      "group": "소자",
+      "mode": "physics",
+      "model": "Native process flow",
+      "source": "https://patents.google.com/patent/US7460422B2/en",
+      "description": "게이트 길이 방향 단면",
+      "note": "준비된 SOI 웨이퍼의 두꺼운 Si body. BOX 아래 handle은 수동 영역입니다. 부분 공핍·floating-body 전기 효과는 계산하지 않습니다.",
+      "fields": [
+        {
+          "key": "body",
+          "label": "Si body 두께",
+          "default": 0.16,
+          "min": 0.12,
+          "max": 0.22,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "length",
+          "label": "게이트 패턴 폭",
+          "default": 0.32,
+          "min": 0.22,
+          "max": 0.5,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "oxide",
+          "label": "게이트 절연막",
+          "default": 0.02,
+          "min": 0.015,
+          "max": 0.035,
+          "unit": "µm",
+          "step": 0.005
+        }
+      ],
+      "flow": [
+        "Gate dielectric",
+        "Gate deposition",
+        "Gate pattern",
+        "Gate etch",
+        "PR strip",
+        "Exposed oxide removal",
+        "Spacer deposition",
+        "Spacer etchback",
+        "Source / drain implant",
+        "Activation anneal"
+      ],
+      "sources": [
+        {
+          "title": "IBM · partially depleted SOI",
+          "url": "https://patents.google.com/patent/US7460422B2/en",
+          "figure": "Fig. 1"
+        }
+      ]
+    },
+    {
+      "id": "gaafet",
+      "title": "GAAFET · Nanowire",
+      "subtitle": "",
+      "group": "소자",
+      "mode": "physics",
+      "model": "Native process flow",
+      "source": "https://semiconductor.samsung.com/news-events/tech-blog/gaa-dtco-for-ppa/",
+      "description": "게이트 중심 횡단면 · S/D는 화면 밖",
+      "note": "Nanowire GAA 게이트 횡단면. Si/SiGe 적층은 형상 성장 근사이며 결정 성장·strain은 제외합니다. S/D는 화면 밖에 있습니다.",
+      "fields": [
+        {
+          "key": "width",
+          "label": "Wire 패턴 폭",
+          "default": 0.07,
+          "min": 0.06,
+          "max": 0.1,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "channel",
+          "label": "채널 층 두께",
+          "default": 0.06,
+          "min": 0.04,
+          "max": 0.08,
+          "unit": "µm",
+          "step": 0.01
+        }
+      ],
+      "flow": [
+        "Nanowire · sacrificial layer",
+        "Nanowire · Si channel layer",
+        "Nanowire · channel pattern",
+        "Nanowire · Si etch",
+        "Nanowire · SiGe etch",
+        "Nanowire · PR strip",
+        "Nanowire · channel release",
+        "Nanowire · gate dielectric",
+        "Nanowire · wrap gate"
+      ],
+      "sources": [
+        {
+          "title": "Samsung · GAA DTCO",
+          "url": "https://semiconductor.samsung.com/news-events/tech-blog/gaa-dtco-for-ppa/",
+          "figure": "Fig. 4 · nanowire / nanosheet"
+        }
+      ]
+    },
+    {
+      "id": "cfet",
+      "title": "CFET",
+      "subtitle": "",
+      "group": "소자",
+      "mode": "physics",
+      "model": "Native process flow",
+      "source": "https://download.intel.com/newsroom/archive/2025/en-us-2023-12-09-intel-demonstrates-breakthroughs-in-nextgeneration-transistor-scaling-for-future-nodes.pdf",
+      "description": "게이트 중심 횡단면 · S/D는 화면 밖",
+      "note": "상하 채널과 분리된 게이트를 갖는 순차 적층 학습 단면. 상부 결정층 형성은 준비된 층의 형상 근사입니다. N/P 전기 동작·접촉·backside power는 제외합니다.",
+      "fields": [
+        {
+          "key": "width",
+          "label": "채널 패턴 폭",
+          "default": 0.18,
+          "min": 0.12,
+          "max": 0.24,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "channel",
+          "label": "채널 층 두께",
+          "default": 0.06,
+          "min": 0.04,
+          "max": 0.08,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "isolation",
+          "label": "층간 절연 cap",
+          "default": 0.06,
+          "min": 0.04,
+          "max": 0.09,
+          "unit": "µm",
+          "step": 0.01
+        }
+      ],
+      "flow": [
+        "Lower FET · sacrificial layer",
+        "Lower FET · Si channel layer",
+        "Lower FET · channel pattern",
+        "Lower FET · Si etch",
+        "Lower FET · SiGe etch",
+        "Lower FET · PR strip",
+        "Lower FET · channel release",
+        "Lower FET · gate dielectric",
+        "Lower FET · wrap gate",
+        "Inter-tier dielectric fill",
+        "Inter-tier CMP",
+        "Inter-tier isolation cap",
+        "Upper FET · sacrificial layer",
+        "Upper FET · Si channel layer",
+        "Upper FET · channel pattern",
+        "Upper FET · Si etch",
+        "Upper FET · SiGe etch",
+        "Upper FET · PR strip",
+        "Upper FET · channel release",
+        "Upper FET · gate dielectric",
+        "Upper FET · wrap gate"
+      ],
+      "sources": [
+        {
+          "title": "Intel · stacked complementary transistors",
+          "url": "https://download.intel.com/newsroom/archive/2025/en-us-2023-12-09-intel-demonstrates-breakthroughs-in-nextgeneration-transistor-scaling-for-future-nodes.pdf",
+          "figure": "p. 3 · stacked CMOS"
+        }
+      ]
+    },
+    {
+      "id": "charge-trap",
+      "title": "Charge Trap Flash",
+      "subtitle": "",
+      "group": "소자",
+      "mode": "physics",
+      "model": "Native process flow",
+      "source": "https://patents.google.com/patent/US20060043469A1/en",
+      "description": "게이트 길이 방향 단면",
+      "note": "평면 SONOS 단일 셀의 tunnel oxide / trap nitride / blocking oxide. 3D NAND 전체 적층과 전하 포획·program/erase는 계산하지 않습니다.",
+      "fields": [
+        {
+          "key": "tunnel",
+          "label": "Tunnel oxide",
+          "default": 0.02,
+          "min": 0.015,
+          "max": 0.035,
+          "unit": "µm",
+          "step": 0.005
+        },
+        {
+          "key": "trap",
+          "label": "Trap nitride",
+          "default": 0.035,
+          "min": 0.025,
+          "max": 0.06,
+          "unit": "µm",
+          "step": 0.005
+        },
+        {
+          "key": "block",
+          "label": "Blocking oxide",
+          "default": 0.03,
+          "min": 0.02,
+          "max": 0.05,
+          "unit": "µm",
+          "step": 0.005
+        },
+        {
+          "key": "length",
+          "label": "게이트 패턴 폭",
+          "default": 0.4,
+          "min": 0.28,
+          "max": 0.55,
+          "unit": "µm",
+          "step": 0.01
+        }
+      ],
+      "flow": [
+        "Tunnel oxide",
+        "Charge-trap nitride",
+        "Blocking oxide",
+        "Control gate",
+        "Cell gate pattern",
+        "Control-gate etch",
+        "Blocking-oxide etch",
+        "Trap-layer etch",
+        "Tunnel-oxide etch",
+        "PR strip",
+        "Source / drain implant",
+        "Activation anneal"
+      ],
+      "sources": [
+        {
+          "title": "Samsung · SONOS cell",
+          "url": "https://patents.google.com/patent/US20060043469A1/en",
+          "figure": "Fig. 1 · conventional planar SONOS reference"
+        },
+        {
+          "title": "SK hynix · 3D NAND와의 구조 비교",
+          "url": "https://news.skhynix.com/en/research-inside-ep1/",
+          "figure": "Fig. 1 · vertical NAND cell; 본 예제는 평면 단일 셀"
+        }
+      ]
+    },
+    {
       "id": "pn-junction",
       "title": "PN Junction",
       "subtitle": "",
-      "group": "Diffusion",
-      "model": "IonImplantation + Anneal",
-      "source": "https://github.com/ViennaTools/ViennaPS/tree/master/examples/pnJunction",
-      "description": "",
+      "group": "소자",
+      "mode": "physics",
+      "model": "Native process flow",
+      "source": "https://toshiba-semicon-storage.com/content/dam/toshiba-ss-v3/master/en/semiconductor/knowledge/e-learning/discrete/discrete-basic-chap1_en.pdf",
+      "description": "Lateral PN · 순 도펀트 농도",
+      "note": "좌우 B/P 주입과 열처리로 만든 lateral PN 단면. 농도는 계산하며 공핍층·I–V는 계산하지 않습니다.",
       "fields": [
         {
-          "key": "p_dose",
-          "label": "P 주입량 (n형)",
-          "default": 100000000000000.0,
-          "min": 1000000000000.0,
+          "key": "donor_dose",
+          "label": "P 주입량",
+          "default": 10000000000000.0,
+          "min": 100000000000.0,
           "max": 1000000000000000.0,
           "unit": "ions/cm²",
-          "step": 1000000000000.0,
-          "description": "왼쪽 창에 주입하는 인의 양입니다. 순 도핑 P−B를 비교합니다."
+          "step": 1000000000000.0
         },
         {
-          "key": "b_dose",
-          "label": "B 주입량 (p형)",
-          "default": 100000000000000.0,
-          "min": 1000000000000.0,
+          "key": "acceptor_dose",
+          "label": "B 주입량",
+          "default": 10000000000000.0,
+          "min": 100000000000.0,
           "max": 1000000000000000.0,
           "unit": "ions/cm²",
-          "step": 1000000000000.0,
-          "description": "오른쪽 창에 주입하는 붕소의 양입니다. 순 도핑 P−B를 비교합니다."
+          "step": 1000000000000.0
         },
         {
           "key": "temperature",
           "label": "열처리 온도",
-          "default": 1100,
+          "default": 1000,
           "min": 950,
           "max": 1100,
           "unit": "°C",
-          "step": 25,
-          "description": "Arrhenius 확산 계수와 고용도 활성화 한계를 바꿉니다."
+          "step": 25
         },
         {
           "key": "time",
-          "label": "총 열처리 시간",
-          "default": 120,
-          "min": 4,
+          "label": "열처리 시간",
+          "default": 30,
+          "min": 1,
           "max": 120,
           "unit": "s",
-          "step": 4,
-          "description": "PR 제거 후의 총 열처리 시간입니다. 확산의 진행을 비교합니다."
+          "step": 1
         }
       ],
-      "note": "왼쪽 창에 P 30 keV, 오른쪽 창에 B 10 keV를 순서대로 주입하고 열처리합니다. 순 도핑 = P−B의 부호와 확산을 관찰합니다. 농도 접합 예제이며 공핍층·전압·전류는 계산하지 않습니다. 원 예제를 본 플랫폼의 격자·차폐 조건에 맞춰 구성했습니다.",
-      "unit": "µm",
-      "mode": "physics",
-      "section": "주입·확산 단면"
+      "flow": [
+        "N-region opening",
+        "Phosphorus implant",
+        "PR strip",
+        "P-region opening",
+        "Boron implant",
+        "PR strip",
+        "Junction anneal"
+      ],
+      "sources": [
+        {
+          "title": "Toshiba · PN junction",
+          "url": "https://toshiba-semicon-storage.com/content/dam/toshiba-ss-v3/master/en/semiconductor/knowledge/e-learning/discrete/discrete-basic-chap1_en.pdf",
+          "figure": "PN junction fundamentals"
+        }
+      ]
     }
   ],
   "engine": "local",

@@ -18,7 +18,7 @@ def verify(ex,params,save=False):
     d=run(dict(example=ex['id'],params=params),'engine.py')
     assert not d.get('failure'),d.get('failure')
     assert d['example']==ex['id']
-    if ex['group']=='Diffusion':
+    if ex['group']=='Diffusion' or ex['id']=='pn-junction':
         c=d['frames'][-1]['concentration'];f=c['fields']
         assert any(abs(x)>0 for x in f['net_total']), 'empty doping distribution'
         assert all(v==0 for v,m in zip(f['net_total'],c['mask']) if not m), 'dopant outside Si'

@@ -23,3 +23,6 @@
 .flow-builder{overflow-anchor:none;overscroll-behavior-x:contain}
 @media(max-width:650px){.heading-actions{max-width:none;justify-content:flex-start}.reverse-view footer{gap:10px}.reverse-toolbar{flex-wrap:wrap}.flow-header-actions{justify-content:flex-start}}
 @media(max-width:380px){.reverse-controls #reverse-fields{grid-template-columns:1fr}.dual-view canvas{height:260px}}
+.view-cell h3{gap:8px;align-items:flex-start}.view-cell h3 b{min-width:0;max-width:75%;overflow-wrap:anywhere;text-align:right}
+.target-options{grid-template-columns:repeat(2,minmax(0,1fr))}.target-options button{white-space:normal;overflow-wrap:anywhere;min-width:0}
+.image-dialog{max-height:85dvh;overflow-y:auto}

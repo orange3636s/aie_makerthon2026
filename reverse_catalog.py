@@ -76,6 +76,8 @@ dict(id='fin',title='Fin',width=1.2,bounds=[-.6,.6,-.48,.15],roi=[-.4,.4,-.4,.1]
 dict(id='locos',title='LOCOS',width=1.6,bounds=[-.8,.8,-.3,.35],roi=[-.72,.72,-.18,.3],section='선택 산화 단면',recipe=[
  ald('SiO2',.025),ald('Si3N4',.075),photo(.38,'Negative','Double',.8),etch('Si3N4',.09),strip(),step('diffusion',method='Wet oxidation',temperature=1000,oxidation_time=.03),remove('Si3N4')])
 ]
+from advanced_devices import targets as advanced_targets
+TARGETS.extend(advanced_targets())
 BY_TARGET={t['id']:t for t in TARGETS}
 
 def validate(data):
@@ -95,5 +97,14 @@ def validate(data):
             elif isinstance(v,bool) or not isinstance(v,(int,float)) or not math.isfinite(v) or not f['min']<=v<=f['max']:raise ValueError(f['label']+': 범위를 확인하세요.')
             if f['key']=='cycles' and v!=int(v):raise ValueError('사이클은 정수여야 합니다.')
             params[f['key']]=v
-        clean.append(dict(op=row['op'],params=params))
-    return BY_TARGET[data['target']],clean
+        label=row.get('label','')
+        if not isinstance(label,str) or len(label)>80:raise ValueError('공정 이름은 80자 이내입니다.')
+        clean.append(dict(op=row['op'],params=params,**({'label':label} if label else {})))
+    target=BY_TARGET[data['target']]
+    if 'wafer' in data:
+        w=data['wafer'];limits={'fdsoi':(.03,.06),'pdsoi':(.12,.22)}
+        if target['id'] not in limits or not isinstance(w,dict) or set(w)!={'body','box'}:raise ValueError('지원하지 않는 웨이퍼입니다.')
+        lo,hi=limits[target['id']]
+        if isinstance(w['body'],bool) or not isinstance(w['body'],(int,float)) or not lo<=w['body']<=hi or w['box']!=.15:raise ValueError('SOI 두께 범위를 확인하세요.')
+        target=dict(target,wafer=w)
+    return target,clean

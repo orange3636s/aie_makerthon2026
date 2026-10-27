@@ -68,3 +68,4 @@ main{padding:30px 34px;max-width:1700px}.page-heading{margin-bottom:24px}.page-h
 @media(min-width:651px){.workspace-layout{display:grid}.library{max-height:calc(100dvh - 76px);min-height:0;overflow-y:auto;overscroll-behavior:contain}.library nav{flex-direction:column;overflow:visible}}
 @media(max-width:650px){.page-heading{flex-direction:column;align-items:stretch}.canvas-wrap canvas{height:320px}.toast{width:calc(100% - 32px);max-width:480px;overflow-wrap:anywhere}}
 @media(max-width:380px){.controls #fields{grid-template-columns:1fr}.app-header{flex-wrap:wrap}.brand{font-size:21px}}
+@media(max-width:650px){.library{max-height:260px;overflow-y:auto;overscroll-behavior:contain}}

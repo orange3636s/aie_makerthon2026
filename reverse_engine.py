@@ -19,7 +19,14 @@ def run(data):
         ps.MakePlane(d,0.,ps.Material.Si).apply()
     else:
         # The lower level set bounds the native dopant cell grid below the wafer.
-        ps.MakePlane(d,-1.2,ps.Material.Si).apply()
+        # Keep the passive SOI handle distinct in the transport solver. The
+        # Pearson tail must not restart in Si below the blocking BOX layer.
+        handle=ps.Material.BulkSi if target.get('wafer') else ps.Material.Si
+        ps.MakePlane(d,-1.2,handle).apply()
+        if target.get('wafer'):
+            body=target['wafer']['body'];box_thickness=target['wafer']['box']
+            ps.MakePlane(d,-body-box_thickness,handle,True).apply()
+            ps.MakePlane(d,-body,ps.Material.SiO2,True).apply()
         ps.MakePlane(d,0.,ps.Material.Si,True).apply()
     frames=[];cmp_stop=None;doping_state=None;concentration=None;failure=None;oxidized=False
     def box(x0,y0,x1,y1):
@@ -35,7 +42,8 @@ def run(data):
         polygons=[]
         for m in sorted(d.getMaterialsInDomain(),key=int):
             mesh=ls.Mesh();convert=ls.ToHullMesh(mesh,d.getMaterialLevelSet(m));convert.setBottomExtension(2.);convert.apply()
-            polygons+=contour_mesh(mesh,int(m),True,x_bounds=(-width/2,width/2),boundary_tolerance=.001)
+            display_material=int(ps.Material.Si) if m==ps.Material.BulkSi else int(m)
+            polygons+=contour_mesh(mesh,display_material,True,x_bounds=(-width/2,width/2),boundary_tolerance=.001)
         if not polygons or any(not p['closed'] for p in polygons):raise ValueError('닫힌 재료 경계를 계산하지 못했습니다. 조건을 줄여 주세요.')
         if periodic:
             polygons=[dict(material=q['material'],closed=q['closed'],points=[[round(sign*x+shift,6),y] for x,y in q['points']]) for q in polygons for sign,shift in [(-1,-.6),(1,-.2),(-1,.2),(1,.6)]]
@@ -59,7 +67,7 @@ def run(data):
         r=subprocess.run([sys.executable,str(ROOT/'reverse_transport.py'),str(src),str(out)],env=env,capture_output=True,timeout=35)
         if r.returncode:raise ValueError('주입·확산 계산 실패: '+r.stderr.decode('utf-8',errors='replace')[-240:])
         result=json.loads(out.read_text(encoding='utf-8'));doping_state=result['state'];concentration=result['concentration']
-    snap('Si substrate')
+    snap(target.get('initialLabel','Si substrate'))
     for i,row in enumerate(steps):
         try:
             op=row['op'];p=row['params'];mats=d.getMaterialsInDomain();metric={};label=BY_OP[op]['title']
@@ -141,7 +149,7 @@ def run(data):
                 if cmp_stop is None:raise ValueError('증착 후에 Global planarization을 추가하세요.')
                 ps.Planarize(d,cmp_stop).apply();label='Global planarization';metric={'stopHeightUm':cmp_stop}
             if doping_state and op!='diffusion':transport('sync',{})
-            snap(label,metric)
+            snap(row.get('label',label),metric)
             if op=='deposition' and not periodic:
                 measurement=side_coverage(frames[-2]['polygons'],frames[-1]['polygons'],int(m),metric['topGrowthUm'],width)
                 if measurement:frames[-1]['metrics'].update(measurement)
