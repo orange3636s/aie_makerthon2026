@@ -15,7 +15,12 @@ def run(data):
     periodic=target['id']=='locos'
     width=target['width']/4 if periodic else target['width']
     d=ps.Domain(gridDelta=.01,xExtent=width,yExtent=2.,boundary=ps.BoundaryType.REFLECTIVE_BOUNDARY)
-    ps.MakePlane(d,0.,ps.Material.Si).apply()
+    if periodic:
+        ps.MakePlane(d,0.,ps.Material.Si).apply()
+    else:
+        # The lower level set bounds the native dopant cell grid below the wafer.
+        ps.MakePlane(d,-1.2,ps.Material.Si).apply()
+        ps.MakePlane(d,0.,ps.Material.Si,True).apply()
     frames=[];cmp_stop=None;doping_state=None;concentration=None;failure=None
     def box(x0,y0,x1,y1):
         level=ls.Domain(d.getGrid());geom=ls.MakeGeometry(level,ls.Box([x0,y0],[x1,y1]));geom.setIgnoreBoundaryConditions([True,True,False]);geom.apply();return level
