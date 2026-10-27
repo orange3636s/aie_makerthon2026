@@ -7,3 +7,11 @@
 @media(min-width:981px) and (max-height:800px){main{padding-top:20px}.page-heading{margin-bottom:18px}.dual-view canvas{height:255px}.reverse-view{padding:16px}.reverse-view footer{margin-top:10px;padding-top:10px}.reverse-controls{max-height:485px;overflow:auto}.process-panel{margin-top:16px}.flow-step{min-height:108px}.flow-step canvas{height:50px}}
 
 @media(min-width:981px) and (max-height:800px){.reverse-controls{overflow:hidden}.reverse-controls .panel-heading{flex-shrink:0}.reverse-controls form{display:flex;flex-direction:column;min-height:0}.reverse-controls #reverse-fields{overflow:auto;min-height:0;flex:1;padding-right:4px}.reverse-controls .primary,.reverse-controls .reverse-status{flex-shrink:0}}
+
+.flow-card{position:relative;flex:0 0 125px;min-width:0}
+.flow-card .flow-step{height:100%;width:100%}
+.flow-remove{position:absolute;top:5px;right:5px;width:24px;height:24px;padding:0;border:0;background:transparent;color:#6b788d;border-radius:6px;font-size:20px;line-height:1;cursor:pointer}
+.flow-remove:hover,.flow-remove:focus-visible{background:#fee9ec;color:#b52643}
+.flow-remove:disabled{opacity:.35;cursor:wait}
+.flow-card .flow-step small{padding-right:22px}
+.step-actions #r-delete{width:auto;padding:6px 10px;font-size:12px;color:#a52a42}

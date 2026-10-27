@@ -1,1 +1,13 @@
-{"name":"simulation","version":"2.0.0","private":true,"scripts":{"start":"node server.cjs","build":"node scripts/build-web.cjs","test":"node tests/grading.cjs"},"engines":{"node":">=22"}}
+{
+  "name": "simulation",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.cjs",
+    "build": "node scripts/build-web.cjs",
+    "test": "node tests/grading.cjs && node tests/recipe-state.cjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -21,7 +21,7 @@ def run(data):
         # The lower level set bounds the native dopant cell grid below the wafer.
         ps.MakePlane(d,-1.2,ps.Material.Si).apply()
         ps.MakePlane(d,0.,ps.Material.Si,True).apply()
-    frames=[];cmp_stop=None;doping_state=None;concentration=None;failure=None
+    frames=[];cmp_stop=None;doping_state=None;concentration=None;failure=None;oxidized=False
     def box(x0,y0,x1,y1):
         level=ls.Domain(d.getGrid());geom=ls.MakeGeometry(level,ls.Box([x0,y0],[x1,y1]));geom.setIgnoreBoundaryConditions([True,True,False]);geom.apply();return level
     def surface_top():return max(p[1] for p in d.getSurfaceMesh(False).getNodes())
@@ -35,16 +35,19 @@ def run(data):
         polygons=[]
         for m in sorted(d.getMaterialsInDomain(),key=int):
             mesh=ls.Mesh();convert=ls.ToHullMesh(mesh,d.getMaterialLevelSet(m));convert.setBottomExtension(2.);convert.apply()
-            polygons+=contour_mesh(mesh,int(m),True)
+            polygons+=contour_mesh(mesh,int(m),True,x_bounds=(-width/2,width/2),boundary_tolerance=.001)
         if not polygons or any(not p['closed'] for p in polygons):raise ValueError('닫힌 재료 경계를 계산하지 못했습니다. 조건을 줄여 주세요.')
         if periodic:
             polygons=[dict(material=q['material'],closed=q['closed'],points=[[round(sign*x+shift,6),y] for x,y in q['points']]) for q in polygons for sign,shift in [(-1,-.6),(1,-.2),(-1,.2),(1,.6)]]
         surface=d.getSurfaceMesh(False).getNodes()
         frame=dict(label=label,polygons=polygons,lowest=min(p[1] for p in surface),highest=max(p[1] for p in surface),metrics=extra or {})
+        if frame['highest']>1.5 or frame['lowest']<-.9:raise ValueError('학습 영역을 벗어났습니다. 공정 시간이나 식각률을 줄이세요.')
         if concentration:frame['concentration']=concentration
         frames.append(frame)
     def transport(op,params):
         nonlocal doping_state,concentration
+        if periodic:raise ValueError('LOCOS 대칭 단면은 주입·확산을 지원하지 않습니다. MOSFET 등 전체 단면에서 실험하세요.')
+        if oxidized:raise ValueError('열산화 후 주입·확산 연결은 지원하지 않습니다. 산화와 도핑 실험을 분리하세요.')
         prefix=Path.cwd()/('transport-'+str(len(frames)));prefix.mkdir(exist_ok=True)
         levels=[]
         for i,v in enumerate(d.getLevelSets()):
@@ -117,8 +120,11 @@ def run(data):
                 metric={'topGrowthUm':round(surface_top()-cmp_stop,5),'nominalGrowthUm':p['gpc']*p['cycles'] if p['method']=='ALD' else p['rate']*p['time']}
             elif op=='diffusion':
                 if p['method']=='Ion implantation':transport('implant',p);label=f"Implant · {p['species']}"
-                elif p['method']=='Anneal':transport('anneal',p);label='Anneal'
+                elif p['method']=='Anneal':
+                    if ps.Material.Mask in mats:raise ValueError('고온 열처리 전에 PR을 제거하세요.')
+                    transport('anneal',p);label='Anneal'
                 else:
+                    if doping_state:raise ValueError('도핑 후 열산화의 재분배는 지원하지 않습니다. 산화와 도핑 실험을 분리하세요.')
                     if ps.Material.SiO2 not in mats:raise ValueError('산화 전에 SiO₂ seed 막이 필요합니다.')
                     if any(m not in [ps.Material.Si,ps.Material.SiO2,ps.Material.Si3N4] for m in mats):raise ValueError('열산화는 Si / SiO₂ / Si₃N₄ 구조에서 실행하세요.')
                     # Oxidation requires a non-wrapped mechanical mask, unlike
@@ -130,7 +136,7 @@ def run(data):
                     d=rebuilt
                     model=ps.Oxidation();model.setTemperature(p['temperature']);model.setPressure(1.);model.setTime(p['oxidation_time']);model.setTimeStep(p['oxidation_time']/3)
                     name='Wet' if p['method'].startswith('Wet') else 'Dry';model.setOxidant(getattr(ps.OxidantType,name));model.setOrientation(ps.SiliconOrientation.Si100);model.setInitialOxideThickness(.025);model.setMaxGridPoints(100000)
-                    advance(model,0);label=p['method']
+                    advance(model,0);label=p['method'];oxidized=True
             elif op=='cmp':
                 if cmp_stop is None:raise ValueError('증착 후에 Global planarization을 추가하세요.')
                 ps.Planarize(d,cmp_stop).apply();label='Global planarization';metric={'stopHeightUm':cmp_stop}
@@ -139,7 +145,6 @@ def run(data):
             if op=='deposition' and not periodic:
                 measurement=side_coverage(frames[-2]['polygons'],frames[-1]['polygons'],int(m),metric['topGrowthUm'],width)
                 if measurement:frames[-1]['metrics'].update(measurement)
-            if frames[-1]['highest']>1.5 or frames[-1]['lowest']<-.9:raise ValueError('학습 영역을 벗어났습니다. 공정 시간이나 식각률을 줄이세요.')
         except (ValueError,RuntimeError,subprocess.TimeoutExpired) as e:
             failure=dict(step=i+1,message=str(e));break
     for i,f in enumerate(frames):f['progress']=i/max(1,len(frames)-1)

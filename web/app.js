@@ -17,12 +17,12 @@ function values(){return Object.fromEntries(selected.fields.map(f=>[f.key,Number
 function dirty(){const changed=!!current&&JSON.stringify(values())!==JSON.stringify(current.params);$('pending').hidden=!changed;return changed}
 let openTheme=null;
 function nav(){
- const groups=[...new Set(catalog.map(s=>s.group))];
+ const groups=['Photo','Etch','C&C','구조','소자'].filter(g=>catalog.some(s=>s.group===g));
  $('examples').innerHTML=groups.map((group,i)=>{
   const list=catalog.filter(s=>s.group===group),open=group===openTheme;
   return `<section class="theme-group"><button class="theme-toggle" aria-expanded="${open}" aria-controls="theme-${i}" data-theme="${group}"><span>${group}</span><span class="theme-meta">${list.length}<span class="chevron" aria-hidden="true">⌄</span></span></button><div id="theme-${i}" class="theme-items" ${open?'':'hidden'}>${list.map(s=>`<button class="nav-item ${s.id===selected.id?'active':''}" data-example="${s.id}" aria-pressed="${s.id===selected.id}"><span class="nav-name">${s.title}</span>${s.id===selected.id?'<span class="selected-dot" aria-hidden="true"></span>':''}</button>`).join('')}</div></section>`;
  }).join('');
- document.querySelectorAll('[data-theme]').forEach(b=>b.addEventListener('click',()=>{openTheme=openTheme===b.dataset.theme?null:b.dataset.theme;nav();if(busy)document.querySelectorAll('[data-example]').forEach(el=>el.disabled=true)}));
+ document.querySelectorAll('[data-theme]').forEach(b=>b.addEventListener('click',()=>{openTheme=openTheme===b.dataset.theme?null:b.dataset.theme;nav();if(busy||window.reverseLab?.busy)document.querySelectorAll('[data-example]').forEach(el=>el.disabled=true)}));
  document.querySelectorAll('[data-example]').forEach(b=>b.addEventListener('click',()=>select(b.dataset.example)));
 }
 async function select(id){if(busy||window.reverseLab?.busy)return;if(window.reverseLab?.active)return window.reverseLab.select(id);stop();selected=catalog.find(s=>s.id===id);openTheme=selected.group;current=lastResults.get(id)||null;nav();$('theme-label').textContent=selected.group+' / PROCESS FLOW';$('model-link').textContent=selected.mode==='physics'?'공정 모델':selected.mode==='effective'?'유효 속도 모델':'형상 모델';$('model-link').href='/tutorial#'+id;$('title').textContent=selected.title;$('subtitle').textContent=selected.subtitle;$('category').textContent=selected.group;$('description').textContent=selected.description;$('hint').textContent=tips[id];$('model-note').textContent=selected.note;$('source').href=selected.source;$('compare').checked=false;
@@ -33,12 +33,12 @@ async function select(id){if(busy||window.reverseLab?.busy)return;if(window.reve
  $('pending').hidden=true;
  if(current){frame=current.previewFrame??current.frames.length-1;updateAll();status('마지막 계산 결과를 불러왔습니다.');$('loading').hidden=true;}else{frame=0;$('timeline').innerHTML='<div class="empty-timeline">새 예제의 공정 단계를 계산하고 있습니다.</div>';$('legend').textContent='';$('frame-label').textContent='계산 준비';$('step-count').textContent='0 / 0';for(const id of ['metric-low','metric-high','metric-frames','metric-time'])$(id).textContent='—';$('insight-title').textContent='이번 공정의 관찰 포인트';$('insight').textContent=tips[id];drawMain();await run();}
 }
-async function request(path,options){const response=await fetch(path,options);const data=await response.json();if(!response.ok)throw Error(data.error||'요청을 처리하지 못했습니다.');return data}
+async function request(path,options={}){try{const response=await fetch(path,{...options,signal:options.signal||AbortSignal.timeout(190000)});let data;try{data=await response.json()}catch{throw Error('서버 응답을 읽지 못했습니다. 잠시 후 다시 실행하세요.')}if(!response.ok)throw Error(data.error||'요청을 처리하지 못했습니다.');return data}catch(e){if(e.name==='TimeoutError')throw Error('응답 시간이 초과됐습니다. 잠시 후 다시 실행하세요.');if(e instanceof TypeError)throw Error('서버 연결이 끊겼습니다. 연결을 확인한 뒤 다시 실행하세요.');throw e}}
 async function run(){if(busy)return;if(!$('condition-form').reportValidity())return;const params=values(),id=selected.id;setBusy(true);let elapsed=0;status('단계별 단면 계산 중…');const tick=setInterval(()=>status(`계산 중 · ${++elapsed}초 경과`),1000);
  try{const job=await request('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({example:id,params})});let result=job.result;
   for(let i=0;!result&&i<260;i++){const info=await request('/api/jobs/'+job.job);if(info.state==='error')throw Error(info.error);if(info.state==='done'){result=info.result;break;}await new Promise(r=>setTimeout(r,600));}
   if(!result)throw Error('계산 응답 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요.');
-  current=result;lastResults.set(id,result);if(!references.has(id))references.set(id,result);frame=result.previewFrame??result.frames.length-1;clearInterval(tick);setBusy(false);updateAll();status(result.failure?`STEP ${result.failure.step} · ${result.failure.message}`:result.cached?'동일 조건의 계산 결과를 불러왔습니다.':`계산 완료 · ${result.elapsed.toFixed(2)}초`,!!result.failure);$('pending').hidden=true;
+  current=result;lastResults.set(id,result);if(!result.failure&&!references.has(id))references.set(id,result);frame=result.previewFrame??result.frames.length-1;clearInterval(tick);setBusy(false);updateAll();status(result.failure?`STEP ${result.failure.step} · ${result.failure.message}`:result.cached?'동일 조건의 계산 결과를 불러왔습니다.':`계산 완료 · ${result.elapsed.toFixed(2)}초`,!!result.failure);$('pending').hidden=true;
  }catch(e){clearInterval(tick);setBusy(false);status(e.message,true);toast(e.message);if(current)updateAll();}
 }
 function combinedBounds(result,reference){if(!reference)return result.bounds;return [Math.min(result.bounds[0],reference.bounds[0]),Math.max(result.bounds[1],reference.bounds[1]),Math.min(result.bounds[2],reference.bounds[2]),Math.max(result.bounds[3],reference.bounds[3])]}
@@ -58,8 +58,8 @@ function draw(canvas,data,bounds,options={}){
   const raw=(bounds[1]-bounds[0])/5,pow=Math.pow(10,Math.floor(Math.log10(raw))),gridStep=Math.ceil(raw/pow)*pow;
   for(let x=Math.ceil(bounds[0]/gridStep)*gridStep;x<=bounds[1];x+=gridStep){const xp=px(x);c.beginPath();c.moveTo(xp,top);c.lineTo(xp,h-bottom);c.stroke();c.textAlign='center';c.fillText(Number(x.toFixed(3)),xp,h-bottom+17)}
   for(let y=Math.ceil(bounds[2]/gridStep)*gridStep;y<=bounds[3];y+=gridStep){const yp=py(y);if(yp<top||yp>h-bottom)continue;c.beginPath();c.moveTo(margin-7,yp);c.lineTo(w-margin+7,yp);c.stroke();c.textAlign='right';c.fillText(Number(y.toFixed(3)),margin-13,yp+3)}
-  c.fillStyle='#526b84';c.textAlign='right';c.fillText(`x (${current?current.unit:'µm'})`,w-margin+8,h-9);
-  c.textAlign='left';c.fillText(`y (${current?current.unit:'µm'})`,12,top-10);
+  c.fillStyle='#526b84';c.textAlign='right';c.fillText(`x (${options.unit||selected?.unit||current?.unit||'µm'})`,w-margin+8,h-9);
+  c.textAlign='left';c.fillText(`y (${options.unit||selected?.unit||current?.unit||'µm'})`,12,top-10);
  }
  c.save();c.beginPath();c.rect(mini?0:margin-7,mini?0:top,w-(mini?0:(margin-7)*2),h-(mini?0:top+bottom));c.clip();
  const grouped=new Map();for(const poly of data.polygons){if(!grouped.has(poly.material))grouped.set(poly.material,[]);grouped.get(poly.material).push(poly)}

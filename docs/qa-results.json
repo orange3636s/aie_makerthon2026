@@ -1,0 +1,920 @@
+{
+  "scenarios": [
+    {
+      "name": "observation:wet",
+      "status": "PASS",
+      "seconds": 0.28
+    },
+    {
+      "name": "observation:rie",
+      "status": "PASS",
+      "seconds": 0.28
+    },
+    {
+      "name": "observation:sf6",
+      "status": "PASS",
+      "seconds": 0.89
+    },
+    {
+      "name": "observation:bosch",
+      "status": "PASS",
+      "seconds": 0.45
+    },
+    {
+      "name": "observation:cryo",
+      "status": "PASS",
+      "seconds": 0.2
+    },
+    {
+      "name": "observation:stack",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "observation:regrowth",
+      "status": "PASS",
+      "seconds": 0.31
+    },
+    {
+      "name": "observation:lele",
+      "status": "PASS",
+      "seconds": 0.24
+    },
+    {
+      "name": "observation:sadp",
+      "status": "PASS",
+      "seconds": 0.23
+    },
+    {
+      "name": "observation:sti",
+      "status": "PASS",
+      "seconds": 3.41
+    },
+    {
+      "name": "observation:locos",
+      "status": "PASS",
+      "seconds": 0.72
+    },
+    {
+      "name": "observation:fin",
+      "status": "PASS",
+      "seconds": 1.48
+    },
+    {
+      "name": "observation:mosfet",
+      "status": "PASS",
+      "seconds": 11.94
+    },
+    {
+      "name": "observation:finfet",
+      "status": "PASS",
+      "seconds": 3.36
+    },
+    {
+      "name": "observation:mbcfet",
+      "status": "PASS",
+      "seconds": 6.41
+    },
+    {
+      "name": "observation:planarization",
+      "status": "PASS",
+      "seconds": 0.24
+    },
+    {
+      "name": "positive-negative PR",
+      "status": "PASS",
+      "seconds": 0.47
+    },
+    {
+      "name": "double-pattern PR",
+      "status": "PASS",
+      "seconds": 0.25
+    },
+    {
+      "name": "repeat-pattern PR",
+      "status": "PASS",
+      "seconds": 0.25
+    },
+    {
+      "name": "isotropic-directional change",
+      "status": "PASS",
+      "seconds": 0.51
+    },
+    {
+      "name": "deposition:PVD",
+      "status": "PASS",
+      "seconds": 0.36
+    },
+    {
+      "name": "deposition:CVD",
+      "status": "PASS",
+      "seconds": 0.38
+    },
+    {
+      "name": "deposition:ALD",
+      "status": "PASS",
+      "seconds": 1.28
+    },
+    {
+      "name": "implant-anneal-deposition conservation",
+      "status": "PASS",
+      "seconds": 2.75
+    },
+    {
+      "name": "masked implant",
+      "status": "PASS",
+      "seconds": 0.8
+    },
+    {
+      "name": "recovery:CMP before deposition",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "recovery:PR strip without PR",
+      "status": "PASS",
+      "seconds": 0.24
+    },
+    {
+      "name": "recovery:missing etch material",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "recovery:duplicate PR",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "recovery:oxidation without seed",
+      "status": "PASS",
+      "seconds": 0.24
+    },
+    {
+      "name": "recovery:anneal without implant",
+      "status": "PASS",
+      "seconds": 0.42
+    },
+    {
+      "name": "recovery:out-of-bounds etch",
+      "status": "PASS",
+      "seconds": 0.26
+    },
+    {
+      "name": "recovery:LOCOS implant boundary",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "recovery:oxidation after implant",
+      "status": "PASS",
+      "seconds": 2.09
+    },
+    {
+      "name": "recovery:anneal with PR",
+      "status": "PASS",
+      "seconds": 1.34
+    }
+  ],
+  "boundaries": [
+    {
+      "name": "wet:width:min",
+      "status": "PASS",
+      "seconds": 0.27
+    },
+    {
+      "name": "wet:width:max",
+      "status": "PASS",
+      "seconds": 0.27
+    },
+    {
+      "name": "wet:duration:min",
+      "status": "PASS",
+      "seconds": 0.23
+    },
+    {
+      "name": "wet:duration:max",
+      "status": "PASS",
+      "seconds": 0.31
+    },
+    {
+      "name": "wet:anisotropy:min",
+      "status": "PASS",
+      "seconds": 0.25
+    },
+    {
+      "name": "wet:anisotropy:max",
+      "status": "PASS",
+      "seconds": 0.34
+    },
+    {
+      "name": "rie:width:min",
+      "status": "PASS",
+      "seconds": 0.27
+    },
+    {
+      "name": "rie:width:max",
+      "status": "PASS",
+      "seconds": 0.27
+    },
+    {
+      "name": "rie:duration:min",
+      "status": "PASS",
+      "seconds": 0.25
+    },
+    {
+      "name": "rie:duration:max",
+      "status": "PASS",
+      "seconds": 0.31
+    },
+    {
+      "name": "rie:rate:min",
+      "status": "PASS",
+      "seconds": 0.27
+    },
+    {
+      "name": "rie:rate:max",
+      "status": "PASS",
+      "seconds": 0.28
+    },
+    {
+      "name": "rie:lateral:min",
+      "status": "PASS",
+      "seconds": 0.28
+    },
+    {
+      "name": "rie:lateral:max",
+      "status": "PASS",
+      "seconds": 0.28
+    },
+    {
+      "name": "sf6:width:min",
+      "status": "PASS",
+      "seconds": 0.94
+    },
+    {
+      "name": "sf6:width:max",
+      "status": "PASS",
+      "seconds": 0.98
+    },
+    {
+      "name": "sf6:oxygen:min",
+      "status": "PASS",
+      "seconds": 1.09
+    },
+    {
+      "name": "sf6:oxygen:max",
+      "status": "PASS",
+      "seconds": 0.94
+    },
+    {
+      "name": "sf6:energy:min",
+      "status": "PASS",
+      "seconds": 0.91
+    },
+    {
+      "name": "sf6:energy:max",
+      "status": "PASS",
+      "seconds": 0.98
+    },
+    {
+      "name": "sf6:duration:min",
+      "status": "PASS",
+      "seconds": 0.83
+    },
+    {
+      "name": "sf6:duration:max",
+      "status": "PASS",
+      "seconds": 1.24
+    },
+    {
+      "name": "bosch:width:min",
+      "status": "PASS",
+      "seconds": 0.41
+    },
+    {
+      "name": "bosch:width:max",
+      "status": "PASS",
+      "seconds": 0.48
+    },
+    {
+      "name": "bosch:cycles:min",
+      "status": "PASS",
+      "seconds": 0.33
+    },
+    {
+      "name": "bosch:cycles:max",
+      "status": "PASS",
+      "seconds": 0.67
+    },
+    {
+      "name": "bosch:etch_time:min",
+      "status": "PASS",
+      "seconds": 0.33
+    },
+    {
+      "name": "bosch:etch_time:max",
+      "status": "PASS",
+      "seconds": 0.67
+    },
+    {
+      "name": "bosch:coating:min",
+      "status": "PASS",
+      "seconds": 0.44
+    },
+    {
+      "name": "bosch:coating:max",
+      "status": "PASS",
+      "seconds": 0.47
+    },
+    {
+      "name": "cryo:width:min",
+      "status": "PASS",
+      "seconds": 0.2
+    },
+    {
+      "name": "cryo:width:max",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "cryo:duration:min",
+      "status": "PASS",
+      "seconds": 0.25
+    },
+    {
+      "name": "cryo:duration:max",
+      "status": "PASS",
+      "seconds": 0.2
+    },
+    {
+      "name": "cryo:rate:min",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "cryo:rate:max",
+      "status": "PASS",
+      "seconds": 0.2
+    },
+    {
+      "name": "cryo:angle:min",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "cryo:angle:max",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "stack:width:min",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "stack:width:max",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "stack:layers:min",
+      "status": "PASS",
+      "seconds": 0.2
+    },
+    {
+      "name": "stack:layers:max",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "stack:duration:min",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "stack:duration:max",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "stack:ratio:min",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "stack:ratio:max",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "regrowth:layers:min",
+      "status": "PASS",
+      "seconds": 0.26
+    },
+    {
+      "name": "regrowth:layers:max",
+      "status": "PASS",
+      "seconds": 0.33
+    },
+    {
+      "name": "regrowth:duration:min",
+      "status": "PASS",
+      "seconds": 0.27
+    },
+    {
+      "name": "regrowth:duration:max",
+      "status": "PASS",
+      "seconds": 0.33
+    },
+    {
+      "name": "regrowth:redeposition:min",
+      "status": "PASS",
+      "seconds": 0.31
+    },
+    {
+      "name": "regrowth:redeposition:max",
+      "status": "PASS",
+      "seconds": 0.31
+    },
+    {
+      "name": "lele:pitch:min",
+      "status": "PASS",
+      "seconds": 0.2
+    },
+    {
+      "name": "lele:pitch:max",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "lele:cd:min",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "lele:cd:max",
+      "status": "PASS",
+      "seconds": 0.2
+    },
+    {
+      "name": "lele:overlay:min",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "lele:overlay:max",
+      "status": "PASS",
+      "seconds": 0.2
+    },
+    {
+      "name": "sadp:pitch:min",
+      "status": "PASS",
+      "seconds": 0.2
+    },
+    {
+      "name": "sadp:pitch:max",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "sadp:mandrel:min",
+      "status": "PASS",
+      "seconds": 0.28
+    },
+    {
+      "name": "sadp:mandrel:max",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "sadp:spacer:min",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "sadp:spacer:max",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "sti:width:min",
+      "status": "PASS",
+      "seconds": 3.2
+    },
+    {
+      "name": "sti:width:max",
+      "status": "PASS",
+      "seconds": 3.2
+    },
+    {
+      "name": "sti:depth:min",
+      "status": "PASS",
+      "seconds": 2.92
+    },
+    {
+      "name": "sti:depth:max",
+      "status": "PASS",
+      "seconds": 4.05
+    },
+    {
+      "name": "sti:fill_time:min",
+      "status": "PASS",
+      "seconds": 2.53
+    },
+    {
+      "name": "sti:fill_time:max",
+      "status": "PASS",
+      "seconds": 3.67
+    },
+    {
+      "name": "locos:mask:min",
+      "status": "PASS",
+      "seconds": 0.69
+    },
+    {
+      "name": "locos:mask:max",
+      "status": "PASS",
+      "seconds": 0.62
+    },
+    {
+      "name": "locos:temperature:min",
+      "status": "PASS",
+      "seconds": 0.72
+    },
+    {
+      "name": "locos:temperature:max",
+      "status": "PASS",
+      "seconds": 1.16
+    },
+    {
+      "name": "locos:duration:min",
+      "status": "PASS",
+      "seconds": 0.69
+    },
+    {
+      "name": "locos:duration:max",
+      "status": "PASS",
+      "seconds": 1.09
+    },
+    {
+      "name": "fin:width:min",
+      "status": "PASS",
+      "seconds": 1.47
+    },
+    {
+      "name": "fin:width:max",
+      "status": "PASS",
+      "seconds": 1.45
+    },
+    {
+      "name": "fin:depth:min",
+      "status": "PASS",
+      "seconds": 0.81
+    },
+    {
+      "name": "fin:depth:max",
+      "status": "PASS",
+      "seconds": 2.53
+    },
+    {
+      "name": "fin:exposed:min",
+      "status": "PASS",
+      "seconds": 1.45
+    },
+    {
+      "name": "fin:exposed:max",
+      "status": "PASS",
+      "seconds": 1.49
+    },
+    {
+      "name": "mosfet:length:min",
+      "status": "PASS",
+      "seconds": 11.23
+    },
+    {
+      "name": "mosfet:length:max",
+      "status": "PASS",
+      "seconds": 11.39
+    },
+    {
+      "name": "mosfet:oxide:min",
+      "status": "PASS",
+      "seconds": 11.31
+    },
+    {
+      "name": "mosfet:oxide:max",
+      "status": "PASS",
+      "seconds": 11.84
+    },
+    {
+      "name": "mosfet:spacer:min",
+      "status": "PASS",
+      "seconds": 11.56
+    },
+    {
+      "name": "mosfet:spacer:max",
+      "status": "PASS",
+      "seconds": 11.44
+    },
+    {
+      "name": "finfet:width:min",
+      "status": "PASS",
+      "seconds": 3.39
+    },
+    {
+      "name": "finfet:width:max",
+      "status": "PASS",
+      "seconds": 3.39
+    },
+    {
+      "name": "finfet:depth:min",
+      "status": "PASS",
+      "seconds": 2.33
+    },
+    {
+      "name": "finfet:depth:max",
+      "status": "PASS",
+      "seconds": 4.94
+    },
+    {
+      "name": "finfet:oxide:min",
+      "status": "PASS",
+      "seconds": 3.45
+    },
+    {
+      "name": "finfet:oxide:max",
+      "status": "PASS",
+      "seconds": 3.42
+    },
+    {
+      "name": "finfet:gate:min",
+      "status": "PASS",
+      "seconds": 3.41
+    },
+    {
+      "name": "finfet:gate:max",
+      "status": "PASS",
+      "seconds": 3.41
+    },
+    {
+      "name": "mbcfet:sheets:min",
+      "status": "PASS",
+      "seconds": 4.59
+    },
+    {
+      "name": "mbcfet:sheets:max",
+      "status": "PASS",
+      "seconds": 9.31
+    },
+    {
+      "name": "mbcfet:width:min",
+      "status": "PASS",
+      "seconds": 4.92
+    },
+    {
+      "name": "mbcfet:width:max",
+      "status": "PASS",
+      "seconds": 9.02
+    },
+    {
+      "name": "mbcfet:thickness:min",
+      "status": "PASS",
+      "seconds": 5.97
+    },
+    {
+      "name": "mbcfet:thickness:max",
+      "status": "PASS",
+      "seconds": 7.05
+    },
+    {
+      "name": "mbcfet:gap:min",
+      "status": "PASS",
+      "seconds": 5.84
+    },
+    {
+      "name": "mbcfet:gap:max",
+      "status": "PASS",
+      "seconds": 7.45
+    },
+    {
+      "name": "planarization:height:min",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "planarization:height:max",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "planarization:film:min",
+      "status": "PASS",
+      "seconds": 0.23
+    },
+    {
+      "name": "planarization:film:max",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "planarization:target:min",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "planarization:target:max",
+      "status": "PASS",
+      "seconds": 0.22
+    }
+  ],
+  "corners": [
+    {
+      "name": "wet:all-min",
+      "status": "PASS",
+      "seconds": 0.23
+    },
+    {
+      "name": "wet:all-max",
+      "status": "PASS",
+      "seconds": 0.5
+    },
+    {
+      "name": "rie:all-min",
+      "status": "PASS",
+      "seconds": 0.23
+    },
+    {
+      "name": "rie:all-max",
+      "status": "PASS",
+      "seconds": 0.41
+    },
+    {
+      "name": "sf6:all-min",
+      "status": "PASS",
+      "seconds": 0.83
+    },
+    {
+      "name": "sf6:all-max",
+      "status": "PASS",
+      "seconds": 1.38
+    },
+    {
+      "name": "bosch:all-min",
+      "status": "PASS",
+      "seconds": 0.28
+    },
+    {
+      "name": "bosch:all-max",
+      "status": "PASS",
+      "seconds": 1.19
+    },
+    {
+      "name": "cryo:all-min",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "cryo:all-max",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "stack:all-min",
+      "status": "PASS",
+      "seconds": 0.2
+    },
+    {
+      "name": "stack:all-max",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "regrowth:all-min",
+      "status": "PASS",
+      "seconds": 0.23
+    },
+    {
+      "name": "regrowth:all-max",
+      "status": "PASS",
+      "seconds": 0.38
+    },
+    {
+      "name": "lele:all-min",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "lele:all-max",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "sadp:all-min",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "sadp:all-max",
+      "status": "PASS",
+      "seconds": 0.22
+    },
+    {
+      "name": "sti:all-min",
+      "status": "PASS",
+      "seconds": 2.33
+    },
+    {
+      "name": "sti:all-max",
+      "status": "PASS",
+      "seconds": 4.58
+    },
+    {
+      "name": "locos:all-min",
+      "status": "PASS",
+      "seconds": 0.7
+    },
+    {
+      "name": "locos:all-max",
+      "status": "PASS",
+      "seconds": 0.73
+    },
+    {
+      "name": "fin:all-min",
+      "status": "PASS",
+      "seconds": 0.81
+    },
+    {
+      "name": "fin:all-max",
+      "status": "PASS",
+      "seconds": 2.55
+    },
+    {
+      "name": "mosfet:all-min",
+      "status": "PASS",
+      "seconds": 11.47
+    },
+    {
+      "name": "mosfet:all-max",
+      "status": "PASS",
+      "seconds": 11.69
+    },
+    {
+      "name": "finfet:all-min",
+      "status": "PASS",
+      "seconds": 2.34
+    },
+    {
+      "name": "finfet:all-max",
+      "status": "PASS",
+      "seconds": 5.27
+    },
+    {
+      "name": "mbcfet:all-min",
+      "status": "PASS",
+      "seconds": 3.2
+    },
+    {
+      "name": "mbcfet:all-max",
+      "status": "PASS",
+      "seconds": 16.48
+    },
+    {
+      "name": "planarization:all-min",
+      "status": "PASS",
+      "seconds": 0.23
+    },
+    {
+      "name": "planarization:all-max",
+      "status": "PASS",
+      "seconds": 0.22
+    }
+  ],
+  "physics-trends": [
+    {
+      "name": "trend:repeated-dose-addition",
+      "status": "PASS",
+      "seconds": 1.59
+    },
+    {
+      "name": "trend:energy-depth",
+      "status": "PASS",
+      "seconds": 2.03
+    },
+    {
+      "name": "trend:B-P-compensation",
+      "status": "PASS",
+      "seconds": 3.7
+    },
+    {
+      "name": "trend:ALD-cycle-growth",
+      "status": "PASS",
+      "seconds": 1.92
+    },
+    {
+      "name": "trend:CVD-PVD-coverage",
+      "status": "PASS",
+      "seconds": 0.98
+    }
+  ]
+}

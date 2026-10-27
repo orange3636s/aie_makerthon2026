@@ -13,7 +13,7 @@ import viennals as ls
 from catalog import validate
 
 
-def contour_mesh(mesh, default_material=10, force_material=False):
+def contour_mesh(mesh, default_material=10, force_material=False, x_bounds=None, boundary_tolerance=1e-6):
     nodes = mesh.getNodes()
     lines = mesh.getLines()
     cell = mesh.getCellData()
@@ -38,6 +38,15 @@ def contour_mesh(mesh, default_material=10, force_material=False):
         adj = defaultdict(list)
         for i, (a,b) in enumerate(converted):
             adj[a].append((i,b)); adj[b].append((i,a))
+        # Native hull extraction can omit a clipping cap at a reflective x edge.
+        # Close only endpoint pairs on that same domain boundary, never interior
+        # gaps. This changes the exported polygon cap, not the solved surface.
+        if x_bounds:
+            for edge_x in x_bounds:
+                ends=sorted((k for k,v in adj.items() if len(v)%2 and abs(coords[k][0]-edge_x)<=boundary_tolerance),key=lambda k:coords[k][1])
+                if len(ends)%2:continue
+                for a,b in zip(ends[::2],ends[1::2]):
+                    index=len(converted);converted.append((a,b));adj[a].append((index,b));adj[b].append((index,a))
         unused = set(range(len(converted)))
         while unused:
             first = next(iter(unused)); start = converted[first][0]
@@ -90,7 +99,7 @@ def run(data):
     def advance(model, duration, particles=False, stencil=False):
         proc=ps.Process(domain,model,duration)
         if particles:
-            rp=ps.RayTracingParameters(); rp.raysPerPoint=100; proc.setParameters(rp)
+            rp=ps.RayTracingParameters(); rp.raysPerPoint=100; rp.useRandomSeeds=False; rp.rngSeed=1729; proc.setParameters(rp)
         if stencil:
             ap=ps.AdvectionParameters(); ap.spatialScheme=ps.SpatialScheme.STENCIL_LOCAL_LAX_FRIEDRICHS_1ST_ORDER; proc.setParameters(ap)
         proc.apply()
