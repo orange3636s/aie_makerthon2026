@@ -92,7 +92,7 @@ function draw(canvas,data,bounds,options={}){
  }
 
  for(const [id,polys] of grouped){const densityVisible=options.doping&&data.concentration?.fields[options.dopingField||(data.concentration.fields.net_active?'net_active':'net_total')];const color=materialStyle(id).color;c.fillStyle=color;c.strokeStyle=shade(color,.85);c.lineWidth=mini?.45:.7;c.beginPath();for(const poly of polys){poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));if(poly.closed)c.closePath()}c.fill('evenodd');c.stroke();}
- if(options.reference){c.strokeStyle='#a85b00';c.lineWidth=1.4;c.setLineDash([5,4]);for(const poly of options.reference.polygons){c.beginPath();poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.stroke()}c.setLineDash([]);}
+
  if(options.doping&&data.concentration){
   const d=data.concentration,values=d.fields[options.dopingField||(d.fields.net_active?'net_active':'net_total')];
   if(values)for(let i=0;i<values.length;i++){const v=values[i],a=Math.abs(v);if(!d.mask[i]||a<1e14)continue;const level=Math.max(0,Math.min(1,(Math.log10(a)-14)/6));const alpha=.2+level*.65,rgb=v>=0?[51,103,212]:[215,61,108];c.fillStyle=`rgb(${rgb.map((v,i)=>Math.round(v*alpha+[237,241,246][i]*(1-alpha))).join(',')})`;const x=d.origin[0]+i%d.nx*d.dx,y=d.origin[1]+Math.floor(i/d.nx)*d.dx;c.fillRect(px(x),py(y+d.dx),Math.ceil(d.dx*scale),Math.ceil(d.dx*scale))}
@@ -105,6 +105,7 @@ function draw(canvas,data,bounds,options={}){
   for(const [a,b] of windows)for(const f of [.2,.5,.8]){const x=px(a+(b-a)*f),end=py(data.highest+.01);c.beginPath();c.moveTo(x,py(y+.08));c.lineTo(x,end);c.lineTo(x-3,end-5);c.moveTo(x,end);c.lineTo(x+3,end-5);c.stroke()}
   if(!mini){c.fillStyle='#64758e';c.font='11px Segoe UI';c.textAlign='left';c.fillText('Mask / UV · 도식',px(-.8),py(y+.10))}
  }
+ if(options.reference){c.strokeStyle='#a85b00';c.lineWidth=1.4;c.setLineDash([5,4]);for(const poly of options.reference.polygons){c.beginPath();poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.stroke()}c.setLineDash([]);}
  c.restore();
 }
 function drawMain(){
