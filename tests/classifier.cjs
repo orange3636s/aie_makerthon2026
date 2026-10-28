@@ -7,5 +7,6 @@ const options=output=>({env:{GEMINI_API_KEY:'test'},referenceParts:[],fetchImpl:
  const result=await classify(image,targets,options(good));assert.equal(result.recommendations.length,3);assert(result.recommendations.every(r=>r.category==='구조'));assert.equal(new Set(result.recommendations.map(r=>r.target)).size,3);assert(result.recommendations.every(r=>!r.reason));
  assert.equal((await classify(image,targets,options({...good,ambiguous:true}))).ambiguous,true);
  for(const invalid of [{...good,recommendations:[{target:'unsupported'}]},{...good,recommendations:[{target:'sti'},{target:'sti'}]},{...good,confidence:2},{...good,ambiguous:null},{...good,identification:'x'.repeat(401)}])await assert.rejects(classify(image,targets,options(invalid)),/형식/);
+ const soi=await classify(image,targets,options({...good,recommendations:[{target:'pdsoi'},{target:'fdsoi'},{target:'mosfet'}]}));assert(soi.ambiguous);assert(soi.identification.includes('구분할 수 없음'));
  console.log('Three-example learning recommendations, categories, uncertainty and malformed response contracts passed');
 })().catch(e=>{console.error(e);process.exitCode=1});

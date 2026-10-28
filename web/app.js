@@ -8,11 +8,12 @@ function representation(){const m=selected?.mode;return m==='geometry'?'공정 �
 function viewNote(){return mode==='2.5d'?'2D 단면의 표시용 깊이 · 3D 계산 아님':selected?.mode==='geometry'?'기하 공정 결과 · 도핑·전기 특성 미포함':selected?.mode==='mask'?'GDS 평면도 · 노광 블러 근사':'실제 계산된 재료 경계'}
 let catalog=[],selected=null,current=null,frame=0,busy=false,mode='2d',timer=null,toastTimer=null;
 const references=new Map(),lastResults=new Map();
-let calculationGeneration=0,calculationJob=null,calculationTick=null;
+let calculationGeneration=0,calculationJob=null,calculationTick=null,calculationController=null;
 function cancelJob(id){return id?request('/api/cancel',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({job:id})}).catch(()=>{}):Promise.resolve();}
-function cancelCalculation(){calculationGeneration++;clearInterval(calculationTick);calculationTick=null;const old=calculationJob;calculationJob=null;if(busy)setBusy(false);return cancelJob(old);}
+function cancelCalculation(){calculationGeneration++;calculationController?.abort();calculationController=null;clearInterval(calculationTick);calculationTick=null;const old=calculationJob;calculationJob=null;if(busy)setBusy(false);return cancelJob(old);}
 async function calculateJob(path,payload,mine){
- const job=await request(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+ const controller=new AbortController();calculationController=controller;
+ const job=await request(path,{method:'POST',signal:AbortSignal.any([controller.signal,AbortSignal.timeout(190000)]),headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
  if(mine!==calculationGeneration){await cancelJob(job.job);return null;}calculationJob=job.job||null;let result=job.result;
  for(let i=0;!result&&i<260;i++){if(mine!==calculationGeneration)return null;const info=await request('/api/jobs/'+job.job);if(mine!==calculationGeneration)return null;if(info.state==='cancelled')return null;if(info.state==='error')throw Error(info.error);if(info.state==='done')result=info.result;else await new Promise(r=>setTimeout(r,600));}
  if(mine!==calculationGeneration)return null;calculationJob=null;if(!result)throw Error('계산 응답 시간이 초과됐습니다.');return result;
@@ -55,7 +56,7 @@ async function request(path,options={}){try{const response=await fetch(path,{...
 async function run(){if(busy||!selected)return;if(!$('condition-form').reportValidity())return;const params=values(),id=selected.id,hadResult=!!current&&current.params.section===params.section,mine=++calculationGeneration;setBusy(true);let elapsed=0;status('단계별 단면 계산 중…');calculationTick=setInterval(()=>{if(mine===calculationGeneration)status(`계산 중 · ${++elapsed}초 경과`)},1000);
  try{const result=await calculateJob('/api/run',{example:id,params},mine);if(!result||mine!==calculationGeneration)return;
   current=result;lastResults.set(id,result);if(!result.failure&&!references.has(ProcessUI.referenceKey(id,result.params)))references.set(ProcessUI.referenceKey(id,result.params),result);frame=hadResult?Math.min(frame,result.frames.length-1):(result.previewFrame??result.frames.length-1);updateAll();status(result.failure?`STEP ${result.failure.step} · ${result.failure.message}`:result.cached?'저장된 계산 결과':`계산 완료 · ${result.elapsed.toFixed(2)}초`,!!result.failure);$('pending').hidden=true;
- }catch(e){if(mine!==calculationGeneration)return;status(e.message,true);toast(e.message);if(current)updateAll();else $('timeline').innerHTML='<div class="empty-timeline">조건을 확인하고 다시 실행해 주세요.</div>';}
+ }catch(e){if(mine!==calculationGeneration)return;status(e.message,true);toast(e.message);if(current)updateAll();else {$('timeline').innerHTML='<div class="empty-timeline">계산을 완료하지 못했습니다. <button type="button" id="retry-calculation">다시 계산</button></div>';$('retry-calculation').onclick=()=>run();}}
  finally{if(mine===calculationGeneration){clearInterval(calculationTick);calculationTick=null;setBusy(false);window.simulationEditor?.result();}}
 }
 function combinedBounds(result,reference){if(!reference)return result.bounds;return [Math.min(result.bounds[0],reference.bounds[0]),Math.max(result.bounds[1],reference.bounds[1]),Math.min(result.bounds[2],reference.bounds[2]),Math.max(result.bounds[3],reference.bounds[3])]}
