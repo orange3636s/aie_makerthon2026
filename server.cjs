@@ -3,6 +3,7 @@ const http=require('node:http'),fs=require('node:fs'),path=require('node:path'),
 const root=__dirname;
 const RecipeState=require('./web/recipe-state.js');
 const ProcessReview=require('./web/process-review.js'), Gemini=require('./gemini.cjs');
+const aiMemo=require('./ai-cache.cjs')();
 const runtimeRoot=path.join(require('node:os').tmpdir(),'simulation-runtime');
 const zlib=require('node:zlib');
 if(process.loadEnvFile&&fs.existsSync(path.join(root,'.env')))process.loadEnvFile(path.join(root,'.env'));
@@ -44,8 +45,7 @@ async function analyze(data,ip){
  const input=validate(data,true),base=reverse.targets.find(t=>t.id===input.target),target=input.view==='gate'?base:{...base,...base.sections[input.view]};
  const concise=rows=>ProcessReview.describeFlow(rows,reverse.operations);
  const report={referenceFlow:concise(target.recipe),actualFlow:concise(input.steps),target:target.title,section:target.section,scope:target.assumptions||'공정 학습 단면; 전기 동작 검증 제외',...ProcessReview.compare(target,input.steps,reverse.operations)};
- consumeAI(ip,'review');
- const explanation=await Gemini.explain(report);
+ const explanation=await aiMemo(JSON.stringify([ip,'review',process.env.GEMINI_MODEL,report]),async()=>{consumeAI(ip,'review');return Gemini.explain(report)});
  return {...report,ai:explanation};
 }
 const server=http.createServer(async(req,res)=>{
@@ -65,8 +65,8 @@ const server=http.createServer(async(req,res)=>{
  let chunks=[],size=0,large=false;req.on('data',chunk=>{size+=chunk.length;if(size>(route==='/api/classify'?4300000:48000)){if(!large){large=true;send(res,413,{error:'입력이 너무 큽니다.'})}chunks=[]}else if(!large)chunks.push(chunk)});
  req.on('end',async()=>{if(large)return;try{const data=JSON.parse(Buffer.concat(chunks).toString());chunks=[];if(!data||typeof data!=='object'||Array.isArray(data))throw Error('JSON 객체로 요청하세요.');if(route==='/api/cancel'){
  if(typeof data.job!=='string'||!jobs.has(data.job))return send(res,200,{cancelled:false});
- return send(res,200,{cancelled:cancelTask(data.job)});
- }if(route==='/api/analyze')return send(res,200,await analyze(data,ip));if(route==='/api/classify'){Gemini.validateImage(data.image);consumeAI(ip,'image');return send(res,200,await Gemini.classify(data.image,catalog.examples))}const flow=route==='/api/reverse',input=validate(data,flow),engine=flow?'reverse_engine.py':'engine.py',key=JSON.stringify([engine,input]),id=crypto.randomUUID();
+ const cancelled=cancelTask(data.job);const until=Date.now()+2500;while(cancelled&&activeTask?.id===data.job&&Date.now()<until)await new Promise(r=>setTimeout(r,25));return send(res,200,{cancelled});
+ }if(route==='/api/analyze')return send(res,200,await analyze(data,ip));if(route==='/api/classify'){Gemini.validateImage(data.image);return send(res,200,await aiMemo(JSON.stringify([ip,'image',process.env.GEMINI_MODEL,data.image]),async()=>{consumeAI(ip,'image');return Gemini.classify(data.image,catalog.examples)}))}const flow=route==='/api/reverse',input=validate(data,flow),engine=flow?'reverse_engine.py':'engine.py',key=JSON.stringify([engine,input]),id=data.requestId||crypto.randomUUID();if(!/^[a-f0-9-]{36}$/.test(id))throw Error('잘못된 요청 ID입니다.');if(jobs.has(id))throw httpError(409,'중복 계산 요청입니다.');
    if(cache.has(key)){const cached={state:'done',result:{...cache.get(key),cached:true}};if(process.env.SIMULATION_SYNC==='1')return send(res,200,cached);jobs.set(id,cached)}else{rate(ip,'run',30,300000);if(queue.length>=4)return send(res,429,{error:'계산 대기열이 가득 찼습니다. 잠시 후 실행하세요.'});jobs.set(id,{state:'queued'});if(process.env.SIMULATION_SYNC==='1'){if(running){jobs.delete(id);return send(res,429,{error:'계산 중입니다. 잠시 후 다시 실행하세요.'})}waiters.set(id,res);res.on('close',()=>{if(!res.writableEnded)cancelTask(id)})}queue.push({id,input,key,engine});pump()}
    if(jobs.size>15){const old=[...jobs].find(([,v])=>['done','error','cancelled'].includes(v.state));if(old)jobs.delete(old[0])}if(!waiters.has(id))send(res,202,{job:id});
   }catch(e){send(res,e.status||400,{error:e instanceof SyntaxError?'올바른 JSON 형식이 아닙니다.':e.message})}});

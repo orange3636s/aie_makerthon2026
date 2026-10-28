@@ -1,9 +1,25 @@
 'use strict';
 function settings(env=process.env){const model=env.GEMINI_MODEL||'gemini-3.5-flash-lite';if(!/^gemini-[a-z0-9.-]+$/.test(model))throw Error('Gemini 모델 ID를 확인하세요.');return{model,key:env.GEMINI_API_KEY}}
-async function generate(system,parts,schema,{fetchImpl=fetch,env=process.env}={}){
+async function generate(system,parts,schema,{fetchImpl=fetch,env=process.env,sleep=ms=>new Promise(r=>setTimeout(r,ms)),random=Math.random}={}){
  const s=settings(env);if(!s.key)throw Error('Gemini API 키가 연결되지 않았습니다.');
- let r;try{r=await fetchImpl('https://generativelanguage.googleapis.com/v1beta/models/'+s.model+':generateContent',{method:'POST',headers:{'x-goog-api-key':s.key,'Content-Type':'application/json'},signal:AbortSignal.timeout(40000),body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents:[{role:'user',parts}],generationConfig:{maxOutputTokens:4096,responseMimeType:'application/json',responseJsonSchema:schema}})});}catch{throw Error('Gemini 응답이 지연되거나 연결되지 않았습니다.')}
- if(!r.ok){const errors={400:'Gemini 입력 형식 또는 API 키를 확인하세요.',401:'Gemini API 키 인증에 실패했습니다.',403:'Gemini API 사용 권한을 확인하세요.',503:'Gemini 서버가 혼잡합니다. 잠시 후 다시 시도하세요.',404:'Gemini 모델 ID를 확인하세요.',429:'Gemini 사용 한도에 도달했습니다. 잠시 후 다시 시도하세요.'};throw Error(errors[r.status]||'Gemini 분석 요청에 실패했습니다.')}
+ const deadline=Date.now()+55000,body=JSON.stringify({systemInstruction:{parts:[{text:system}]},contents:[{role:'user',parts}],generationConfig:{maxOutputTokens:4096,responseMimeType:'application/json',responseJsonSchema:schema}});
+ let r;
+ for(let attempt=0;attempt<3;attempt++){
+  try{r=await fetchImpl('https://generativelanguage.googleapis.com/v1beta/models/'+s.model+':generateContent',{method:'POST',headers:{'x-goog-api-key':s.key,'Content-Type':'application/json'},signal:AbortSignal.timeout(Math.max(1,Math.min(30000,deadline-Date.now()))),body});}
+  catch{if(attempt<2&&deadline-Date.now()>3000){await sleep(1000*2**attempt+Math.floor(random()*400));continue;}throw Object.assign(Error('AI 연결 시간이 초과됐습니다. 기본 분석은 그대로 사용할 수 있습니다.'),{status:504})}
+  if(r.ok)break;
+  let detail={};try{detail=await r.json()}catch{}
+  const message=detail.error?.message||'',info=detail.error?.details||[],retryInfo=info.find(x=>String(x['@type']).endsWith('RetryInfo'));
+  const raw=r.headers?.get?.('retry-after'),headerDelay=raw?(Number.isFinite(Number(raw))?Number(raw)*1000:Date.parse(raw)-Date.now()):null;
+  const retryMs=headerDelay??(retryInfo?.retryDelay?parseFloat(retryInfo.retryDelay)*1000:null);
+  const hardQuota=/per.?day|daily|billing|credit|limit:\s*0/i.test(message)||info.some(x=>JSON.stringify(x).match(/per.?day|daily/i));
+  const transient=[500,502,503,504].includes(r.status)||(r.status===429&&!hardQuota);
+  const delay=Math.max(1000*2**attempt+Math.floor(random()*400),Number.isFinite(retryMs)?retryMs:0);
+  if(transient&&attempt<2&&delay<=5000&&deadline-Date.now()>delay+1000){await sleep(delay);continue;}
+  console.warn('AI upstream failure',JSON.stringify({status:r.status,attempts:attempt+1,model:s.model}));
+  const errors={400:'AI 입력 형식 또는 API 키를 확인하세요.',401:'AI API 키 인증에 실패했습니다.',403:'AI API 사용 권한을 확인하세요.',503:'AI 서버 혼잡으로 재시도 후에도 응답하지 않았습니다. 기본 분석을 표시합니다.',404:'AI 모델 ID를 확인하세요.',429:hardQuota?'AI 제공업체의 사용 한도를 소진했습니다. 한도 초기화 후 다시 시도하세요.':'AI 요청 제한입니다. 잠시 기다린 뒤 다시 시도하세요.'};
+  throw Object.assign(Error(errors[r.status]||'AI 분석 요청에 실패했습니다. 기본 분석은 사용할 수 있습니다.'),{status:r.status});
+ }
  let data,output;try{data=await r.json();output=JSON.parse(data.candidates[0].content.parts.filter(p=>!p.thought).map(p=>p.text||'').join(''));}catch{throw Error('Gemini 분석 결과를 읽지 못했습니다.')}
  return {output,model:data.modelVersion||s.model};
 }
