@@ -4,8 +4,10 @@ const targets=JSON.parse(fs.readFileSync(path.join(root,'reverse-catalog.json'))
 for(const target of targets){const id=target.id;
  const r=JSON.parse(fs.readFileSync(path.join(root,'references',id+'.json'))),final=r.frames.at(-1);
  assert.equal(compare(final,final,r.roi,target).score,100,id+' self comparison');
- assert.ok(compare(final,r.frames[0],r.roi,target).score<(target.wafer?45:35),id+' plain substrate cannot score highly');
- const missing={...final,concentration:undefined,polygons:final.polygons.filter(p=>p.material===10)};
+ // RIE has only Si: the unetched substrate retains real, partial geometry overlap.
+ assert.ok(compare(final,r.frames[0],r.roi,target).score<(id==='rie'?60:target.wafer?45:35),id+' plain substrate cannot score highly');
+ const hasFilm=final.polygons.some(p=>p.material!==10);
+ const missing={...final,concentration:undefined,polygons:hasFilm?final.polygons.filter(p=>p.material===10):[]};
  assert.ok(compare(final,missing,r.roi,target).score<35,id+' missing materials');
  const shifted={...final,polygons:final.polygons.map(p=>({...p,points:p.points.map(([x,y])=>[x+.14,y])}))};
  if(shifted.concentration)shifted.concentration={...shifted.concentration,origin:[shifted.concentration.origin[0]+.14,shifted.concentration.origin[1]]};

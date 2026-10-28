@@ -81,6 +81,10 @@ def run(data):
                 else:
                     if ps.Material.Mask in mats:raise ValueError('기존 PR을 먼저 제거하세요.')
                     d.duplicateTopLevelSet(ps.Material.Mask);advance(ps.SphereDistribution(radius=p['thickness']),0)
+                    if data.get('_photoPreview'):
+                        snap('PR coating')
+                        snap('Mask alignment / exposure · schematic')
+                        frames[-1]['exposure']=dict(pattern=p['pattern'],width=p['width'],pitch=p['pitch'],offset=p['offset'],tone=p['tone'])
                     pr=d.getMaterialLevelSet(ps.Material.Mask)
                     centers=[p['offset']] if p['pattern']=='Central' else [p['offset']-p['pitch']/2,p['offset']+p['pitch']/2] if p['pattern']=='Double' else [p['offset']+j*p['pitch'] for j in range(-8,9) if abs(p['offset']+j*p['pitch'])<target['width']/2+p['width']/2]
                     if periodic:

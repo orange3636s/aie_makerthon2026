@@ -96,6 +96,8 @@ for target in TARGETS:
         # Educational similarity weights, not a device-performance prediction.
         target['assessment']=dict(version=2,species=species,requireAnneal=True,
             weights=dict(geometry=.2,total=.35,active=.35,process=.1) if target.get('grading')=='doping' else dict(geometry=.5,total=.2,active=.2,process=.1))
+from process_presets import targets as process_targets
+TARGETS.extend(process_targets())
 BY_TARGET={t['id']:t for t in TARGETS}
 
 def validate(data):

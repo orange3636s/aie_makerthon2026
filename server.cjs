@@ -12,7 +12,7 @@ const python=process.env.SIMULATION_PYTHON||(fs.existsSync(localPython)?localPyt
 const catalog=JSON.parse(fs.readFileSync(path.join(root,'catalog.json'))),reverse=JSON.parse(fs.readFileSync(path.join(root,'reverse-catalog.json')));
 const jobs=new Map(),cache=new Map(),queue=[],limits=new Map(),waiters=new Map();let running=false,aiToday=0,aiDay='';
 const assets={'/':'index.html','/tutorial':'parameters.html','/challenge':'index.html'};
-for(const f of ['index.html','app.js','style.css','materials.js','parameters.html','tutorial.js','reverse.js','reverse.css','grading.js','recipe-state.js','process-review.js'])assets['/'+f]=f;
+for(const f of ['index.html','app.js','style.css','materials.js','parameters.html','tutorial.js','process-guide.js','tutorial-guide.js','reverse.js','reverse.css','grading.js','recipe-state.js','process-review.js'])assets['/'+f]=f;
 if(host==='127.0.0.1'){assets['/qa.html']='qa.html';assets['/qa.js']='qa.js';}
 function send(res,status,data,type='application/json; charset=utf-8'){
  let body=Buffer.isBuffer(data)?data:Buffer.from(JSON.stringify(data));if(res.canGzip&&body.length>32000){body=zlib.gzipSync(body);res.setHeader('Content-Encoding','gzip');res.setHeader('Vary','Accept-Encoding')}
@@ -26,7 +26,7 @@ function pump(){if(running||!queue.length)return;running=true;const task=queue.s
   try{if(error)throw Error(error.killed?'계산 제한 시간(150초)을 넘었습니다. 조건을 줄여 주세요.':'계산을 완료하지 못했습니다. 공정 조건을 확인하세요.');const result=JSON.parse(fs.readFileSync(out));result.cached=false;if(!result.failure){cache.set(key,result);if(cache.size>6)cache.delete(cache.keys().next().value)}jobs.set(id,{state:'done',result});}catch(e){jobs.set(id,{state:'error',error:e.message});console.error('solver',id,(stderr||'').slice(-400))}finally{if(waiters.has(id)){const response=waiters.get(id),job=jobs.get(id);waiters.delete(id);if(!response.destroyed)send(response,job.state==='done'?200:422,job)}running=false;fs.rm(dir,{recursive:true,force:true},()=>{});pump()}
  });
 }
-function consumeAI(ip,kind){if(!process.env.GEMINI_API_KEY)throw Error('Gemini API 키가 연결되지 않았습니다.');rate(ip,kind,5,3600000);const today=new Date().toISOString().slice(0,10);if(aiDay!==today){aiDay=today;aiToday=0}if(aiToday>=Number(process.env.LLM_DAILY_LIMIT||20))throw Error('오늘의 AI 분석 한도에 도달했습니다.');aiToday++}
+function consumeAI(ip,kind){if(!process.env.GEMINI_API_KEY)throw Error('AI API 키가 연결되지 않았습니다.');rate(ip,kind,5,3600000);const today=new Date().toISOString().slice(0,10);if(aiDay!==today){aiDay=today;aiToday=0}if(aiToday>=Number(process.env.LLM_DAILY_LIMIT||20))throw Error('오늘의 AI 분석 한도에 도달했습니다.');aiToday++}
 async function analyze(data,ip){
  const input=validate(data,true),base=reverse.targets.find(t=>t.id===input.target),target=input.view==='gate'?base:{...base,...base.sections[input.view]};
  const concise=rows=>rows.map(s=>{const op=reverse.operations.find(o=>o.id===s.op),p={...RecipeState.defaults(op,s.params?.method),...s.params};return{op:s.op,label:s.label,params:Object.fromEntries(op.fields.filter(f=>!f.when||Object.entries(f.when).every(([k,vs])=>vs.includes(p[k]))).map(f=>[f.key,p[f.key]]))}});

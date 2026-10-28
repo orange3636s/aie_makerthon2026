@@ -850,12 +850,12 @@
         {
           "op": "deposition",
           "params": {
-            "material": "W",
             "method": "CVD",
+            "material": "W",
             "rate": 0.08,
-            "time": 4.75,
-            "sticking": 0.15,
-            "exponent": 1.0
+            "time": 6.875,
+            "sticking": 0.03,
+            "exponent": 10.0
           },
           "label": "W contact fill"
         },
@@ -1019,6 +1019,18 @@
           "label": "ILD planarization"
         },
         {
+          "op": "deposition",
+          "params": {
+            "material": "SiO2",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 1.25,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "Contact dielectric cap"
+        },
+        {
           "op": "photo",
           "params": {
             "width": 0.2,
@@ -1048,12 +1060,12 @@
         {
           "op": "deposition",
           "params": {
-            "material": "W",
             "method": "CVD",
+            "material": "W",
             "rate": 0.08,
-            "time": 4.75,
-            "sticking": 0.15,
-            "exponent": 1.0
+            "time": 6.875,
+            "sticking": 0.03,
+            "exponent": 10.0
           },
           "label": "W contact fill"
         },
@@ -1215,6 +1227,18 @@
           "label": "ILD planarization"
         },
         {
+          "op": "deposition",
+          "params": {
+            "material": "SiO2",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 1.25,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "Contact dielectric cap"
+        },
+        {
           "op": "photo",
           "params": {
             "width": 0.2,
@@ -1244,12 +1268,12 @@
         {
           "op": "deposition",
           "params": {
-            "material": "W",
             "method": "CVD",
+            "material": "W",
             "rate": 0.08,
-            "time": 4.75,
-            "sticking": 0.15,
-            "exponent": 1.0
+            "time": 6.875,
+            "sticking": 0.03,
+            "exponent": 10.0
           },
           "label": "W contact fill"
         },
@@ -1424,6 +1448,18 @@
           "label": "ILD planarization"
         },
         {
+          "op": "deposition",
+          "params": {
+            "material": "SiO2",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 1.25,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "Contact dielectric cap"
+        },
+        {
           "op": "photo",
           "params": {
             "width": 0.2,
@@ -1453,12 +1489,12 @@
         {
           "op": "deposition",
           "params": {
-            "material": "W",
             "method": "CVD",
+            "material": "W",
             "rate": 0.08,
-            "time": 4.75,
-            "sticking": 0.15,
-            "exponent": 1.0
+            "time": 6.875,
+            "sticking": 0.03,
+            "exponent": 10.0
           },
           "label": "W contact fill"
         },
@@ -1700,6 +1736,18 @@
           "label": "ILD planarization"
         },
         {
+          "op": "deposition",
+          "params": {
+            "material": "SiO2",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 1.25,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "Contact dielectric cap"
+        },
+        {
           "op": "photo",
           "params": {
             "width": 0.2,
@@ -1729,12 +1777,12 @@
         {
           "op": "deposition",
           "params": {
-            "material": "W",
             "method": "CVD",
+            "material": "W",
             "rate": 0.08,
-            "time": 4.75,
-            "sticking": 0.15,
-            "exponent": 1.0
+            "time": 6.875,
+            "sticking": 0.03,
+            "exponent": 10.0
           },
           "label": "W contact fill"
         },
@@ -1943,6 +1991,18 @@
           "label": "ILD planarization"
         },
         {
+          "op": "deposition",
+          "params": {
+            "material": "SiO2",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 1.25,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "Contact dielectric cap"
+        },
+        {
           "op": "photo",
           "params": {
             "width": 0.2,
@@ -1983,6 +2043,16 @@
           "label": "Contact bottom oxide clear"
         },
         {
+          "op": "etch",
+          "params": {
+            "material": "Si3N4",
+            "rate": 0.1,
+            "time": 1.0,
+            "isotropic": 0
+          },
+          "label": "S/D hardmask clear"
+        },
+        {
           "op": "photo",
           "params": {
             "action": "Strip"
@@ -1992,12 +2062,12 @@
         {
           "op": "deposition",
           "params": {
-            "material": "W",
             "method": "CVD",
+            "material": "W",
             "rate": 0.08,
-            "time": 4.75,
-            "sticking": 0.15,
-            "exponent": 1.0
+            "time": 6.875,
+            "sticking": 0.03,
+            "exponent": 10.0
           },
           "label": "W contact fill"
         },
@@ -2264,6 +2334,18 @@
               "label": "ILD planarization"
             },
             {
+              "op": "deposition",
+              "params": {
+                "material": "SiO2",
+                "method": "CVD",
+                "rate": 0.08,
+                "time": 1.25,
+                "sticking": 0.15,
+                "exponent": 1.0
+              },
+              "label": "Contact dielectric cap"
+            },
+            {
               "op": "photo",
               "params": {
                 "width": 0.2,
@@ -2293,12 +2375,12 @@
             {
               "op": "deposition",
               "params": {
-                "material": "Co",
                 "method": "CVD",
+                "material": "Co",
                 "rate": 0.08,
-                "time": 4.75,
-                "sticking": 0.15,
-                "exponent": 1.0
+                "time": 6.875,
+                "sticking": 0.03,
+                "exponent": 10.0
               },
               "label": "Co contact fill"
             },
@@ -2590,6 +2672,18 @@
               "op": "cmp",
               "params": {},
               "label": "ILD planarization"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "material": "SiO2",
+                "method": "CVD",
+                "rate": 0.08,
+                "time": 1.25,
+                "sticking": 0.15,
+                "exponent": 1.0
+              },
+              "label": "Contact dielectric cap"
             },
             {
               "op": "photo",
@@ -3007,6 +3101,18 @@
               "label": "ILD planarization"
             },
             {
+              "op": "deposition",
+              "params": {
+                "material": "SiO2",
+                "method": "CVD",
+                "rate": 0.08,
+                "time": 1.25,
+                "sticking": 0.15,
+                "exponent": 1.0
+              },
+              "label": "Contact dielectric cap"
+            },
+            {
               "op": "photo",
               "params": {
                 "width": 0.2,
@@ -3229,6 +3335,18 @@
           "label": "ILD planarization"
         },
         {
+          "op": "deposition",
+          "params": {
+            "material": "SiO2",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 1.25,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "Contact dielectric cap"
+        },
+        {
           "op": "photo",
           "params": {
             "width": 0.2,
@@ -3258,12 +3376,12 @@
         {
           "op": "deposition",
           "params": {
-            "material": "W",
             "method": "CVD",
+            "material": "W",
             "rate": 0.08,
-            "time": 4.75,
-            "sticking": 0.15,
-            "exponent": 1.0
+            "time": 6.875,
+            "sticking": 0.03,
+            "exponent": 10.0
           },
           "label": "W contact fill"
         },
@@ -3688,6 +3806,18 @@
               "label": "ILD planarization"
             },
             {
+              "op": "deposition",
+              "params": {
+                "material": "SiO2",
+                "method": "CVD",
+                "rate": 0.08,
+                "time": 1.25,
+                "sticking": 0.15,
+                "exponent": 1.0
+              },
+              "label": "Contact dielectric cap"
+            },
+            {
               "op": "photo",
               "params": {
                 "width": 0.2,
@@ -3893,6 +4023,18 @@
               "label": "ILD planarization"
             },
             {
+              "op": "deposition",
+              "params": {
+                "material": "SiO2",
+                "method": "CVD",
+                "rate": 0.08,
+                "time": 1.25,
+                "sticking": 0.15,
+                "exponent": 1.0
+              },
+              "label": "Contact dielectric cap"
+            },
+            {
               "op": "photo",
               "params": {
                 "width": 0.2,
@@ -3954,6 +4096,507 @@
           }
         }
       }
+    },
+    {
+      "id": "photo-lithography",
+      "title": "Photo Lithography",
+      "group": "Photo",
+      "width": 1.6,
+      "bounds": [
+        -0.8,
+        0.8,
+        -0.5,
+        0.55
+      ],
+      "roi": [
+        -0.72,
+        0.72,
+        -0.5,
+        0.5
+      ],
+      "section": "공정 패턴 단면",
+      "recipe": [
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "SiO2",
+            "cycles": 100,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 5e-05
+          },
+          "label": "SiO₂ barrier deposition"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.22,
+            "tone": "Positive",
+            "pattern": "Repeat",
+            "pitch": 0.5
+          },
+          "label": "Develop · Positive PR"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "rate": 0.1,
+            "time": 1.2,
+            "isotropic": 0
+          },
+          "label": "SiO₂ pattern transfer"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "PR removal"
+        }
+      ]
+    },
+    {
+      "id": "rie",
+      "title": "RIE Etch",
+      "group": "Etch",
+      "width": 1.6,
+      "bounds": [
+        -0.8,
+        0.8,
+        -0.5,
+        0.55
+      ],
+      "roi": [
+        -0.72,
+        0.72,
+        -0.5,
+        0.5
+      ],
+      "section": "공정 패턴 단면",
+      "recipe": [
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.4,
+            "tone": "Positive",
+            "pattern": "Double",
+            "pitch": 0.8
+          },
+          "label": "Double-window PR"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "Si",
+            "rate": 0.35,
+            "time": 1.2,
+            "isotropic": 0.05
+          },
+          "label": "RIE · directional etch"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "PR removal"
+        }
+      ]
+    },
+    {
+      "id": "planarization",
+      "title": "Planarization",
+      "group": "C&C",
+      "width": 1.6,
+      "bounds": [
+        -0.8,
+        0.8,
+        -0.5,
+        0.55
+      ],
+      "roi": [
+        -0.72,
+        0.72,
+        -0.5,
+        0.5
+      ],
+      "section": "공정 패턴 단면",
+      "recipe": [
+        {
+          "op": "deposition",
+          "params": {
+            "material": "Si3N4",
+            "method": "PVD",
+            "rate": 0.08,
+            "time": 2.25,
+            "sticking": 1.0,
+            "exponent": 30
+          },
+          "label": "Si₃N₄ film"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.18,
+            "tone": "Negative",
+            "pattern": "Repeat",
+            "pitch": 0.5
+          },
+          "label": "Repeat pattern"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "Si3N4",
+            "rate": 0.1,
+            "time": 2.0,
+            "isotropic": 0
+          },
+          "label": "Pillar etch"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "PR removal"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "SiO2",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 3.0,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "SiO₂ overburden"
+        },
+        {
+          "op": "cmp",
+          "params": {},
+          "label": "Global planarization"
+        }
+      ]
+    },
+    {
+      "id": "pvd",
+      "title": "PVD Trench Deposition",
+      "group": "Deposition",
+      "width": 1.6,
+      "bounds": [
+        -0.8,
+        0.8,
+        -0.5,
+        0.55
+      ],
+      "roi": [
+        -0.72,
+        0.72,
+        -0.5,
+        0.5
+      ],
+      "section": "공정 패턴 단면",
+      "recipe": [
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.4,
+            "tone": "Positive",
+            "pattern": "Central",
+            "pitch": 0.6
+          },
+          "label": "Trench PR"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "Si",
+            "rate": 0.1,
+            "time": 3.0,
+            "isotropic": 0
+          },
+          "label": "Trench etch"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "PR removal"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "PVD",
+            "material": "SiO2",
+            "rate": 0.08,
+            "time": 0.8,
+            "sticking": 1.0,
+            "exponent": 20
+          },
+          "label": "PVD · 1/3"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "PVD",
+            "material": "SiO2",
+            "rate": 0.08,
+            "time": 0.8,
+            "sticking": 1.0,
+            "exponent": 20
+          },
+          "label": "PVD · 2/3"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "PVD",
+            "material": "SiO2",
+            "rate": 0.08,
+            "time": 0.8,
+            "sticking": 1.0,
+            "exponent": 20
+          },
+          "label": "PVD · 3/3"
+        }
+      ]
+    },
+    {
+      "id": "cvd",
+      "title": "CVD Trench Fill",
+      "group": "Deposition",
+      "width": 1.6,
+      "bounds": [
+        -0.8,
+        0.8,
+        -0.5,
+        0.55
+      ],
+      "roi": [
+        -0.72,
+        0.72,
+        -0.5,
+        0.5
+      ],
+      "section": "공정 패턴 단면",
+      "recipe": [
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.4,
+            "tone": "Positive",
+            "pattern": "Central",
+            "pitch": 0.6
+          },
+          "label": "Trench PR"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "Si",
+            "rate": 0.1,
+            "time": 3.0,
+            "isotropic": 0
+          },
+          "label": "Trench etch"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "PR removal"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "CVD",
+            "material": "SiO2",
+            "rate": 0.08,
+            "time": 0.8,
+            "sticking": 0.15,
+            "exponent": 1
+          },
+          "label": "CVD · 1/3"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "CVD",
+            "material": "SiO2",
+            "rate": 0.08,
+            "time": 0.8,
+            "sticking": 0.15,
+            "exponent": 1
+          },
+          "label": "CVD · 2/3"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "CVD",
+            "material": "SiO2",
+            "rate": 0.08,
+            "time": 0.8,
+            "sticking": 0.15,
+            "exponent": 1
+          },
+          "label": "CVD · 3/3"
+        }
+      ]
+    },
+    {
+      "id": "ald",
+      "title": "Atomic Layer Deposition",
+      "group": "Deposition",
+      "width": 1.6,
+      "bounds": [
+        -0.8,
+        0.8,
+        -0.5,
+        0.55
+      ],
+      "roi": [
+        -0.72,
+        0.72,
+        -0.5,
+        0.5
+      ],
+      "section": "공정 패턴 단면",
+      "recipe": [
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.4,
+            "tone": "Positive",
+            "pattern": "Central",
+            "pitch": 0.6
+          },
+          "label": "Trench PR"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "Si",
+            "rate": 0.1,
+            "time": 3.0,
+            "isotropic": 0
+          },
+          "label": "Trench etch"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "PR removal"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "SiO2",
+            "cycles": 60,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 5e-05
+          },
+          "label": "ALD · SiO₂"
+        }
+      ]
+    },
+    {
+      "id": "anneal",
+      "title": "Thermal Anneal",
+      "group": "Diffusion",
+      "width": 1.6,
+      "bounds": [
+        -0.8,
+        0.8,
+        -0.5,
+        0.55
+      ],
+      "roi": [
+        -0.72,
+        0.72,
+        -0.5,
+        0.5
+      ],
+      "section": "공정 패턴 단면",
+      "recipe": [
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.5,
+            "tone": "Positive",
+            "pattern": "Central",
+            "pitch": 0.6
+          },
+          "label": "Implant window"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "species": "B",
+            "energy": 30,
+            "dose": 100000000000000.0
+          },
+          "label": "Implant · B"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "PR removal"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Anneal",
+            "temperature": 1100,
+            "time": 30.0
+          },
+          "label": "Anneal · 30.0 s"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Anneal",
+            "temperature": 1100,
+            "time": 30.0
+          },
+          "label": "Anneal · 60.0 s"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Anneal",
+            "temperature": 1100,
+            "time": 60.0
+          },
+          "label": "Anneal · 120.0 s"
+        }
+      ],
+      "assessment": {
+        "version": 2,
+        "species": [
+          "B"
+        ],
+        "requireAnneal": true,
+        "weights": {
+          "geometry": 0.2,
+          "total": 0.35,
+          "active": 0.35,
+          "process": 0.1
+        }
+      },
+      "grading": "doping"
     }
   ]
 }

@@ -9,6 +9,7 @@ out=ROOT/'.runtime/device-details';out.mkdir(parents=True,exist_ok=True)
 report=[]
 def grade(file):return json.loads(subprocess.check_output([node,str(ROOT/'tests/grade-result.cjs'),str(file)],encoding='utf-8'))
 for base in TARGETS:
+    if base['id'] not in ('pn-junction','mosfet','fdsoi','pdsoi','rcat','bcat','finfet','gaafet','mbcfet','charge-trap','cfet'):continue
     variants=[('gate',base)] if base.get('assessment') else []
     variants+=list(base.get('sections',{}).items())
     for view,t in variants:

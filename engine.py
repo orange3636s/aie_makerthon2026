@@ -64,6 +64,8 @@ def contour_mesh(mesh, default_material=10, force_material=False, x_bounds=None,
 
 def run(data):
     spec, p = validate(data)
+    from process_presets import IDS as process_ids,run as process_run
+    if spec['id'] in process_ids:return process_run(spec,p)
     from advanced_devices import SOURCES,simulate
     if spec['id'] in SOURCES:return simulate(spec,p)
     from learning_examples import IDS as learning_ids, run as run_learning

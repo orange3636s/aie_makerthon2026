@@ -3,12 +3,14 @@ const assert=require('node:assert/strict');
 const base=process.argv[2]||'http://127.0.0.1:3004';let count=0;
 async function call(path,body,expected=200,headers={}){
  const r=await fetch(base+path,{...(body!==undefined?{method:'POST',body:typeof body==='string'?body:JSON.stringify(body)}:{}),headers:{'Content-Type':'application/json',...headers},signal:AbortSignal.timeout(45000)});
- const d=await r.json();assert.equal(r.status,expected,JSON.stringify(d));count++;return d;
+ const d=await r.json();assert.equal(r.status===202&&expected===200&&d.job?200:r.status,expected,JSON.stringify(d));count++;
+ if(d.job&&!d.result){for(let i=0;i<150;i++){await new Promise(resolve=>setTimeout(resolve,1000));const j=await(await fetch(base+'/api/jobs/'+d.job)).json();assert.notEqual(j.state,'error',j.error);if(j.state==='done')return {...d,result:j.result}}throw Error('job timed out')}
+ return d;
 }
 (async()=>{
  assert((await call('/api/health')).ok);
- assert.equal((await call('/api/catalog')).examples.length,29);
- assert.equal((await call('/api/reverse-catalog')).targets.length,14);
+ assert.equal((await call('/api/catalog')).examples.length,30);
+ assert.equal((await call('/api/reverse-catalog')).targets.length,21);
  for(const id of ['pn-junction','charge-trap','fdsoi','pdsoi','rcat','bcat','gaafet','cfet']){const ref=await call('/api/reference/'+id);assert.equal(ref.failure,null);assert(ref.frames.length>5)}
  await call('/api/reference/missing',undefined,404);await call('/api/jobs/missing',undefined,404);
  await call('/api/reverse','{',400);
