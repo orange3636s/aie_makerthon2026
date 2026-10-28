@@ -164,7 +164,7 @@ def run(data):
     bounds=list(target['bounds'])
     bounds[2]=min(bounds[2],min(f['lowest'] for f in frames)-.08)
     bounds[3]=max(bounds[3],max(f['highest'] for f in frames)+.08)
-    return dict(target=target['id'],example=target['id'],frames=frames,steps=steps,bounds=bounds,roi=target['roi'],unit='µm',elapsed=round(time.perf_counter()-started,3),failure=failure,model='Native process flow',engine='ViennaPS '+ps.__version__)
+    return dict(target=target['id'],view=data.get('view','gate'),section=target['section'],example=target['id'],frames=frames,steps=steps,bounds=bounds,roi=target['roi'],unit='µm',elapsed=round(time.perf_counter()-started,3),failure=failure,model='Native process flow',engine='ViennaPS '+ps.__version__)
 
 if __name__=='__main__':
     result=run(json.loads(Path(sys.argv[1]).read_text(encoding='utf-8')))

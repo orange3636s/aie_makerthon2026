@@ -236,7 +236,7 @@ def run(data):
             dist=ps.DirectionalProcess(direction=[0.,-1.,0.],directionalVelocity=-1.,maskMaterial=ps.Material.Si);advance(dist,h*p.get('recess',60)/100)
             snap("STI recess · fin 노출",.75)
             if kind=='finfet':
-                coat(ps.Material.HfO2,p["oxide"]);snap("High-k conformal 증착",.87)
+                coat(ps.Material.HfO2,p["oxide"]);snap("HfO₂ conformal 증착",.87)
                 coat(ps.Material.TiN,p["gate"]);snap("게이트 증착 · 횡단면",1.)
     elif kind=="locos":
         grid=.025; extent=.7 if kind=='fin' else .2

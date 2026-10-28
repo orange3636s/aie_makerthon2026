@@ -1,11 +1,11 @@
 {
-  "name": "simulation",
+  "name": "processtrace",
   "version": "2.0.0",
   "private": true,
   "scripts": {
     "start": "node server.cjs",
     "build": "node scripts/build-web.cjs",
-    "test": "node tests/grading.cjs && node tests/recipe-state.cjs && node tests/display.cjs && node tests/rendering.cjs"
+    "test": "node tests/grading.cjs && node tests/recipe-state.cjs && node tests/display.cjs && node tests/rendering.cjs && node tests/process-review.cjs && node tests/classifier.cjs"
   },
   "engines": {
     "node": ">=22"

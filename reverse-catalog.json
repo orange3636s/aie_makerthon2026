@@ -122,6 +122,9 @@
             "PolySi",
             "HfO2",
             "TiN",
+            "W",
+            "Co",
+            "Mo",
             "Metal",
             "Dielectric"
           ],
@@ -210,6 +213,9 @@
             "PolySi",
             "HfO2",
             "TiN",
+            "W",
+            "Co",
+            "Mo",
             "Metal",
             "Dielectric"
           ],
@@ -727,15 +733,15 @@
         -0.8,
         0.8,
         -0.5,
-        0.15
+        0.45
       ],
       "roi": [
         -0.72,
         0.72,
         -0.35,
-        0.02
+        0.35
       ],
-      "section": "Lateral PN · 순 도펀트 농도",
+      "section": "Lateral PN · P/N 금속 콘택",
       "recipe": [
         {
           "op": "photo",
@@ -801,6 +807,62 @@
             "time": 30
           },
           "label": "Junction anneal"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "SiO2",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 4.0,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "ILD deposition"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.2,
+            "tone": "Positive",
+            "pattern": "Double",
+            "pitch": 1.0
+          },
+          "label": "P/N contact openings"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "rate": 0.1,
+            "time": 6.0,
+            "isotropic": 0
+          },
+          "label": "Contact-hole etch · ILD"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "Contact PR strip"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "W",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 4.75,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "W contact fill"
+        },
+        {
+          "op": "cmp",
+          "params": {},
+          "label": "Contact metal CMP"
         }
       ],
       "sources": [
@@ -907,7 +969,8 @@
             "species": "P",
             "energy": 30,
             "dose": 10000000000000.0
-          }
+          },
+          "label": "Source / drain implant · P"
         },
         {
           "op": "diffusion",
@@ -915,7 +978,8 @@
             "method": "Anneal",
             "temperature": 1000,
             "time": 30
-          }
+          },
+          "label": "Dopant activation"
         },
         {
           "op": "deposition",
@@ -940,56 +1004,63 @@
         {
           "op": "deposition",
           "params": {
-            "material": "Dielectric",
+            "material": "SiO2",
             "method": "CVD",
             "rate": 0.08,
-            "time": 2.875,
+            "time": 4.0,
             "sticking": 0.15,
             "exponent": 1.0
-          }
+          },
+          "label": "ILD deposition"
         },
         {
           "op": "cmp",
-          "params": {}
+          "params": {},
+          "label": "ILD planarization"
         },
         {
           "op": "photo",
           "params": {
-            "width": 0.38,
+            "width": 0.2,
             "tone": "Positive",
-            "pattern": "Double",
-            "pitch": 1.0
-          }
+            "pattern": "Repeat",
+            "pitch": 0.5
+          },
+          "label": "S/D + gate contact openings"
         },
         {
           "op": "etch",
           "params": {
-            "material": "Dielectric",
+            "material": "SiO2",
             "rate": 0.1,
-            "time": 3.0,
+            "time": 6.0,
             "isotropic": 0
-          }
+          },
+          "label": "Contact-hole etch · ILD"
         },
         {
           "op": "photo",
           "params": {
             "action": "Strip"
-          }
+          },
+          "label": "Contact PR strip"
         },
         {
           "op": "deposition",
           "params": {
-            "material": "Metal",
+            "material": "W",
             "method": "CVD",
             "rate": 0.08,
-            "time": 3.75,
+            "time": 4.75,
             "sticking": 0.15,
             "exponent": 1.0
-          }
+          },
+          "label": "W contact fill"
         },
         {
           "op": "cmp",
-          "params": {}
+          "params": {},
+          "label": "Contact metal CMP"
         }
       ],
       "assessment": {
@@ -1125,6 +1196,67 @@
             "time": 20
           },
           "label": "Activation anneal"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "SiO2",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 4.0,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "ILD deposition"
+        },
+        {
+          "op": "cmp",
+          "params": {},
+          "label": "ILD planarization"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.2,
+            "tone": "Positive",
+            "pattern": "Repeat",
+            "pitch": 0.5
+          },
+          "label": "S/D + gate contact openings"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "rate": 0.1,
+            "time": 6.0,
+            "isotropic": 0
+          },
+          "label": "Contact-hole etch · ILD"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "Contact PR strip"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "W",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 4.75,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "W contact fill"
+        },
+        {
+          "op": "cmp",
+          "params": {},
+          "label": "Contact metal CMP"
         }
       ],
       "sources": [
@@ -1273,6 +1405,67 @@
             "time": 20
           },
           "label": "Activation anneal"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "SiO2",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 4.0,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "ILD deposition"
+        },
+        {
+          "op": "cmp",
+          "params": {},
+          "label": "ILD planarization"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.2,
+            "tone": "Positive",
+            "pattern": "Repeat",
+            "pitch": 0.5
+          },
+          "label": "S/D + gate contact openings"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "rate": 0.1,
+            "time": 6.0,
+            "isotropic": 0
+          },
+          "label": "Contact-hole etch · ILD"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "Contact PR strip"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "W",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 4.75,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "W contact fill"
+        },
+        {
+          "op": "cmp",
+          "params": {},
+          "label": "Contact metal CMP"
         }
       ],
       "sources": [
@@ -1478,7 +1671,7 @@
             "energy": 10,
             "dose": 10000000000000.0
           },
-          "label": "Source / drain implant"
+          "label": "Source / drain implant · P"
         },
         {
           "op": "diffusion",
@@ -1488,6 +1681,67 @@
             "time": 20
           },
           "label": "Dopant activation"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "SiO2",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 4.0,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "ILD deposition"
+        },
+        {
+          "op": "cmp",
+          "params": {},
+          "label": "ILD planarization"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.2,
+            "tone": "Positive",
+            "pattern": "Repeat",
+            "pitch": 0.5
+          },
+          "label": "S/D + gate contact openings"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "rate": 0.1,
+            "time": 6.0,
+            "isotropic": 0
+          },
+          "label": "Contact-hole etch · ILD"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "Contact PR strip"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "W",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 4.75,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "W contact fill"
+        },
+        {
+          "op": "cmp",
+          "params": {},
+          "label": "Contact metal CMP"
         }
       ],
       "sources": [
@@ -1497,7 +1751,7 @@
           "figure": "recess channel / gate cross-sections; Fig. 13 array"
         }
       ],
-      "assumptions": "Recessed channel의 게이트 길이 방향 단면. 접촉·커패시터는 제외합니다.",
+      "assumptions": "Recessed channel의 게이트 길이 방향 단면. S/D 주입·활성화·금속 콘택을 포함합니다. 커패시터·접촉저항은 제외합니다.",
       "assessment": {
         "version": 2,
         "species": [
@@ -1530,6 +1784,42 @@
       ],
       "section": "게이트 길이 방향 단면",
       "recipe": [
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.48000000000000004,
+            "tone": "Negative",
+            "pattern": "Central",
+            "pitch": 0.6
+          },
+          "label": "S/D implant mask"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Ion implantation",
+            "species": "P",
+            "energy": 10,
+            "dose": 10000000000000.0
+          },
+          "label": "Source / drain implant · P"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "Implant PR strip"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Anneal",
+            "temperature": 1000,
+            "time": 20
+          },
+          "label": "Dopant activation"
+        },
         {
           "op": "deposition",
           "params": {
@@ -1594,7 +1884,7 @@
         {
           "op": "deposition",
           "params": {
-            "material": "Metal",
+            "material": "W",
             "method": "CVD",
             "rate": 0.08,
             "time": 5.25,
@@ -1611,7 +1901,7 @@
         {
           "op": "etch",
           "params": {
-            "material": "Metal",
+            "material": "W",
             "rate": 0.1,
             "time": 1.6,
             "isotropic": 0
@@ -1636,43 +1926,85 @@
           "label": "Cap CMP"
         },
         {
+          "op": "deposition",
+          "params": {
+            "material": "SiO2",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 4.0,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "ILD deposition"
+        },
+        {
+          "op": "cmp",
+          "params": {},
+          "label": "ILD planarization"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.2,
+            "tone": "Positive",
+            "pattern": "Repeat",
+            "pitch": 0.5
+          },
+          "label": "S/D + gate contact openings"
+        },
+        {
           "op": "etch",
           "params": {
             "material": "SiO2",
             "rate": 0.1,
-            "time": 0.35,
+            "time": 6.0,
             "isotropic": 0
           },
-          "label": "Exposed oxide removal"
+          "label": "Contact-hole etch · ILD"
         },
         {
           "op": "etch",
           "params": {
             "material": "Si3N4",
             "rate": 0.1,
-            "time": 0.75,
+            "time": 3.0,
             "isotropic": 0
           },
-          "label": "Cap / pad etchback"
+          "label": "Buried-gate cap opening"
         },
         {
-          "op": "diffusion",
+          "op": "etch",
           "params": {
-            "method": "Ion implantation",
-            "species": "P",
-            "energy": 10,
-            "dose": 10000000000000.0
+            "material": "SiO2",
+            "rate": 0.1,
+            "time": 1.0,
+            "isotropic": 0
           },
-          "label": "Source / drain implant"
+          "label": "Contact bottom oxide clear"
         },
         {
-          "op": "diffusion",
+          "op": "photo",
           "params": {
-            "method": "Anneal",
-            "temperature": 1000,
-            "time": 20
+            "action": "Strip"
           },
-          "label": "Dopant activation"
+          "label": "Contact PR strip"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "W",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 4.75,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "W contact fill"
+        },
+        {
+          "op": "cmp",
+          "params": {},
+          "label": "Contact metal CMP"
         }
       ],
       "sources": [
@@ -1785,7 +2117,214 @@
             "ald_sticking": 5e-05
           }
         }
-      ]
+      ],
+      "sections": {
+        "sd": {
+          "width": 1.6,
+          "bounds": [
+            -0.8,
+            0.8,
+            -0.4,
+            0.55
+          ],
+          "roi": [
+            -0.72,
+            0.72,
+            -0.25,
+            0.45
+          ],
+          "recipe": [
+            {
+              "op": "deposition",
+              "params": {
+                "method": "ALD",
+                "material": "HfO2",
+                "cycles": 20,
+                "gpc": 0.001,
+                "pulse": 0.1,
+                "ald_sticking": 5e-05
+              },
+              "label": "Gate dielectric · HfO₂"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "material": "TiN",
+                "method": "PVD",
+                "rate": 0.08,
+                "time": 2.0,
+                "sticking": 1.0,
+                "exponent": 30
+              },
+              "label": "Gate electrode · TiN"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "width": 0.3,
+                "tone": "Negative",
+                "pattern": "Central",
+                "pitch": 0.6
+              },
+              "label": "Gate length pattern"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "TiN",
+                "rate": 0.1,
+                "time": 1.9,
+                "isotropic": 0
+              },
+              "label": "Gate etch"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "action": "Strip"
+              },
+              "label": "Gate PR strip"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "HfO2",
+                "rate": 0.1,
+                "time": 0.3,
+                "isotropic": 0
+              },
+              "label": "Exposed HfO₂ removal"
+            },
+            {
+              "op": "diffusion",
+              "params": {
+                "method": "Ion implantation",
+                "species": "P",
+                "energy": 8,
+                "dose": 1000000000000.0
+              },
+              "label": "S/D extension implant · P"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "method": "ALD",
+                "material": "Si3N4",
+                "cycles": 35,
+                "gpc": 0.001,
+                "pulse": 0.1,
+                "ald_sticking": 5e-05
+              },
+              "label": "Spacer deposition"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "Si3N4",
+                "rate": 0.1,
+                "time": 0.45,
+                "isotropic": 0
+              },
+              "label": "Spacer etchback"
+            },
+            {
+              "op": "diffusion",
+              "params": {
+                "method": "Ion implantation",
+                "species": "P",
+                "energy": 10,
+                "dose": 10000000000000.0
+              },
+              "label": "Deep S/D implant · P"
+            },
+            {
+              "op": "diffusion",
+              "params": {
+                "method": "Anneal",
+                "temperature": 1000,
+                "time": 20
+              },
+              "label": "S/D activation anneal"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "material": "SiO2",
+                "method": "CVD",
+                "rate": 0.08,
+                "time": 4.0,
+                "sticking": 0.15,
+                "exponent": 1.0
+              },
+              "label": "ILD deposition"
+            },
+            {
+              "op": "cmp",
+              "params": {},
+              "label": "ILD planarization"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "width": 0.2,
+                "tone": "Positive",
+                "pattern": "Repeat",
+                "pitch": 0.5
+              },
+              "label": "S/D + gate contact openings"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "SiO2",
+                "rate": 0.1,
+                "time": 6.0,
+                "isotropic": 0
+              },
+              "label": "Contact-hole etch · ILD"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "action": "Strip"
+              },
+              "label": "Contact PR strip"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "material": "Co",
+                "method": "CVD",
+                "rate": 0.08,
+                "time": 4.75,
+                "sticking": 0.15,
+                "exponent": 1.0
+              },
+              "label": "Co contact fill"
+            },
+            {
+              "op": "cmp",
+              "params": {},
+              "label": "Contact metal CMP"
+            }
+          ],
+          "section": "n형 S/D 국소 단면 · 게이트 단면과 독립 계산",
+          "assumptions": "독립적인 길이 방향 S/D 학습 모듈입니다. 확장 주입·스페이서·고농도 주입·활성화·ILD·금속 콘택을 계산합니다. 게이트 횡단면과 연결된 3D 구조나 접촉저항을 계산하지 않습니다.",
+          "assessment": {
+            "version": 2,
+            "species": [
+              "P"
+            ],
+            "requireAnneal": true,
+            "weights": {
+              "geometry": 0.5,
+              "total": 0.2,
+              "active": 0.2,
+              "process": 0.1
+            }
+          }
+        }
+      }
     },
     {
       "id": "gaafet",
@@ -1815,7 +2354,7 @@
             "sticking": 1.0,
             "exponent": 30
           },
-          "label": "Nanowire · sacrificial layer"
+          "label": "Channel · sacrificial layer"
         },
         {
           "op": "deposition",
@@ -1827,7 +2366,7 @@
             "sticking": 1.0,
             "exponent": 30
           },
-          "label": "Nanowire · Si channel layer"
+          "label": "Channel · Si channel layer"
         },
         {
           "op": "photo",
@@ -1837,7 +2376,7 @@
             "pattern": "Central",
             "pitch": 0.6
           },
-          "label": "Nanowire · channel pattern"
+          "label": "Channel · channel pattern"
         },
         {
           "op": "etch",
@@ -1847,7 +2386,7 @@
             "time": 0.7,
             "isotropic": 0
           },
-          "label": "Nanowire · Si etch"
+          "label": "Channel · Si etch"
         },
         {
           "op": "etch",
@@ -1857,14 +2396,14 @@
             "time": 1.0,
             "isotropic": 0
           },
-          "label": "Nanowire · SiGe etch"
+          "label": "Channel · SiGe etch"
         },
         {
           "op": "photo",
           "params": {
             "action": "Strip"
           },
-          "label": "Nanowire · PR strip"
+          "label": "Channel · PR strip"
         },
         {
           "op": "etch",
@@ -1872,7 +2411,7 @@
             "material": "SiGe",
             "method": "Selective removal"
           },
-          "label": "Nanowire · channel release"
+          "label": "Channel · channel release"
         },
         {
           "op": "deposition",
@@ -1884,7 +2423,7 @@
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
-          "label": "Nanowire · gate dielectric"
+          "label": "Channel · gate dielectric"
         },
         {
           "op": "deposition",
@@ -1896,7 +2435,7 @@
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
-          "label": "Nanowire · wrap gate"
+          "label": "Channel · wrap gate"
         }
       ],
       "sources": [
@@ -1906,7 +2445,214 @@
           "figure": "Fig. 4 · nanowire / nanosheet"
         }
       ],
-      "assumptions": "Nanowire GAA 게이트 횡단면. Si/SiGe 적층은 형상 성장 근사이며 결정 성장·strain은 제외합니다. S/D는 화면 밖에 있습니다."
+      "assumptions": "GAA 게이트 횡단면. Si/SiGe 적층은 형상 성장 근사이며 결정 성장·strain은 제외합니다. S/D는 화면 밖에 있습니다.",
+      "sections": {
+        "sd": {
+          "width": 1.6,
+          "bounds": [
+            -0.8,
+            0.8,
+            -0.4,
+            0.55
+          ],
+          "roi": [
+            -0.72,
+            0.72,
+            -0.25,
+            0.45
+          ],
+          "recipe": [
+            {
+              "op": "deposition",
+              "params": {
+                "method": "ALD",
+                "material": "HfO2",
+                "cycles": 20,
+                "gpc": 0.001,
+                "pulse": 0.1,
+                "ald_sticking": 5e-05
+              },
+              "label": "Gate dielectric · HfO₂"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "material": "TiN",
+                "method": "PVD",
+                "rate": 0.08,
+                "time": 2.0,
+                "sticking": 1.0,
+                "exponent": 30
+              },
+              "label": "Gate electrode · TiN"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "width": 0.3,
+                "tone": "Negative",
+                "pattern": "Central",
+                "pitch": 0.6
+              },
+              "label": "Gate length pattern"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "TiN",
+                "rate": 0.1,
+                "time": 1.9,
+                "isotropic": 0
+              },
+              "label": "Gate etch"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "action": "Strip"
+              },
+              "label": "Gate PR strip"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "HfO2",
+                "rate": 0.1,
+                "time": 0.3,
+                "isotropic": 0
+              },
+              "label": "Exposed HfO₂ removal"
+            },
+            {
+              "op": "diffusion",
+              "params": {
+                "method": "Ion implantation",
+                "species": "P",
+                "energy": 8,
+                "dose": 1000000000000.0
+              },
+              "label": "S/D extension implant · P"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "method": "ALD",
+                "material": "Si3N4",
+                "cycles": 35,
+                "gpc": 0.001,
+                "pulse": 0.1,
+                "ald_sticking": 5e-05
+              },
+              "label": "Spacer deposition"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "Si3N4",
+                "rate": 0.1,
+                "time": 0.45,
+                "isotropic": 0
+              },
+              "label": "Spacer etchback"
+            },
+            {
+              "op": "diffusion",
+              "params": {
+                "method": "Ion implantation",
+                "species": "P",
+                "energy": 10,
+                "dose": 10000000000000.0
+              },
+              "label": "Deep S/D implant · P"
+            },
+            {
+              "op": "diffusion",
+              "params": {
+                "method": "Anneal",
+                "temperature": 1000,
+                "time": 20
+              },
+              "label": "S/D activation anneal"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "material": "SiO2",
+                "method": "CVD",
+                "rate": 0.08,
+                "time": 4.0,
+                "sticking": 0.15,
+                "exponent": 1.0
+              },
+              "label": "ILD deposition"
+            },
+            {
+              "op": "cmp",
+              "params": {},
+              "label": "ILD planarization"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "width": 0.2,
+                "tone": "Positive",
+                "pattern": "Repeat",
+                "pitch": 0.5
+              },
+              "label": "S/D + gate contact openings"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "SiO2",
+                "rate": 0.1,
+                "time": 6.0,
+                "isotropic": 0
+              },
+              "label": "Contact-hole etch · ILD"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "action": "Strip"
+              },
+              "label": "Contact PR strip"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "method": "ALD",
+                "material": "Mo",
+                "cycles": 100,
+                "gpc": 0.003,
+                "pulse": 0.1,
+                "ald_sticking": 5e-05
+              },
+              "label": "Mo contact fill"
+            },
+            {
+              "op": "cmp",
+              "params": {},
+              "label": "Contact metal CMP"
+            }
+          ],
+          "section": "n형 S/D 국소 단면 · 게이트 단면과 독립 계산",
+          "assumptions": "독립적인 길이 방향 S/D 학습 모듈입니다. 확장 주입·스페이서·고농도 주입·활성화·ILD·금속 콘택을 계산합니다. 게이트 횡단면과 연결된 3D 구조나 접촉저항을 계산하지 않습니다.",
+          "assessment": {
+            "version": 2,
+            "species": [
+              "P"
+            ],
+            "requireAnneal": true,
+            "weights": {
+              "geometry": 0.5,
+              "total": 0.2,
+              "active": 0.2,
+              "process": 0.1
+            }
+          }
+        }
+      }
     },
     {
       "id": "mbcfet",
@@ -2114,7 +2860,214 @@
             "ald_sticking": 5e-05
           }
         }
-      ]
+      ],
+      "sections": {
+        "sd": {
+          "width": 1.6,
+          "bounds": [
+            -0.8,
+            0.8,
+            -0.4,
+            0.55
+          ],
+          "roi": [
+            -0.72,
+            0.72,
+            -0.25,
+            0.45
+          ],
+          "recipe": [
+            {
+              "op": "deposition",
+              "params": {
+                "method": "ALD",
+                "material": "HfO2",
+                "cycles": 20,
+                "gpc": 0.001,
+                "pulse": 0.1,
+                "ald_sticking": 5e-05
+              },
+              "label": "Gate dielectric · HfO₂"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "material": "TiN",
+                "method": "PVD",
+                "rate": 0.08,
+                "time": 2.0,
+                "sticking": 1.0,
+                "exponent": 30
+              },
+              "label": "Gate electrode · TiN"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "width": 0.3,
+                "tone": "Negative",
+                "pattern": "Central",
+                "pitch": 0.6
+              },
+              "label": "Gate length pattern"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "TiN",
+                "rate": 0.1,
+                "time": 1.9,
+                "isotropic": 0
+              },
+              "label": "Gate etch"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "action": "Strip"
+              },
+              "label": "Gate PR strip"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "HfO2",
+                "rate": 0.1,
+                "time": 0.3,
+                "isotropic": 0
+              },
+              "label": "Exposed HfO₂ removal"
+            },
+            {
+              "op": "diffusion",
+              "params": {
+                "method": "Ion implantation",
+                "species": "P",
+                "energy": 8,
+                "dose": 1000000000000.0
+              },
+              "label": "S/D extension implant · P"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "method": "ALD",
+                "material": "Si3N4",
+                "cycles": 35,
+                "gpc": 0.001,
+                "pulse": 0.1,
+                "ald_sticking": 5e-05
+              },
+              "label": "Spacer deposition"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "Si3N4",
+                "rate": 0.1,
+                "time": 0.45,
+                "isotropic": 0
+              },
+              "label": "Spacer etchback"
+            },
+            {
+              "op": "diffusion",
+              "params": {
+                "method": "Ion implantation",
+                "species": "P",
+                "energy": 10,
+                "dose": 10000000000000.0
+              },
+              "label": "Deep S/D implant · P"
+            },
+            {
+              "op": "diffusion",
+              "params": {
+                "method": "Anneal",
+                "temperature": 1000,
+                "time": 20
+              },
+              "label": "S/D activation anneal"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "material": "SiO2",
+                "method": "CVD",
+                "rate": 0.08,
+                "time": 4.0,
+                "sticking": 0.15,
+                "exponent": 1.0
+              },
+              "label": "ILD deposition"
+            },
+            {
+              "op": "cmp",
+              "params": {},
+              "label": "ILD planarization"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "width": 0.2,
+                "tone": "Positive",
+                "pattern": "Repeat",
+                "pitch": 0.5
+              },
+              "label": "S/D + gate contact openings"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "SiO2",
+                "rate": 0.1,
+                "time": 6.0,
+                "isotropic": 0
+              },
+              "label": "Contact-hole etch · ILD"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "action": "Strip"
+              },
+              "label": "Contact PR strip"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "method": "ALD",
+                "material": "Mo",
+                "cycles": 100,
+                "gpc": 0.003,
+                "pulse": 0.1,
+                "ald_sticking": 5e-05
+              },
+              "label": "Mo contact fill"
+            },
+            {
+              "op": "cmp",
+              "params": {},
+              "label": "Contact metal CMP"
+            }
+          ],
+          "section": "n형 S/D 국소 단면 · 게이트 단면과 독립 계산",
+          "assumptions": "독립적인 길이 방향 S/D 학습 모듈입니다. 확장 주입·스페이서·고농도 주입·활성화·ILD·금속 콘택을 계산합니다. 게이트 횡단면과 연결된 3D 구조나 접촉저항을 계산하지 않습니다.",
+          "assessment": {
+            "version": 2,
+            "species": [
+              "P"
+            ],
+            "requireAnneal": true,
+            "weights": {
+              "geometry": 0.5,
+              "total": 0.2,
+              "active": 0.2,
+              "process": 0.1
+            }
+          }
+        }
+      }
     },
     {
       "id": "charge-trap",
@@ -2257,6 +3210,67 @@
             "time": 20
           },
           "label": "Activation anneal"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "SiO2",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 4.0,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "ILD deposition"
+        },
+        {
+          "op": "cmp",
+          "params": {},
+          "label": "ILD planarization"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.2,
+            "tone": "Positive",
+            "pattern": "Repeat",
+            "pitch": 0.5
+          },
+          "label": "S/D + gate contact openings"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "rate": 0.1,
+            "time": 6.0,
+            "isotropic": 0
+          },
+          "label": "Contact-hole etch · ILD"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "Contact PR strip"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "W",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 4.75,
+            "sticking": 0.15,
+            "exponent": 1.0
+          },
+          "label": "W contact fill"
+        },
+        {
+          "op": "cmp",
+          "params": {},
+          "label": "Contact metal CMP"
         }
       ],
       "sources": [
@@ -2511,7 +3525,7 @@
           "op": "deposition",
           "params": {
             "method": "ALD",
-            "material": "Metal",
+            "material": "W",
             "cycles": 35,
             "gpc": 0.001,
             "pulse": 0.1,
@@ -2527,7 +3541,419 @@
           "figure": "p. 3 · stacked CMOS"
         }
       ],
-      "assumptions": "상하 채널과 분리된 게이트를 갖는 순차 적층 학습 단면. 상부 결정층 형성은 준비된 층의 형상 근사입니다. N/P 전기 동작·접촉·backside power는 제외합니다."
+      "assumptions": "상하 채널과 분리된 게이트를 갖는 순차 적층 학습 단면. 상부 결정층 형성은 준비된 층의 형상 근사입니다. N/P 전기 동작·접촉·backside power는 제외합니다.",
+      "sections": {
+        "sd": {
+          "width": 1.6,
+          "bounds": [
+            -0.8,
+            0.8,
+            -0.4,
+            0.55
+          ],
+          "roi": [
+            -0.72,
+            0.72,
+            -0.25,
+            0.45
+          ],
+          "recipe": [
+            {
+              "op": "deposition",
+              "params": {
+                "method": "ALD",
+                "material": "HfO2",
+                "cycles": 20,
+                "gpc": 0.001,
+                "pulse": 0.1,
+                "ald_sticking": 5e-05
+              },
+              "label": "Gate dielectric · HfO₂"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "material": "TiN",
+                "method": "PVD",
+                "rate": 0.08,
+                "time": 2.0,
+                "sticking": 1.0,
+                "exponent": 30
+              },
+              "label": "Gate electrode · TiN"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "width": 0.3,
+                "tone": "Negative",
+                "pattern": "Central",
+                "pitch": 0.6
+              },
+              "label": "Gate length pattern"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "TiN",
+                "rate": 0.1,
+                "time": 1.9,
+                "isotropic": 0
+              },
+              "label": "Gate etch"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "action": "Strip"
+              },
+              "label": "Gate PR strip"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "HfO2",
+                "rate": 0.1,
+                "time": 0.3,
+                "isotropic": 0
+              },
+              "label": "Exposed HfO₂ removal"
+            },
+            {
+              "op": "diffusion",
+              "params": {
+                "method": "Ion implantation",
+                "species": "P",
+                "energy": 8,
+                "dose": 1000000000000.0
+              },
+              "label": "S/D extension implant · P"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "method": "ALD",
+                "material": "Si3N4",
+                "cycles": 35,
+                "gpc": 0.001,
+                "pulse": 0.1,
+                "ald_sticking": 5e-05
+              },
+              "label": "Spacer deposition"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "Si3N4",
+                "rate": 0.1,
+                "time": 0.45,
+                "isotropic": 0
+              },
+              "label": "Spacer etchback"
+            },
+            {
+              "op": "diffusion",
+              "params": {
+                "method": "Ion implantation",
+                "species": "P",
+                "energy": 10,
+                "dose": 10000000000000.0
+              },
+              "label": "Deep S/D implant · P"
+            },
+            {
+              "op": "diffusion",
+              "params": {
+                "method": "Anneal",
+                "temperature": 1000,
+                "time": 20
+              },
+              "label": "S/D activation anneal"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "material": "SiO2",
+                "method": "CVD",
+                "rate": 0.08,
+                "time": 4.0,
+                "sticking": 0.15,
+                "exponent": 1.0
+              },
+              "label": "ILD deposition"
+            },
+            {
+              "op": "cmp",
+              "params": {},
+              "label": "ILD planarization"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "width": 0.2,
+                "tone": "Positive",
+                "pattern": "Repeat",
+                "pitch": 0.5
+              },
+              "label": "S/D + gate contact openings"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "SiO2",
+                "rate": 0.1,
+                "time": 6.0,
+                "isotropic": 0
+              },
+              "label": "Contact-hole etch · ILD"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "action": "Strip"
+              },
+              "label": "Contact PR strip"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "method": "ALD",
+                "material": "Mo",
+                "cycles": 100,
+                "gpc": 0.003,
+                "pulse": 0.1,
+                "ald_sticking": 5e-05
+              },
+              "label": "Mo contact fill"
+            },
+            {
+              "op": "cmp",
+              "params": {},
+              "label": "Contact metal CMP"
+            }
+          ],
+          "section": "n형 S/D 국소 단면 · 게이트 단면과 독립 계산",
+          "assumptions": "독립적인 길이 방향 S/D 학습 모듈입니다. 확장 주입·스페이서·고농도 주입·활성화·ILD·금속 콘택을 계산합니다. 게이트 횡단면과 연결된 3D 구조나 접촉저항을 계산하지 않습니다.",
+          "assessment": {
+            "version": 2,
+            "species": [
+              "P"
+            ],
+            "requireAnneal": true,
+            "weights": {
+              "geometry": 0.5,
+              "total": 0.2,
+              "active": 0.2,
+              "process": 0.1
+            }
+          }
+        },
+        "sd-p": {
+          "width": 1.6,
+          "bounds": [
+            -0.8,
+            0.8,
+            -0.4,
+            0.55
+          ],
+          "roi": [
+            -0.72,
+            0.72,
+            -0.25,
+            0.45
+          ],
+          "recipe": [
+            {
+              "op": "deposition",
+              "params": {
+                "method": "ALD",
+                "material": "HfO2",
+                "cycles": 20,
+                "gpc": 0.001,
+                "pulse": 0.1,
+                "ald_sticking": 5e-05
+              },
+              "label": "Gate dielectric · HfO₂"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "material": "TiN",
+                "method": "PVD",
+                "rate": 0.08,
+                "time": 2.0,
+                "sticking": 1.0,
+                "exponent": 30
+              },
+              "label": "Gate electrode · TiN"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "width": 0.3,
+                "tone": "Negative",
+                "pattern": "Central",
+                "pitch": 0.6
+              },
+              "label": "Gate length pattern"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "TiN",
+                "rate": 0.1,
+                "time": 1.9,
+                "isotropic": 0
+              },
+              "label": "Gate etch"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "action": "Strip"
+              },
+              "label": "Gate PR strip"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "HfO2",
+                "rate": 0.1,
+                "time": 0.3,
+                "isotropic": 0
+              },
+              "label": "Exposed HfO₂ removal"
+            },
+            {
+              "op": "diffusion",
+              "params": {
+                "method": "Ion implantation",
+                "species": "B",
+                "energy": 8,
+                "dose": 1000000000000.0
+              },
+              "label": "S/D extension implant · B"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "method": "ALD",
+                "material": "Si3N4",
+                "cycles": 35,
+                "gpc": 0.001,
+                "pulse": 0.1,
+                "ald_sticking": 5e-05
+              },
+              "label": "Spacer deposition"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "Si3N4",
+                "rate": 0.1,
+                "time": 0.45,
+                "isotropic": 0
+              },
+              "label": "Spacer etchback"
+            },
+            {
+              "op": "diffusion",
+              "params": {
+                "method": "Ion implantation",
+                "species": "B",
+                "energy": 10,
+                "dose": 10000000000000.0
+              },
+              "label": "Deep S/D implant · B"
+            },
+            {
+              "op": "diffusion",
+              "params": {
+                "method": "Anneal",
+                "temperature": 1000,
+                "time": 20
+              },
+              "label": "S/D activation anneal"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "material": "SiO2",
+                "method": "CVD",
+                "rate": 0.08,
+                "time": 4.0,
+                "sticking": 0.15,
+                "exponent": 1.0
+              },
+              "label": "ILD deposition"
+            },
+            {
+              "op": "cmp",
+              "params": {},
+              "label": "ILD planarization"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "width": 0.2,
+                "tone": "Positive",
+                "pattern": "Repeat",
+                "pitch": 0.5
+              },
+              "label": "S/D + gate contact openings"
+            },
+            {
+              "op": "etch",
+              "params": {
+                "material": "SiO2",
+                "rate": 0.1,
+                "time": 6.0,
+                "isotropic": 0
+              },
+              "label": "Contact-hole etch · ILD"
+            },
+            {
+              "op": "photo",
+              "params": {
+                "action": "Strip"
+              },
+              "label": "Contact PR strip"
+            },
+            {
+              "op": "deposition",
+              "params": {
+                "method": "ALD",
+                "material": "Mo",
+                "cycles": 100,
+                "gpc": 0.003,
+                "pulse": 0.1,
+                "ald_sticking": 5e-05
+              },
+              "label": "Mo contact fill"
+            },
+            {
+              "op": "cmp",
+              "params": {},
+              "label": "Contact metal CMP"
+            }
+          ],
+          "section": "p형 S/D 국소 단면 · 게이트 단면과 독립 계산",
+          "assumptions": "독립적인 길이 방향 S/D 학습 모듈입니다. 확장 주입·스페이서·고농도 주입·활성화·ILD·금속 콘택을 계산합니다. 게이트 횡단면과 연결된 3D 구조나 접촉저항을 계산하지 않습니다.",
+          "assessment": {
+            "version": 2,
+            "species": [
+              "B"
+            ],
+            "requireAnneal": true,
+            "weights": {
+              "geometry": 0.5,
+              "total": 0.2,
+              "active": 0.2,
+              "process": 0.1
+            }
+          }
+        }
+      }
     }
   ]
 }

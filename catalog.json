@@ -463,7 +463,19 @@
       "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다.",
       "unit": "µm",
       "mode": "physics",
-      "section": "2D 단면"
+      "section": "2D 단면",
+      "flow": [
+        "deposition",
+        "deposition",
+        "photo",
+        "etch",
+        "etch",
+        "etch",
+        "photo",
+        "deposition",
+        "cmp",
+        "etch"
+      ]
     },
     {
       "id": "locos",
@@ -505,7 +517,16 @@
       "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다. 대칭 반주기 0.4 µm를 계산하고 4회 반사해 표시합니다. Double 마스크의 pitch는 0.8 µm로 고정합니다.",
       "unit": "µm",
       "mode": "physics",
-      "section": "2D 단면"
+      "section": "2D 단면",
+      "flow": [
+        "deposition",
+        "deposition",
+        "photo",
+        "etch",
+        "photo",
+        "diffusion",
+        "etch"
+      ]
     },
     {
       "id": "fin",
@@ -547,7 +568,15 @@
       "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다.",
       "unit": "µm",
       "mode": "physics",
-      "section": "2D 단면"
+      "section": "2D 단면",
+      "flow": [
+        "photo",
+        "etch",
+        "photo",
+        "deposition",
+        "cmp",
+        "etch"
+      ]
     },
     {
       "id": "pn-junction",
@@ -604,7 +633,13 @@
         "P-region opening",
         "Boron implant",
         "PR strip",
-        "Junction anneal"
+        "Junction anneal",
+        "ILD deposition",
+        "P/N contact openings",
+        "Contact-hole etch · ILD",
+        "Contact PR strip",
+        "W contact fill",
+        "Contact metal CMP"
       ],
       "sources": [
         {
@@ -654,7 +689,26 @@
       "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다.",
       "unit": "µm",
       "mode": "physics",
-      "section": "게이트 · 접촉부 단면"
+      "section": "게이트 · 접촉부 단면",
+      "flow": [
+        "deposition",
+        "deposition",
+        "photo",
+        "etch",
+        "photo",
+        "etch",
+        "Source / drain implant · P",
+        "Dopant activation",
+        "deposition",
+        "etch",
+        "ILD deposition",
+        "ILD planarization",
+        "S/D + gate contact openings",
+        "Contact-hole etch · ILD",
+        "Contact PR strip",
+        "W contact fill",
+        "Contact metal CMP"
+      ]
     },
     {
       "id": "fdsoi",
@@ -705,7 +759,14 @@
         "Spacer deposition",
         "Spacer etchback",
         "Source / drain implant",
-        "Activation anneal"
+        "Activation anneal",
+        "ILD deposition",
+        "ILD planarization",
+        "S/D + gate contact openings",
+        "Contact-hole etch · ILD",
+        "Contact PR strip",
+        "W contact fill",
+        "Contact metal CMP"
       ],
       "sources": [
         {
@@ -1116,7 +1177,14 @@
         "Spacer deposition",
         "Spacer etchback",
         "Source / drain implant",
-        "Activation anneal"
+        "Activation anneal",
+        "ILD deposition",
+        "ILD planarization",
+        "S/D + gate contact openings",
+        "Contact-hole etch · ILD",
+        "Contact PR strip",
+        "W contact fill",
+        "Contact metal CMP"
       ],
       "sources": [
         {
@@ -1181,8 +1249,15 @@
         "Hardmask removal",
         "Spacer deposition",
         "Spacer etchback",
-        "Source / drain implant",
-        "Dopant activation"
+        "Source / drain implant · P",
+        "Dopant activation",
+        "ILD deposition",
+        "ILD planarization",
+        "S/D + gate contact openings",
+        "Contact-hole etch · ILD",
+        "Contact PR strip",
+        "W contact fill",
+        "Contact metal CMP"
       ],
       "sources": [
         {
@@ -1232,6 +1307,10 @@
         }
       ],
       "flow": [
+        "S/D implant mask",
+        "Source / drain implant · P",
+        "Implant PR strip",
+        "Dopant activation",
         "Hardmask · Si₃N₄",
         "Recess opening",
         "Hardmask etch",
@@ -1243,10 +1322,15 @@
         "Gate recess etch",
         "Nitride gate cap",
         "Cap CMP",
-        "Exposed oxide removal",
-        "Cap / pad etchback",
-        "Source / drain implant",
-        "Dopant activation"
+        "ILD deposition",
+        "ILD planarization",
+        "S/D + gate contact openings",
+        "Contact-hole etch · ILD",
+        "Buried-gate cap opening",
+        "Contact bottom oxide clear",
+        "Contact PR strip",
+        "W contact fill",
+        "Contact metal CMP"
       ],
       "sources": [
         {
@@ -1263,8 +1347,18 @@
       "group": "소자",
       "model": "Native sequential process",
       "source": "https://github.com/ViennaTools/ViennaPS/tree/v4.6.2/examples/emulation/FinFET.py",
-      "description": "fin 패터닝부터 STI, high-k, 게이트 증착까지 단계를 살펴봅니다. 게이트 중앙을 가로지르는 횡단면으로 fin의 양쪽 측벽과 상부를 관찰합니다.",
+      "description": "fin 패터닝부터 STI, HfO₂, 게이트 증착까지 단계를 살펴봅니다. 게이트 중앙을 가로지르는 횡단면으로 fin의 양쪽 측벽과 상부를 관찰합니다.",
       "fields": [
+        {
+          "key": "section",
+          "label": "관찰 단면",
+          "options": [
+            "게이트 단면",
+            "n형 S/D·콘택"
+          ],
+          "default": "게이트 단면",
+          "description": "게이트 횡단면과 독립적인 S/D 국소 단면을 선택합니다. 둘을 연결한 3D 계산은 아닙니다."
+        },
         {
           "key": "width",
           "label": "Fin 패턴 폭",
@@ -1272,7 +1366,12 @@
           "min": 0.08,
           "max": 0.3,
           "unit": "µm",
-          "step": 0.01
+          "step": 0.01,
+          "when": {
+            "section": [
+              "게이트 단면"
+            ]
+          }
         },
         {
           "key": "depth",
@@ -1281,16 +1380,26 @@
           "min": 0.2,
           "max": 0.5,
           "unit": "µm",
-          "step": 0.01
+          "step": 0.01,
+          "when": {
+            "section": [
+              "게이트 단면"
+            ]
+          }
         },
         {
           "key": "oxide",
-          "label": "High-k 성장량",
+          "label": "HfO₂ 성장량",
           "default": 0.02,
           "min": 0.015,
           "max": 0.04,
           "unit": "µm",
-          "step": 0.005
+          "step": 0.005,
+          "when": {
+            "section": [
+              "게이트 단면"
+            ]
+          }
         },
         {
           "key": "gate",
@@ -1299,13 +1408,58 @@
           "min": 0.03,
           "max": 0.12,
           "unit": "µm",
-          "step": 0.01
+          "step": 0.01,
+          "when": {
+            "section": [
+              "게이트 단면"
+            ]
+          }
+        },
+        {
+          "key": "sd_dose",
+          "label": "S/D 주입량",
+          "default": 10000000000000.0,
+          "min": 1000000000000.0,
+          "max": 100000000000000.0,
+          "step": 1000000000000.0,
+          "unit": "ions/cm²",
+          "when": {
+            "section": [
+              "n형 S/D·콘택"
+            ]
+          },
+          "description": "Deep S/D 주입량입니다. Extension 주입량은 이 값의 10%입니다."
+        },
+        {
+          "key": "sd_anneal",
+          "label": "활성화 시간",
+          "default": 20,
+          "min": 1,
+          "max": 120,
+          "step": 1,
+          "unit": "s",
+          "when": {
+            "section": [
+              "n형 S/D·콘택"
+            ]
+          },
+          "description": "1000 °C에서 마지막 주입 이후 활성화하는 시간입니다."
         }
       ],
-      "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다.",
+      "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다. S/D·콘택은 독립적인 국소 2D 학습 모듈이며 게이트 횡단면과 결합한 3D 해석이 아닙니다.",
       "unit": "µm",
       "mode": "physics",
-      "section": "게이트 중심 횡단면"
+      "section": "게이트 중심 횡단면",
+      "flow": [
+        "photo",
+        "etch",
+        "photo",
+        "deposition",
+        "cmp",
+        "etch",
+        "deposition",
+        "deposition"
+      ]
     },
     {
       "id": "gaafet",
@@ -1316,8 +1470,18 @@
       "model": "Native process flow",
       "source": "https://semiconductor.samsung.com/news-events/tech-blog/gaa-dtco-for-ppa/",
       "description": "게이트 중심 횡단면 · S/D는 화면 밖",
-      "note": "Nanowire GAA 게이트 횡단면. Si/SiGe 적층은 형상 성장 근사이며 결정 성장·strain은 제외합니다. S/D는 화면 밖에 있습니다.",
+      "note": "GAA 게이트 횡단면. Si/SiGe 적층은 형상 성장 근사이며 결정 성장·strain은 제외합니다. S/D는 화면 밖에 있습니다. S/D·콘택은 독립적인 국소 2D 학습 모듈이며 게이트 횡단면과 결합한 3D 해석이 아닙니다.",
       "fields": [
+        {
+          "key": "section",
+          "label": "관찰 단면",
+          "options": [
+            "게이트 단면",
+            "n형 S/D·콘택"
+          ],
+          "default": "게이트 단면",
+          "description": "게이트 횡단면과 독립적인 S/D 국소 단면을 선택합니다. 둘을 연결한 3D 계산은 아닙니다."
+        },
         {
           "key": "width",
           "label": "Wire 패턴 폭",
@@ -1325,7 +1489,12 @@
           "min": 0.06,
           "max": 0.1,
           "unit": "µm",
-          "step": 0.01
+          "step": 0.01,
+          "when": {
+            "section": [
+              "게이트 단면"
+            ]
+          }
         },
         {
           "key": "channel",
@@ -1334,19 +1503,54 @@
           "min": 0.04,
           "max": 0.08,
           "unit": "µm",
-          "step": 0.01
+          "step": 0.01,
+          "when": {
+            "section": [
+              "게이트 단면"
+            ]
+          }
+        },
+        {
+          "key": "sd_dose",
+          "label": "S/D 주입량",
+          "default": 10000000000000.0,
+          "min": 1000000000000.0,
+          "max": 100000000000000.0,
+          "step": 1000000000000.0,
+          "unit": "ions/cm²",
+          "when": {
+            "section": [
+              "n형 S/D·콘택"
+            ]
+          },
+          "description": "Deep S/D 주입량입니다. Extension 주입량은 이 값의 10%입니다."
+        },
+        {
+          "key": "sd_anneal",
+          "label": "활성화 시간",
+          "default": 20,
+          "min": 1,
+          "max": 120,
+          "step": 1,
+          "unit": "s",
+          "when": {
+            "section": [
+              "n형 S/D·콘택"
+            ]
+          },
+          "description": "1000 °C에서 마지막 주입 이후 활성화하는 시간입니다."
         }
       ],
       "flow": [
-        "Nanowire · sacrificial layer",
-        "Nanowire · Si channel layer",
-        "Nanowire · channel pattern",
-        "Nanowire · Si etch",
-        "Nanowire · SiGe etch",
-        "Nanowire · PR strip",
-        "Nanowire · channel release",
-        "Nanowire · gate dielectric",
-        "Nanowire · wrap gate"
+        "Channel · sacrificial layer",
+        "Channel · Si channel layer",
+        "Channel · channel pattern",
+        "Channel · Si etch",
+        "Channel · SiGe etch",
+        "Channel · PR strip",
+        "Channel · channel release",
+        "Channel · gate dielectric",
+        "Channel · wrap gate"
       ],
       "sources": [
         {
@@ -1366,13 +1570,28 @@
       "description": "분리된 Si nanosheet를 게이트가 둘러싸는 구조입니다.",
       "fields": [
         {
+          "key": "section",
+          "label": "관찰 단면",
+          "options": [
+            "게이트 단면",
+            "n형 S/D·콘택"
+          ],
+          "default": "게이트 단면",
+          "description": "게이트 횡단면과 독립적인 S/D 국소 단면을 선택합니다. 둘을 연결한 3D 계산은 아닙니다."
+        },
+        {
           "key": "sheets",
           "label": "Si 채널 수",
           "default": 3,
           "min": 2,
           "max": 4,
           "unit": "층",
-          "step": 1
+          "step": 1,
+          "when": {
+            "section": [
+              "게이트 단면"
+            ]
+          }
         },
         {
           "key": "width",
@@ -1381,7 +1600,12 @@
           "min": 0.14,
           "max": 0.4,
           "unit": "µm",
-          "step": 0.01
+          "step": 0.01,
+          "when": {
+            "section": [
+              "게이트 단면"
+            ]
+          }
         },
         {
           "key": "thickness",
@@ -1390,7 +1614,12 @@
           "min": 0.025,
           "max": 0.06,
           "unit": "µm",
-          "step": 0.005
+          "step": 0.005,
+          "when": {
+            "section": [
+              "게이트 단면"
+            ]
+          }
         },
         {
           "key": "gap",
@@ -1399,13 +1628,70 @@
           "min": 0.04,
           "max": 0.08,
           "unit": "µm",
-          "step": 0.01
+          "step": 0.01,
+          "when": {
+            "section": [
+              "게이트 단면"
+            ]
+          }
+        },
+        {
+          "key": "sd_dose",
+          "label": "S/D 주입량",
+          "default": 10000000000000.0,
+          "min": 1000000000000.0,
+          "max": 100000000000000.0,
+          "step": 1000000000000.0,
+          "unit": "ions/cm²",
+          "when": {
+            "section": [
+              "n형 S/D·콘택"
+            ]
+          },
+          "description": "Deep S/D 주입량입니다. Extension 주입량은 이 값의 10%입니다."
+        },
+        {
+          "key": "sd_anneal",
+          "label": "활성화 시간",
+          "default": 20,
+          "min": 1,
+          "max": 120,
+          "step": 1,
+          "unit": "s",
+          "when": {
+            "section": [
+              "n형 S/D·콘택"
+            ]
+          },
+          "description": "1000 °C에서 마지막 주입 이후 활성화하는 시간입니다."
         }
       ],
-      "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다.",
+      "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다. S/D·콘택은 독립적인 국소 2D 학습 모듈이며 게이트 횡단면과 결합한 3D 해석이 아닙니다.",
       "unit": "µm",
       "mode": "physics",
-      "section": "게이트 중심 횡단면"
+      "section": "게이트 중심 횡단면",
+      "flow": [
+        "deposition",
+        "deposition",
+        "deposition",
+        "deposition",
+        "deposition",
+        "deposition",
+        "photo",
+        "etch",
+        "etch",
+        "etch",
+        "etch",
+        "etch",
+        "etch",
+        "photo",
+        "deposition",
+        "cmp",
+        "etch",
+        "etch",
+        "deposition",
+        "deposition"
+      ]
     },
     {
       "id": "charge-trap",
@@ -1467,7 +1753,14 @@
         "Tunnel-oxide etch",
         "PR strip",
         "Source / drain implant",
-        "Activation anneal"
+        "Activation anneal",
+        "ILD deposition",
+        "ILD planarization",
+        "S/D + gate contact openings",
+        "Contact-hole etch · ILD",
+        "Contact PR strip",
+        "W contact fill",
+        "Contact metal CMP"
       ],
       "sources": [
         {
@@ -1491,8 +1784,19 @@
       "model": "Native process flow",
       "source": "https://download.intel.com/newsroom/archive/2025/en-us-2023-12-09-intel-demonstrates-breakthroughs-in-nextgeneration-transistor-scaling-for-future-nodes.pdf",
       "description": "게이트 중심 횡단면 · S/D는 화면 밖",
-      "note": "상하 채널과 분리된 게이트를 갖는 순차 적층 학습 단면. 상부 결정층 형성은 준비된 층의 형상 근사입니다. N/P 전기 동작·접촉·backside power는 제외합니다.",
+      "note": "상하 채널과 분리된 게이트를 갖는 순차 적층 학습 단면. 상부 결정층 형성은 준비된 층의 형상 근사입니다. N/P 전기 동작·접촉·backside power는 제외합니다. S/D·콘택은 독립적인 국소 2D 학습 모듈이며 게이트 횡단면과 결합한 3D 해석이 아닙니다.",
       "fields": [
+        {
+          "key": "section",
+          "label": "관찰 단면",
+          "options": [
+            "게이트 단면",
+            "n형 S/D·콘택",
+            "p형 S/D·콘택"
+          ],
+          "default": "게이트 단면",
+          "description": "게이트 횡단면과 독립적인 S/D 국소 단면을 선택합니다. 둘을 연결한 3D 계산은 아닙니다."
+        },
         {
           "key": "width",
           "label": "채널 패턴 폭",
@@ -1500,7 +1804,12 @@
           "min": 0.12,
           "max": 0.24,
           "unit": "µm",
-          "step": 0.01
+          "step": 0.01,
+          "when": {
+            "section": [
+              "게이트 단면"
+            ]
+          }
         },
         {
           "key": "channel",
@@ -1509,7 +1818,12 @@
           "min": 0.04,
           "max": 0.08,
           "unit": "µm",
-          "step": 0.01
+          "step": 0.01,
+          "when": {
+            "section": [
+              "게이트 단면"
+            ]
+          }
         },
         {
           "key": "isolation",
@@ -1518,7 +1832,44 @@
           "min": 0.04,
           "max": 0.09,
           "unit": "µm",
-          "step": 0.01
+          "step": 0.01,
+          "when": {
+            "section": [
+              "게이트 단면"
+            ]
+          }
+        },
+        {
+          "key": "sd_dose",
+          "label": "S/D 주입량",
+          "default": 10000000000000.0,
+          "min": 1000000000000.0,
+          "max": 100000000000000.0,
+          "step": 1000000000000.0,
+          "unit": "ions/cm²",
+          "when": {
+            "section": [
+              "n형 S/D·콘택",
+              "p형 S/D·콘택"
+            ]
+          },
+          "description": "Deep S/D 주입량입니다. Extension 주입량은 이 값의 10%입니다."
+        },
+        {
+          "key": "sd_anneal",
+          "label": "활성화 시간",
+          "default": 20,
+          "min": 1,
+          "max": 120,
+          "step": 1,
+          "unit": "s",
+          "when": {
+            "section": [
+              "n형 S/D·콘택",
+              "p형 S/D·콘택"
+            ]
+          },
+          "description": "1000 °C에서 마지막 주입 이후 활성화하는 시간입니다."
         }
       ],
       "flow": [

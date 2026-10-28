@@ -30,16 +30,17 @@ async function select(id){if(busy||window.reverseLab?.busy)return;if(window.reve
  history.replaceState(null,'','#'+id);$('model-badge').textContent=representation();$('view-note').textContent=viewNote();$('axis-type').textContent=id==='gds'?'MASK · X–Y':id==='finfet'?'GATE CENTER · X–Y':'X–Y';$('provenance').textContent=selected.mode==='geometry'?'◉ 공정 모델 기하 공정 · 치수 기반 형상 계산':selected.mode==='mask'?'◉ 동봉된 GDS layer 0 · 원본과 블러 결과':'◉ 재료 경계는 공정 모델의 중간 계산 결과입니다.';
  const params=current?current.params:defaults(selected);
  $('fields').innerHTML=selected.fields.map(f=>f.options?`<div class="field"><label for="number-${f.key}">${f.label}</label><select id="number-${f.key}">${f.options.map(v=>`<option value="${v}" ${v===params[f.key]?'selected':''}>${v}</option>`).join('')}</select></div>`:`<div class="field"><div class="field-top"><label for="number-${f.key}">${f.label}</label><div class="number-wrap"><input id="number-${f.key}" type="number" min="${f.min}" max="${f.max}" step="any" value="${shortNumber(params[f.key])}" required><span>${f.unit}</span></div></div><input id="range-${f.key}" aria-label="${f.label} 조절" type="range" min="${f.min}" max="${f.max}" step="${f.key.includes('dose')?'any':f.step}" value="${params[f.key]}"><div class="range-labels"><span>${shortNumber(f.min)}</span><span>${shortNumber(f.max)}</span></div></div>`).join('');
- selected.fields.forEach(f=>{const n=$('number-'+f.key),r=$('range-'+f.key);if(!r){n.addEventListener('change',dirty);return}r.addEventListener('input',()=>{n.value=shortNumber(Number(r.value));dirty()});n.addEventListener('input',()=>{r.value=n.value;dirty()})});
- $('pending').hidden=true;
+ selected.fields.forEach(f=>{const n=$('number-'+f.key),r=$('range-'+f.key);if(!r){n.addEventListener('change',()=>{dirty();fieldVisibility()});return}r.addEventListener('input',()=>{n.value=shortNumber(Number(r.value));dirty()});n.addEventListener('input',()=>{r.value=n.value;dirty()})});
+ fieldVisibility();$('pending').hidden=true;
  if(current){frame=current.previewFrame??current.frames.length-1;updateAll();status('마지막 계산 결과를 불러왔습니다.');$('loading').hidden=true;}else{frame=0;$('timeline').innerHTML='<div class="empty-timeline">새 예제의 공정 단계를 계산하고 있습니다.</div>';$('legend').textContent='';$('frame-label').textContent='계산 준비';$('step-count').textContent='0 / 0';for(const id of ['metric-low','metric-high','metric-frames','metric-time'])$(id).textContent='—';$('insight-title').textContent='이번 공정의 관찰 포인트';$('insight').textContent=tips[id];drawMain();await run();}
 }
+function fieldVisibility(){const p=values();selected.fields.forEach(f=>{$('number-'+f.key).closest('.field').hidden=!!f.when&&!Object.entries(f.when).every(([k,v])=>v.includes(p[k]))})}
 async function request(path,options={}){try{const response=await fetch(path,{...options,signal:options.signal||AbortSignal.timeout(190000)});let data;try{data=await response.json()}catch{throw Error('서버 응답을 읽지 못했습니다. 잠시 후 다시 실행하세요.')}if(!response.ok)throw Error(data.error||'요청을 처리하지 못했습니다.');return data}catch(e){if(e.name==='TimeoutError')throw Error('응답 시간이 초과됐습니다. 잠시 후 다시 실행하세요.');if(e instanceof TypeError)throw Error('서버 연결이 끊겼습니다. 연결을 확인한 뒤 다시 실행하세요.');throw e}}
-async function run(){if(busy||!selected)return;if(!$('condition-form').reportValidity())return;const params=values(),id=selected.id;setBusy(true);let elapsed=0;status('단계별 단면 계산 중…');const tick=setInterval(()=>status(`계산 중 · ${++elapsed}초 경과`),1000);
+async function run(){if(busy||!selected)return;if(!$('condition-form').reportValidity())return;const params=values(),id=selected.id,hadResult=!!current&&current.params.section===params.section;setBusy(true);let elapsed=0;status('단계별 단면 계산 중…');const tick=setInterval(()=>status(`계산 중 · ${++elapsed}초 경과`),1000);
  try{const job=await request('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({example:id,params})});let result=job.result;
   for(let i=0;!result&&i<260;i++){const info=await request('/api/jobs/'+job.job);if(info.state==='error')throw Error(info.error);if(info.state==='done'){result=info.result;break;}await new Promise(r=>setTimeout(r,600));}
   if(!result)throw Error('계산 응답 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요.');
-  current=result;lastResults.set(id,result);if(!result.failure&&!references.has(id))references.set(id,result);frame=result.previewFrame??result.frames.length-1;clearInterval(tick);setBusy(false);updateAll();status(result.failure?`STEP ${result.failure.step} · ${result.failure.message}`:result.cached?'동일 조건의 계산 결과를 불러왔습니다.':`계산 완료 · ${result.elapsed.toFixed(2)}초`,!!result.failure);$('pending').hidden=true;
+  current=result;lastResults.set(id,result);if(!result.failure&&!references.has(id))references.set(id,result);frame=hadResult?Math.min(frame,result.frames.length-1):(result.previewFrame??result.frames.length-1);clearInterval(tick);setBusy(false);updateAll();status(result.failure?`STEP ${result.failure.step} · ${result.failure.message}`:result.cached?'동일 조건의 계산 결과를 불러왔습니다.':`계산 완료 · ${result.elapsed.toFixed(2)}초`,!!result.failure);$('pending').hidden=true;
  }catch(e){clearInterval(tick);setBusy(false);status(e.message,true);toast(e.message);if(current)updateAll();else $('timeline').innerHTML='<div class="empty-timeline">조건을 확인하고 시뮬레이션을 다시 실행해 주세요.</div>';}
 }
 function combinedBounds(result,reference){if(!reference)return result.bounds;return [Math.min(result.bounds[0],reference.bounds[0]),Math.max(result.bounds[1],reference.bounds[1]),Math.min(result.bounds[2],reference.bounds[2]),Math.max(result.bounds[3],reference.bounds[3])]}
@@ -84,7 +85,7 @@ function draw(canvas,data,bounds,options={}){
   for(const {id,a,b,light} of faces){c.fillStyle=shade(materialStyle(id).color,light);c.beginPath();c.moveTo(px(a[0]),py(a[1]));c.lineTo(px(b[0]),py(b[1]));c.lineTo(px(b[0])+extra,py(b[1])-extra);c.lineTo(px(a[0])+extra,py(a[1])-extra);c.closePath();c.fill();}
  }
 
- for(const [id,polys] of grouped){const densityVisible=options.doping&&data.concentration?.fields[options.dopingField||(data.concentration.fields.net_active?'net_active':'net_total')];const color=id===10&&(densityVisible||options.neutralSilicon)?'#edf1f6':materialStyle(id).color;c.fillStyle=color;c.strokeStyle=shade(color,.85);c.lineWidth=mini?.45:.7;c.beginPath();for(const poly of polys){poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));if(poly.closed)c.closePath()}c.fill('evenodd');c.stroke();}
+ for(const [id,polys] of grouped){const densityVisible=options.doping&&data.concentration?.fields[options.dopingField||(data.concentration.fields.net_active?'net_active':'net_total')];const color=materialStyle(id).color;c.fillStyle=color;c.strokeStyle=shade(color,.85);c.lineWidth=mini?.45:.7;c.beginPath();for(const poly of polys){poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));if(poly.closed)c.closePath()}c.fill('evenodd');c.stroke();}
  if(options.reference){c.strokeStyle='#a85b00';c.lineWidth=1.4;c.setLineDash([5,4]);for(const poly of options.reference.polygons){c.beginPath();poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.stroke()}c.setLineDash([]);}
  if(options.doping&&data.concentration){
   const d=data.concentration,values=d.fields[options.dopingField||(d.fields.net_active?'net_active':'net_total')];
@@ -94,12 +95,12 @@ function draw(canvas,data,bounds,options={}){
 }
 function drawMain(){
  const data=current?.frames[frame],hasDoping=!!data?.concentration,field=$('doping-field').value;
- $('doping-tools').hidden=!hasDoping;const siLegend=$('legend').querySelector('[data-material="10"] i');if(siLegend)siLegend.style.background=hasDoping&&$('show-doping').checked&&data.concentration.fields[field]?'#edf1f6':materialStyle(10).color;
- let caption=selected?.section||'2D 단면';
- if(hasDoping){const values=data.concentration.fields[field];caption=values?`${field==='net_total'?'총':'활성'} 순 도핑 · 파랑 n형 / 분홍 p형 · 10¹⁴–10²⁰ cm⁻³`:'열처리 전 · 활성 농도 미계산';}
+ $('doping-tools').hidden=!hasDoping;const siLegend=$('legend').querySelector('[data-material="10"] i');if(siLegend)siLegend.style.background=materialStyle(10).color;
+ let caption=current?.section||selected?.section||'2D 단면';
+ if(hasDoping){const sectionCaption=current?.view&&current.view!=='gate'?caption+' · ':'';const values=data.concentration.fields[field];caption=sectionCaption+(values?`${field==='net_total'?'총':'활성'} 순 도핑 · 파랑 n형 / 분홍 p형 · 10¹⁴–10²⁰ cm⁻³`:'열처리 전 · 활성 농도 미계산');}
  else if(data?.metrics?.topGrowthUm!=null){caption+=` · 이번 단계 상부 성장 ${(data.metrics.topGrowthUm*1000).toFixed(1)} nm`;if(data.metrics.stepCoverage!=null)caption+=` · 측벽 피복 ${(data.metrics.stepCoverage*100).toFixed(0)}%`;}
  $('section-caption').textContent=caption+(mode==='2.5d'?' · 표시용 돌출 보기':'');
- const reference=$('compare').checked?references.get(selected?.id):null;
+ const saved=references.get(selected?.id),reference=$('compare').checked&&saved?.params?.section===current?.params?.section?saved:null;
  draw($('section'),data,current?combinedBounds(current,reference):null,{extrude:mode==='2.5d',reference:reference?refFrame():null,doping:$('show-doping').checked,dopingField:field});
 }
 // Reveal only within the horizontal timeline; never move the document viewport.
@@ -117,14 +118,14 @@ function updateAll(){if(!current)return;$('download-image').disabled=false;$('ex
 }
 function download(blob,name){const link=document.createElement('a'),url=URL.createObjectURL(blob);link.href=url;link.download=name;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
 $('condition-form').addEventListener('submit',e=>{e.preventDefault();run()});
-$('reset').addEventListener('click',()=>{selected.fields.forEach(f=>{$('number-'+f.key).value=f.options?f.default:shortNumber(f.default);if($('range-'+f.key))$('range-'+f.key).value=f.default});dirty();status('기본 조건으로 바꿨습니다. 실행하면 결과를 갱신합니다.')});
+$('reset').addEventListener('click',()=>{selected.fields.forEach(f=>{$('number-'+f.key).value=f.options?f.default:shortNumber(f.default);if($('range-'+f.key))$('range-'+f.key).value=f.default});fieldVisibility();dirty();status('기본 조건으로 바꿨습니다. 실행하면 결과를 갱신합니다.')});
 $('show-doping').addEventListener('change',drawMain);$('doping-field').addEventListener('change',drawMain);
 $('compare').addEventListener('change',()=>{drawMain();$('reference-status').textContent=$('compare').checked?'주황 점선: 기준의 같은 진행률':'예제별 기준 결과 저장됨'});
 $('pin-reference').addEventListener('click',()=>{references.set(selected.id,current);drawMain();toast('현재 결과를 비교 기준으로 저장했습니다.')});
 for(const [id,next] of [['view2d','2d'],['view25d','2.5d']])$(id).addEventListener('click',()=>{mode=next;$('view2d').classList.toggle('active',next==='2d');$('view25d').classList.toggle('active',next==='2.5d');$('view2d').setAttribute('aria-pressed',String(next==='2d'));$('view25d').setAttribute('aria-pressed',String(next==='2.5d'));$('view-note').textContent=viewNote();drawMain()});
 $('play').addEventListener('click',()=>{if(timer){stop();return}if(!current)return;if(frame>=current.frames.length-1)frame=0;updateFrame();$('play').textContent='Ⅱ 일시정지';timer=setInterval(()=>{if(frame>=current.frames.length-1){stop();return}frame++;updateFrame();revealFrame()},850)});
-$('download-image').addEventListener('click',()=>{$('section').toBlob(blob=>{if(blob)download(blob,`simulation-${selected.id}-step-${frame+1}.png`)});});
-$('export-json').addEventListener('click',()=>{if(window.reverseLab?.active){window.reverseLab.save();return}if(current)download(new Blob([JSON.stringify(current,null,2)],{type:'application/json'}),`simulation-${selected.id}.json`)});
+$('download-image').addEventListener('click',()=>{$('section').toBlob(blob=>{if(blob)download(blob,`ProcessTrace-${selected.id}-step-${frame+1}.png`)});});
+$('export-json').addEventListener('click',()=>{if(window.reverseLab?.active){window.reverseLab.save();return}if(current)download(new Blob([JSON.stringify(current,null,2)],{type:'application/json'}),`ProcessTrace-${selected.id}.json`)});
 new ResizeObserver(()=>{drawMain();if(current)document.querySelectorAll('.frame-card').forEach((el,i)=>draw(el.querySelector('canvas'),current.frames[i],current.bounds,{mini:true,doping:true,dopingField:'net_total'}))}).observe($('section').parentElement);
 (async()=>{try{const info=await request('/api/catalog');catalog=info.examples;$('example-total').textContent=catalog.length;$('library-count').textContent=catalog.length;$('engine').innerHTML=info.engine;const requested=location.hash.slice(1);await select(catalog.some(s=>s.id===requested)?requested:'bosch')}catch(e){$('loading').hidden=true;status('서버에 연결하지 못했습니다. 시작 파일을 실행해 주세요.',true);toast(e.message)}})();
 

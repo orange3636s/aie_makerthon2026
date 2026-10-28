@@ -4,6 +4,13 @@ from reverse_catalog import BY_TARGET,dep,ald,photo,etch,strip,remove,step
 
 def run(spec,p):
     from reverse_engine import run as simulate
+    if p.get('section','게이트 단면')!='게이트 단면':
+        from contact_modules import sd_section
+        section=sd_section(spec['id'],'B' if p['section']=='p형 S/D·콘택' else 'P',p)
+        from reverse_engine import run as section_run
+        result=section_run(dict(target=spec['id'],view='sd-p' if p['section']=='p형 S/D·콘택' else 'sd',steps=section['recipe']))
+        result.update(params=p,mode='physics',note=section['assumptions'],source=spec['source'],previewFrame=len(result['frames'])-1)
+        return result
     kind=spec['id'];recipe=copy.deepcopy(BY_TARGET[kind]['recipe'])
     if kind=='mosfet':
         recipe[0]=ald('SiO2',p['oxide']);recipe[2]=photo(p['length']);recipe[5]=etch('SiO2',p['oxide']+.01);recipe[8]=ald('Si3N4',p['spacer']);recipe[9]=etch('Si3N4',p['spacer']+.005)

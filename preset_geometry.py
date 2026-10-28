@@ -120,7 +120,7 @@ def run(spec,p):
             outer=rect(32,-a-k,y0-k,a+k,y1+k)
             oxide += [outer,rect(32,-a,y0,a,y1)]
             gate.append(rect(79,-a-k,y0-k,a+k,y1+k))
-        snap('High-k · Gate 형성',finbase+sti+channels+gate+oxide)
+        snap('HfO₂ · TiN 형성',finbase+sti+channels+gate+oxide)
         bounds=[-.57,.57,-.24,top+.12]
     elif kind=='planarization':
         h=p['height'];film=p['film'];target=p['target'];extent=1.2
@@ -183,7 +183,7 @@ def compact_native(result):
         'sf6':[(0,'마스크 · Si'),(3,'SF₆/O₂ 식각 · 중간'),(n-1,'SF₆/O₂ 식각 · 최종')],
         'locos':[(0,'Pad oxide · 질화막'),(3,'선택 열산화'),(4,'질화막 제거')],
         'mosfet':[(0,'Si 기판'),(1,'게이트 산화막'),(3,'게이트 증착 · 식각'),(5,'스페이서 형성'),(7,'절연막 충전 · CMP'),(n-1,'접촉부 형성')],
-        'finfet':[(0,'Si 기판'),(3,'Fin 식각'),(6,'STI 충전 · Recess'),(7,'High-k 증착'),(n-1,'게이트 형성')],
+        'finfet':[(0,'Si 기판'),(3,'Fin 식각'),(6,'STI 충전 · Recess'),(7,'HfO₂ 증착'),(n-1,'게이트 형성')],
         'fin':[(0,'Si 기판'),(3,'Fin 식각'),(5,'산화막 충전 · CMP'),(n-1,'STI Recess')],
     }.get(kind,[(i,f['label']) for i,f in enumerate(frames)])
     result['frames']=[dict(frames[i],label=label,progress=j/(len(selections)-1)) for j,(i,label) in enumerate(selections)]

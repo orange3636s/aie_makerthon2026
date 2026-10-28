@@ -27,7 +27,7 @@ def verify(ex,params,save=False):
         lo,hi=extent(poly,11);assert lo<-.1 and hi>.08,'recess gate must cross the wafer surface'
         assert {10,11,16,30}<=mats
     elif kind=='bcat':
-        lo,hi=extent(poly,5);assert hi<.015 and lo<-.1,'gate must remain buried'
+        buried=next(f for f in d['frames'] if f['label']=='Cap CMP');lo,hi=extent(buried['polygons'],70);assert hi<.015 and lo<-.1,'gate must remain buried'
         assert 16 in mats and 'concentration' in f
     elif kind in ('fdsoi','pdsoi'):
         body=params.get('body',.04 if kind=='fdsoi' else .16)
@@ -41,7 +41,7 @@ def verify(ex,params,save=False):
         assert len([q for q in poly if q['material']==10])>= (3 if kind=='cfet' else 2),'released Si channel missing'
         assert {32,79}<=mats
         if kind=='cfet':
-            assert extent(poly,5)[0]-extent(poly,79)[1]>.025,'upper/lower gate isolation lost'
+            assert extent(poly,70)[0]-extent(poly,79)[1]>.025,'upper/lower gate isolation lost'
             assert 30 in mats
     elif kind=='charge-trap':
         assert {10,11,16,30}<=mats
@@ -60,11 +60,11 @@ def verify(ex,params,save=False):
 examples=[e for e in json.loads((ROOT/'catalog.json').read_text(encoding='utf-8'))['examples'] if e['id'] in SOURCES]
 for ex in examples:
     check(ex['id']+':default',lambda ex=ex:verify(ex,{},True))
-    for f in ex['fields']:
+    for f in [f for f in ex['fields'] if 'options' not in f and not f['key'].startswith('sd_')]:
         for edge in ('min','max'):
             check(f"{ex['id']}:{f['key']}:{edge}",lambda ex=ex,f=f,edge=edge:verify(ex,{f['key']:f[edge]}))
     for edge in ('min','max'):
-        check(ex['id']+':all-'+edge,lambda ex=ex,edge=edge:verify(ex,{f['key']:f[edge] for f in ex['fields']}))
+        check(ex['id']+':all-'+edge,lambda ex=ex,edge=edge:verify(ex,{f['key']:f[edge] for f in ex['fields'] if 'options' not in f and not f['key'].startswith('sd_')}))
 
 def reference_matches():
     catalog=json.loads((ROOT/'reverse-catalog.json').read_text(encoding='utf-8'))

@@ -9,7 +9,7 @@ def choice(key,label,options,default,when=None):
     d=dict(key=key,label=label,options=options,default=default)
     if when:d['when']=when
     return d
-MATERIALS=['Si','SiO2','Si3N4','SiGe','PolySi','HfO2','TiN','Metal','Dielectric']
+MATERIALS=['Si','SiO2','Si3N4','SiGe','PolySi','HfO2','TiN','W','Co','Mo','Metal','Dielectric']
 OPS=[
  dict(id='photo',title='Photo',model='Conformal PR + Boolean mask',fields=[
   choice('action','작업',['Pattern','Strip'],'Pattern'),
@@ -79,6 +79,15 @@ dict(id='locos',title='LOCOS',width=1.6,bounds=[-.8,.8,-.3,.35],roi=[-.72,.72,-.
 ]
 from advanced_devices import targets as advanced_targets
 TARGETS.extend(advanced_targets())
+from contact_modules import contacts,sd_section
+for t in TARGETS:
+    if t['id']=='mosfet':
+        t['recipe']=t['recipe'][:10]+contacts()
+        t['recipe'][6]['label']='Source / drain implant · P'
+        t['recipe'][7]['label']='Dopant activation'
+    if t['id'] in ('finfet','gaafet','mbcfet','cfet'):
+        t['sections']={'sd':sd_section(t['id'])}
+        if t['id']=='cfet':t['sections']['sd-p']=sd_section(t['id'],'B')
 DEVICE_ORDER=('pn-junction','mosfet','fdsoi','pdsoi','rcat','bcat','finfet','gaafet','mbcfet','charge-trap','cfet')
 TARGETS.sort(key=lambda target: (target['id'] in DEVICE_ORDER, DEVICE_ORDER.index(target['id']) if target['id'] in DEVICE_ORDER else 0))
 for target in TARGETS:
@@ -111,6 +120,10 @@ def validate(data):
         if not isinstance(label,str) or len(label)>80:raise ValueError('공정 이름은 80자 이내입니다.')
         clean.append(dict(op=row['op'],params=params,**({'label':label} if label else {})))
     target=BY_TARGET[data['target']]
+    view=data.get('view','gate')
+    if view!='gate':
+        if view not in target.get('sections',{}):raise ValueError('지원하지 않는 단면입니다.')
+        target=dict(target,**target['sections'][view],view=view)
     if 'wafer' in data:
         w=data['wafer'];limits={'fdsoi':(.03,.06),'pdsoi':(.12,.22)}
         if target['id'] not in limits or not isinstance(w,dict) or set(w)!={'body','box'}:raise ValueError('지원하지 않는 웨이퍼입니다.')
