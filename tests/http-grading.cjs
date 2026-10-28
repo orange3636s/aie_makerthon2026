@@ -11,9 +11,15 @@ async function simulate(payload){const job=await request('/api/reverse',payload)
  for(const id of ['mosfet','rcat','charge-trap']){
   const t=catalog.targets.find(t=>t.id===id),ref=await request('/api/reference/'+id);
   assert.equal(t.assessment.version,2);assert.equal(compare(ref.frames.at(-1),ref.frames.at(-1),t.roi,t).score,100);
+  const baseline=await simulate({target:id,steps:t.recipe});assert.equal(baseline.failure,null);
+  assert(compare(ref.frames.at(-1),baseline.frames.at(-1),t.roi,t).score>=99,'native answer remains near the saved reference');
   const steps=t.recipe.filter(s=>s.op!=='diffusion'),result=await simulate({target:id,steps});
   assert.equal(result.failure,null);const g=compare(ref.frames.at(-1),result.frames.at(-1),t.roi,t);
-  assert.equal(g.score,50);assert.equal(g.components.geometry,1);assert.equal(g.components.total,0);assert.equal(g.components.process,0);
+  // Native Windows/Linux contour extraction differs slightly. The causal
+  // invariant (removing dopants does not change geometry) is tested within the
+  // same runtime; saved-reference agreement separately allows 0.5% raster error.
+  assert.equal(compare(baseline.frames.at(-1),result.frames.at(-1),t.roi,t).components.geometry,1);
+  assert.equal(g.score,50);assert(g.components.geometry>=.995);assert.equal(g.components.total,0);assert.equal(g.components.process,0);
   console.log(id,'HTTP native no-doping:',g.score,'reference: 100');
  }
  if(process.argv.includes('--presets')){

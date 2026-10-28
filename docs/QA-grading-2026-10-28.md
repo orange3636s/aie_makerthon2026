@@ -71,3 +71,11 @@ not been added or claimed.
 
 Runtime: pinned ViennaPS 4.6.2 geometry + 4.7 transport worker, CPU, Windows x64.
 Machine-readable native reports are generated at `.runtime/grading-v2/report.json`.
+
+Production Linux verification: MOSFET, RCAT and CTF with omitted doping score 50;
+RCAT and CTF canonical native recalculations score 100. RCAT has approximately
+0.17% geometry-raster difference from the saved Windows reference. Comparing
+canonical and no-doping results within the same Linux runtime gives IoU 1.
+The HTTP regression therefore tests this causal invariant against a fresh native
+baseline and allows up to 0.5% contour-raster difference across platforms.
+The application grading formula itself was not relaxed for this test.
