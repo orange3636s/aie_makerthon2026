@@ -7,9 +7,13 @@ import viennals as ls
 from engine import contour_mesh
 from reverse_catalog import validate,BY_OP
 from measurements import side_coverage
+from photo_model import openings,complement,DEVELOP_RATE
 
 ROOT=Path(__file__).resolve().parent
 def run(data):
+    from reverse_catalog import BY_TARGET
+    from structure_recipes import modernize
+    if data.get('target') in BY_TARGET:data={**data,'steps':modernize(data.get('steps',[]))}
     target,steps=validate(data);started=time.perf_counter()
     ps.setDimension(2);ls.setDimension(2);ps.setNumThreads(1);ps.Length.setUnit('um');ps.Time.setUnit('s');ps.Logger.setLogLevel(ps.LogLevel.ERROR)
     periodic=target['id']=='locos'
@@ -29,10 +33,25 @@ def run(data):
             ps.MakePlane(d,-body,ps.Material.SiO2,True).apply()
         ps.MakePlane(d,0.,ps.Material.Si,True).apply()
     frames=[];cmp_stop=None;doping_state=None;concentration=None;failure=None;oxidized=False
-    implanted=set();annealed=set();mask_intervals=None;current_step=0
+    implanted=set();diffused=set();annealed=set();mask_intervals=None;current_step=0
+    photo_mask=None;pr_tone='Positive';pr_top=0.;developed_depth=0.;pr_thickness=.06
+    def material(name):return ps.Material(201) if name=='HfZrO2' else getattr(ps.Material,name)
     def box(x0,y0,x1,y1):
         level=ls.Domain(d.getGrid());geom=ls.MakeGeometry(level,ls.Box([x0,y0],[x1,y1]));geom.setIgnoreBoundaryConditions([True,True,False]);geom.apply();return level
     def surface_top():return max(p[1] for p in d.getSurfaceMesh(False).getNodes())
+    def replace_material(selected,level):
+        nonlocal d
+        # Preserve raw material volumes; reinserting Si above the dielectric stack
+        # would otherwise overwrite the material order in a multi-tier device.
+        volumes={}
+        for mat in d.getMaterialsInDomain():
+            v=level if mat==selected else d.getMaterialLevelSet(mat)
+            if v.getNumberOfPoints()==0:continue
+            copy=ls.Domain();copy.deepCopy(v);volumes[mat]=copy
+        rebuilt=ps.Domain(gridDelta=.01,xExtent=width,yExtent=2.,boundary=ps.BoundaryType.REFLECTIVE_BOUNDARY)
+        order=sorted(volumes,key=lambda mat:(0 if mat in (ps.Material.Si,ps.Material.BulkSi) else 2 if mat==ps.Material.Mask else 1,int(mat)))
+        for index,mat in enumerate(order):rebuilt.insertNextLevelSetAsMaterial(volumes[mat],mat,index>0)
+        d=rebuilt
     def ray_params():
         rp=ps.RayTracingParameters();rp.raysPerPoint=120;rp.useRandomSeeds=False;rp.rngSeed=1729;return rp
     def advance(model,t,particles=False):
@@ -52,8 +71,9 @@ def run(data):
         frame=dict(label=label,stepIndex=current_step,polygons=polygons,lowest=min(p[1] for p in surface),highest=max(p[1] for p in surface),metrics=extra or {})
         if frame['highest']>1.5 or frame['lowest']<-.9:raise ValueError('학습 영역을 벗어났습니다. 공정 시간이나 식각률을 줄이세요.')
         if concentration:frame['concentration']=concentration
+        if photo_mask and current_step and steps[current_step-1]['op']=='photo':frame['photoMask']={**photo_mask,'tone':pr_tone,'arrows':steps[current_step-1]['params']['action']=='Develop'}
         # Evidence records completed operations only, independently of user labels.
-        frame['processEvidence']=dict(implantedSpecies=sorted(implanted),annealedSpecies=sorted(annealed))
+        frame['processEvidence']=dict(implantedSpecies=sorted(implanted),diffusedSpecies=sorted(diffused),dopedSpecies=sorted(implanted|diffused),annealedSpecies=sorted(annealed))
         frames.append(frame)
     def transport(op,params):
         nonlocal doping_state,concentration
@@ -67,9 +87,11 @@ def run(data):
         payload=dict(width=target['width'],levels=levels,state=doping_state,operation=op,params=params)
         src=prefix/'input.json';out=prefix/'output.json';src.write_text(json.dumps(payload),encoding='utf-8')
         env={**os.environ,'SIMULATION_DOPING_ENGINE':'1','PYTHONIOENCODING':'utf-8'}
-        r=subprocess.run([sys.executable,str(ROOT/'reverse_transport.py'),str(src),str(out)],env=env,capture_output=True,timeout=35)
+        r=subprocess.run([sys.executable,str(ROOT/'reverse_transport.py'),str(src),str(out)],env=env,capture_output=True,timeout=60)
         if r.returncode:raise ValueError('주입·확산 계산 실패: '+r.stderr.decode('utf-8',errors='replace')[-240:])
-        result=json.loads(out.read_text(encoding='utf-8'));doping_state=result['state'];concentration=result['concentration']
+        result=json.loads(out.read_text(encoding='utf-8'))
+        if result.get('error'):raise ValueError(result['error'])
+        doping_state=result['state'];concentration=result['concentration']
     snap(target.get('initialLabel','Si substrate'))
     for i,row in enumerate(steps):
         current_step=i+1
@@ -78,7 +100,30 @@ def run(data):
             if op=='photo':
                 if p['action']=='Strip':
                     if ps.Material.Mask not in mats:raise ValueError('제거할 PR이 없습니다.')
-                    d.removeMaterial(ps.Material.Mask);label='PR strip';mask_intervals=None
+                    d.removeMaterial(ps.Material.Mask);label='PR strip';mask_intervals=None;photo_mask=None
+                elif p['action']=='Coat':
+                    if ps.Material.Mask in mats:raise ValueError('기존 PR을 먼저 제거하세요.')
+                    d.duplicateTopLevelSet(ps.Material.Mask);advance(ps.SphereDistribution(radius=p['thickness']),0)
+                    pr_tone=p['tone'];pr_top=surface_top();pr_thickness=p['thickness'];developed_depth=0.;photo_mask=None;mask_intervals=None
+                    label='PR coating'
+                elif p['action']=='Patterning':
+                    if ps.Material.Mask not in mats:raise ValueError('PR coating을 먼저 추가하세요.')
+                    if periodic and (p['pattern']!='Double' or p['offset']!=0 or p['pitch']!=.8):raise ValueError('LOCOS는 Double 마스크, 간격 800 nm, 위치 0 nm를 사용합니다.')
+                    photo_mask={k:p[k] for k in ('pattern','width','pitch','offset')};developed_depth=0.;pr_top=surface_top()
+                    label='Patterning'
+                elif p['action']=='Develop':
+                    if ps.Material.Mask not in mats or not photo_mask:raise ValueError('PR coating과 Patterning을 먼저 추가하세요.')
+                    windows=openings(photo_mask,target['width'])
+                    if periodic:windows=[(-width/2,min(width/2,-.2+photo_mask['width']/2))]
+                    dissolving=windows if pr_tone=='Positive' else complement(windows,width)
+                    mask_intervals=complement(dissolving,width)
+                    developed_depth+=DEVELOP_RATE*p['develop_time']
+                    pr=d.getMaterialLevelSet(ps.Material.Mask)
+                    for a,b in dissolving:
+                        ls.BooleanOperation(pr,box(a,pr_top-developed_depth,b,2),ls.BooleanOperationEnum.RELATIVE_COMPLEMENT).apply()
+                    d.removeMaterial(ps.Material.Mask);d.insertNextLevelSetAsMaterial(pr,ps.Material.Mask,True)
+                    metric={'development':dict(intervals=dissolving,fraction=min(1.,developed_depth/pr_thickness),depthNm=round(developed_depth*1000,3))}
+                    label='Developing'
                 else:
                     if ps.Material.Mask in mats:raise ValueError('기존 PR을 먼저 제거하세요.')
                     d.duplicateTopLevelSet(ps.Material.Mask);advance(ps.SphereDistribution(radius=p['thickness']),0)
@@ -114,15 +159,22 @@ def run(data):
                     d.removeMaterial(ps.Material.Mask);d.insertNextLevelSetAsMaterial(pr,ps.Material.Mask,True)
                     label=f"Photo · {p['tone']} PR"
             elif op=='etch':
-                m=getattr(ps.Material,p['material'])
+                if oxidized:
+                    # Rewrap the oxidation solver's mechanical-mask domain for
+                    # generic material-selective level-set evolution.
+                    rebuilt=ps.Domain(gridDelta=.01,xExtent=width,yExtent=2.,boundary=ps.BoundaryType.REFLECTIVE_BOUNDARY)
+                    for name in (ps.Material.Si,ps.Material.SiO2,ps.Material.Si3N4):
+                        if name in d.getMaterialsInDomain():rebuilt.insertNextLevelSetAsMaterial(d.getMaterialLevelSet(name),name,name!=ps.Material.Si)
+                    d=rebuilt;oxidized=False
+                m=material(p['material'])
                 if m not in mats:raise ValueError(p['material']+' 재료가 없습니다.')
                 if p['method']=='Selective removal':
                     if m==ps.Material.Si:raise ValueError('기판 전체 제거는 지원하지 않습니다. 식각률·시간을 지정하세요.')
                     d.removeMaterial(m)
                 elif p['method']=='Pattern transfer':
                     if not mask_intervals:raise ValueError('패턴 전사 식각 전에 PR 마스크를 추가하세요.')
-                    material=d.getMaterialLevelSet(m)
-                    mesh=ls.Mesh();ls.ToSurfaceMesh(material,mesh).apply()
+                    material_level=d.getMaterialLevelSet(m)
+                    mesh=ls.Mesh();ls.ToSurfaceMesh(material_level,mesh).apply()
                     top=max(v[1] for v in mesh.getNodes())
                     # Ideal vertical pattern transfer, explicitly geometric.
                     # The finite etch budget prevents erasing the bulk substrate.
@@ -132,28 +184,42 @@ def run(data):
                         end=max(end,b)
                     if end<width/2:windows.append((end,width/2))
                     for a,b in windows:
-                        ls.BooleanOperation(material,box(a,top-p['rate']*p['time'],b,2),ls.BooleanOperationEnum.RELATIVE_COMPLEMENT).apply()
-                    d.removeMaterial(m);d.insertNextLevelSetAsMaterial(material,m,True)
+                        ls.BooleanOperation(material_level,box(a,top-p['rate']*p['time'],b,2),ls.BooleanOperationEnum.RELATIVE_COMPLEMENT).apply()
+                    d.removeMaterial(m);d.insertNextLevelSetAsMaterial(material_level,m,True)
+                elif p['method']=='Isotropic' and p.get('access')=='Section sides':
+                    # Explicit reduced-dimensional release: the selected film is
+                    # accessible from out-of-plane sides. Other materials stay fixed.
+                    # This is not an exposed-surface transport or 3D chemistry solve.
+                    isolated=ps.Domain(gridDelta=.01,xExtent=width,yExtent=2.,boundary=ps.BoundaryType.REFLECTIVE_BOUNDARY)
+                    level=ls.Domain();level.deepCopy(d.getMaterialLevelSet(m))
+                    isolated.insertNextLevelSetAsMaterial(level,m,False)
+                    ps.Process(isolated,ps.DirectionalProcess(direction=[0.,-1.,0.],directionalVelocity=0.,isotropicVelocity=-p['rate'],maskMaterial=[],calculateVisibility=False),p['time']).apply()
+                    remaining=isolated.getMaterialLevelSet(m)
+                    replace_material(m,remaining)
+                    metric={'accessAssumption':'Out-of-plane film access; isolated-material isotropic retreat','etchBudgetNm':p['rate']*p['time']*1000}
                 else:
-                    ratio=1. if p['method']=='Isotropic' else p['isotropic']
+                    # Effective ALE depth, not a precursor/reaction kinetics model.
+                    ratio=1. if p['method']=='Isotropic' else 0. if p['method']=='ALE' else p['isotropic']
+                    rate=p['epc']*p['cycles'] if p['method']=='ALE' else p['rate']
+                    duration=1. if p['method']=='ALE' else p['time']
                     protected=None
-                    if target.get('projectedMask') and mask_intervals and p['method']=='Directional':
+                    if target.get('projectedMask') and mask_intervals and p['method'] in ('Directional','ALE'):
                         before=d.getMaterialLevelSet(m)
-                        undercut=p['rate']*p['time']*ratio
+                        undercut=rate*duration*ratio
                         for a,b in mask_intervals:
                             if b-a<=2*undercut:continue
                             piece=ls.Domain();piece.deepCopy(before)
                             ls.BooleanOperation(piece,box(a+undercut,-2,b-undercut,2),ls.BooleanOperationEnum.INTERSECT).apply()
                             if protected is None:protected=piece
                             else:ls.BooleanOperation(protected,piece,ls.BooleanOperationEnum.UNION).apply()
-                    advance(ps.DirectionalProcess(direction=[0.,-1.,0.],directionalVelocity=-p['rate']*(1-ratio),isotropicVelocity=-p['rate']*ratio,maskMaterial=[a for a in mats if a!=m]),p['time'])
+                    advance(ps.DirectionalProcess(direction=[0.,-1.,0.],directionalVelocity=-rate*(1-ratio),isotropicVelocity=-rate*ratio,maskMaterial=[a for a in mats if a!=m]),duration)
                     if protected is not None:
                         remaining=d.getMaterialLevelSet(m)
                         ls.BooleanOperation(remaining,protected,ls.BooleanOperationEnum.UNION).apply()
-                        d.removeMaterial(m);d.insertNextLevelSetAsMaterial(remaining,m,True)
+                        replace_material(m,remaining)
                 label=f"Etch · {p['material']}"
             elif op=='deposition':
-                cmp_stop=surface_top();m=getattr(ps.Material,p['material']);d.duplicateTopLevelSet(m)
+                cmp_stop=surface_top();m=material(p['material']);d.duplicateTopLevelSet(m)
                 if p['method']=='Conformal':
                     advance(ps.SphereDistribution(radius=p['rate']*p['time']),0)
                 elif p['method'] in ('PVD','CVD'):
@@ -168,11 +234,36 @@ def run(data):
                 metric={'topGrowthUm':round(surface_top()-cmp_stop,5),'nominalGrowthUm':p['gpc']*p['cycles'] if p['method']=='ALD' else p['rate']*p['time']}
             elif op=='diffusion':
                 if p['method']=='Ion implantation':
-                    transport('implant',p);label=f"Implant · {p['species']}"
+                    saved=None;temporary=p['implant_mask']!='Existing'
+                    if temporary:
+                        if ps.Material.Mask in mats:
+                            saved=ls.Domain();saved.deepCopy(d.getMaterialLevelSet(ps.Material.Mask));d.removeMaterial(ps.Material.Mask)
+                        spans=openings(dict(pattern=p['implant_mask'],width=p['implant_width'],pitch=p['implant_pitch'],offset=p['implant_offset']),width)
+                        stop=complement(spans,width);screen=None;top=surface_top()
+                        for a,b in stop:
+                            piece=box(a,top+.05,b,top+.15)
+                            if screen is None:screen=piece
+                            else:ls.BooleanOperation(screen,piece,ls.BooleanOperationEnum.UNION).apply()
+                        if saved is not None:
+                            if screen is None:screen=ls.Domain();screen.deepCopy(saved)
+                            else:ls.BooleanOperation(screen,saved,ls.BooleanOperationEnum.UNION).apply()
+                        if screen is not None:d.insertNextLevelSetAsMaterial(screen,ps.Material.Mask,True)
+                    try:transport('implant',p)
+                    finally:
+                        if temporary:
+                            d.removeMaterial(ps.Material.Mask)
+                            if saved is not None:d.insertNextLevelSetAsMaterial(saved,ps.Material.Mask,True)
+                    label=f"Implant · {p['species']}"
                     implanted.add(p['species']);annealed.discard(p['species'])
                 elif p['method']=='Anneal':
                     if ps.Material.Mask in mats:raise ValueError('고온 열처리 전에 PR을 제거하세요.')
-                    transport('anneal',p);label='Anneal';annealed.update(implanted)
+                    transport('anneal',p);label='Anneal';annealed.update(implanted|diffused)
+                elif p['method'] in ('Pre-deposition','Drive-in'):
+                    if ps.Material.Mask in mats:raise ValueError('고온 확산 전에 PR을 제거하세요. SiO₂ 또는 Si₃N₄ 확산 마스크를 사용하세요.')
+                    source=p['method']=='Pre-deposition'
+                    transport('predep' if source else 'drivein',p)
+                    if source:diffused.add(p['species'])
+                    annealed.update(implanted|diffused);label=p['method']+(' · '+p['species'] if source else '')
                 else:
                     if doping_state:raise ValueError('도핑 후 열산화의 재분배는 지원하지 않습니다. 산화와 도핑 실험을 분리하세요.')
                     if ps.Material.SiO2 not in mats:raise ValueError('산화 전에 SiO₂ seed 막이 필요합니다.')
@@ -189,7 +280,8 @@ def run(data):
                     advance(model,0);label=p['method'];oxidized=True
             elif op=='cmp':
                 if cmp_stop is None:raise ValueError('증착 후에 Global planarization을 추가하세요.')
-                ps.Planarize(d,cmp_stop).apply();label='Global planarization';metric={'stopHeightUm':cmp_stop}
+                top=surface_top();cut=max(cmp_stop,top-p['rate']*p['time'])
+                ps.Planarize(d,cut).apply();label='C&C';metric={'stopHeightUm':cmp_stop,'cutHeightUm':cut,'removedHeightNm':round((top-cut)*1000,3),'slurryRecord':p['slurry']}
             if doping_state and op!='diffusion':transport('sync',{})
             snap(row.get('label',label),metric)
             if op=='deposition' and not periodic:

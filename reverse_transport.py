@@ -17,6 +17,11 @@ def run(p):
         dop.positions=old['positions'];dop.fields=old['fields'];dop.ready=True;dop.sync()
     if p['operation']=='implant':dop.implant(p['params'])
     elif p['operation']=='anneal':dop.anneal(p['params'])
+    elif p['operation']=='predep':dop.diffuse(p['params'],source=True)
+    elif p['operation']=='drivein':dop.diffuse(p['params'])
     return dict(state=dict(positions=dop.positions,fields=dop.fields),concentration=dop.snapshot())
 
-if __name__=='__main__':Path(sys.argv[2]).write_text(json.dumps(run(json.loads(Path(sys.argv[1]).read_text(encoding='utf-8'))),allow_nan=False),encoding='utf-8')
+if __name__=='__main__':
+    try:result=run(json.loads(Path(sys.argv[1]).read_text(encoding='utf-8')))
+    except ValueError as error:result={'error':str(error)}
+    Path(sys.argv[2]).write_text(json.dumps(result,allow_nan=False),encoding='utf-8')

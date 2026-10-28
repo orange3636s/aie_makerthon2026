@@ -1,6 +1,6 @@
 # ProcessTrace
 
-반도체 공정 관찰 및 역설계 교육 플랫폼. 30종 예제, 21종 역설계 목표를 제공합니다.
+반도체 공정 관찰 및 역설계 교육 플랫폼. 32종 예제, 25종 역설계 목표를 제공합니다.
 
 공개 서비스: [process-trace.vercel.app](https://process-trace.vercel.app/)
 
@@ -32,6 +32,7 @@
 
 ## 계산 범위
 
+- Pre-deposition / Drive-in: FiPy 4.0.3 유한체적 확산. 노출된 Si에 고정 농도를 공급하는 모드와 외부 공급 없이 종별 총량을 보존하는 모드를 구분합니다. B/P 계수는 `annealing.csv`를 사용하며 고용도로 제한한 평형 활성 농도를 함께 표시합니다. 비 Si 막은 완전 차단, 등온·고유 확산 근사입니다. 도펀트 공급 가스 반응, TED, 계면 편석은 계산하지 않습니다.
 - 형상/입자 수송: ViennaPS 4.6.2 / ViennaLS 5.8.5 공식 wheel.
 - 주입/열처리: ViennaPS 4.7.0 공식 CI 빌드의 별도 프로세스. 공개 B/P Pearson-IV 분포와 Arrhenius 확산 계수 사용.
 - PVD/CVD: 공통 유효 입자 모델의 입사 방향성·부착 확률 프리셋. 모든 수치가 같으면 결과도 같습니다. 화면·API·Python에서 같은 기본 조건을 사용합니다. ALD: 표면 반응·coverage 모델, 공식 예제와 같은 macro-cycle 가속.
@@ -51,6 +52,8 @@
 
 ## 검증
 
+로컬 확산 추가분: `.venv/Scripts/python tests/diffusion-physics.py`는 erfc 해석해·총량 보존·마스크·반복 확산을 검증합니다. `.venv/Scripts/python tests/diffusion-native.py`는 실제 native 형상과의 연결·차단·오류 복구를 검사합니다.
+
 [2026-10-28 엄격 시나리오 검증 기록](docs/QA-2026-10-28.md): 기존 16개 예제, 경계값·조합·실패 복구·공정 편집과 채점.
 
 `npm test`: 재료별 채점, 예시 100점, 기판만/누락 재료/위치 이동 감점.
@@ -63,6 +66,7 @@ Linux의 native 4.7 패키지는 공식 CI artifact를 checksum 검증 후 추�
 
 ## 출처
 
+- [FiPy](https://pages.nist.gov/fipy/en/stable/) · [확산 방정식 및 경계 조건](https://pages.nist.gov/fipy/en/stable/generated/examples.diffusion.mesh1D.html)
 - [ViennaPS](https://github.com/ViennaTools/ViennaPS) · [공식 예제](https://viennatools.github.io/ViennaPS/examples/)
 - [Native 4.7 source](https://github.com/ViennaTools/ViennaPS/tree/7a8b17fba8f11f907cac96ae6e03ee0aa3c68948)
 - [공식 CI artifact](https://github.com/ViennaTools/ViennaPS/actions/runs/35322918342)

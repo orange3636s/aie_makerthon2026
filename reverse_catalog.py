@@ -9,24 +9,28 @@ def choice(key,label,options,default,when=None):
     d=dict(key=key,label=label,options=options,default=default)
     if when:d['when']=when
     return d
-MATERIALS=['Si','SiO2','Si3N4','SiGe','PolySi','HfO2','TiN','W','Co','Mo','Metal','Dielectric']
+MATERIALS=['Si','PolySi','SiO2','Si3N4','SiGe','Al2O3','HfO2','HfZrO2','TiN','W','Co','Mo','Metal','Dielectric']
 OPS=[
- dict(id='photo',title='Photo',model='Conformal PR + Boolean mask',fields=[
-  choice('action','작업',['Pattern','Strip'],'Pattern'),
-  choice('pattern','마스크',['Central','Double','Triple','Repeat'],'Central',{'action':['Pattern']}),
-  choice('tone','PR 극성',['Positive','Negative'],'Positive',{'action':['Pattern']}),
-  n('width','패턴 폭',.3,.06,1.,'µm',.01,{'action':['Pattern']}),
-  n('pitch','패턴 간격',.6,.15,1.,'µm',.01,{'action':['Pattern'],'pattern':['Double','Triple','Repeat']}),
-  n('offset','정렬 위치',0,-.4,.4,'µm',.01,{'action':['Pattern']}),
-  n('thickness','PR 두께',.06,.03,.15,'µm',.01,{'action':['Pattern']})],
-  note='노광 창: Central은 중앙 1개, Double은 ±pitch/2, Triple은 −pitch·0·+pitch, Repeat는 pitch 간격입니다. Positive PR은 창에서 제거되고 Negative PR은 창에 남습니다. 광학 노광/현상 화학은 계산하지 않습니다.'),
+ dict(id='photo',title='Photo',model='PR coating / mask geometry / timed vertical development',fields=[
+  choice('action','작업',['Coat','Patterning','Develop','Strip','Pattern'],'Coat'),
+  choice('pattern','마스크',['Central','Double','Triple','Repeat'],'Central',{'action':['Pattern','Patterning']}),
+  choice('tone','PR 극성',['Positive','Negative'],'Positive',{'action':['Pattern','Coat']}),
+  n('width','패턴 폭',.3,.06,1.,'µm',.01,{'action':['Pattern','Patterning']}),
+  n('pitch','패턴 간격',.6,.15,1.,'µm',.01,{'action':['Pattern','Patterning'],'pattern':['Double','Triple','Repeat']}),
+  n('offset','정렬 위치',0,-.4,.4,'µm',.01,{'action':['Pattern','Patterning']}),
+  n('thickness','PR 두께',.06,.03,.15,'µm',.01,{'action':['Coat']}),
+  n('develop_time','현상 시간',60,1,180,'s',1,{'action':['Develop']})],
+  note='노광 창: Central은 중앙 1개, Double은 ±pitch/2, Triple은 −pitch·0·+pitch, Repeat는 pitch 간격입니다. Positive PR은 창에서 제거되고 Negative PR은 창에 남습니다. PR coating → Patterning → Developing → PR strip을 분리합니다. Developing은 1 nm/s의 일정 수직 제거 모델이며 광학 노광·현상 화학은 계산하지 않습니다.'),
  dict(id='etch',title='Etch',model='DirectionalProcess / material-selective geometric etch',fields=[
   choice('material','식각 재료',MATERIALS,'Si'),
-  choice('method','방식',['Directional','Isotropic','Pattern transfer','Selective removal'],'Directional'),
+  choice('method','방식',['Isotropic','Directional','ALE','Pattern transfer','Selective removal'],'Directional'),
   n('rate','식각률',.15,.005,.5,'µm/s',.005,{'method':['Directional','Isotropic','Pattern transfer']}),
   n('time','식각 시간',1.,.05,8.,'s',.05,{'method':['Directional','Isotropic','Pattern transfer']}),
-  n('isotropic','등방성 비율',.05,0,1,'',.05,{'method':['Directional']})],
-  note='DirectionalProcess의 directionalVelocity=−rate×(1−비율), isotropicVelocity=−rate×비율. 다른 재료는 maskMaterial로 보호합니다. Pattern transfer는 PR 수직 투영 외부를 깊이 rate×time만큼 자르는 Boolean 기하 모델입니다. Selective removal은 선택 재료의 전체 제거로, 반응 속도 모델이 아닙니다.'),
+  n('isotropic','등방성 비율',1.,0,1,'',.05,{'method':['Directional']}),
+  choice('access','식각 접근면',['Exposed','Section sides'],'Exposed',{'method':['Isotropic']}),
+  n('cycles','ALE 사이클',100,1,500,'cycle',1,{'method':['ALE']}),
+  n('epc','사이클당 제거량',.0002,.00005,.002,'µm/cycle',.00005,{'method':['ALE']})],
+  note='ALE는 EPC×사이클 수를 native DirectionalProcess로 적분한 유효 제거량 모델입니다. 개별 반응·흡착·퍼지나 재료별 EPC는 예측하지 않습니다. 10 nm 격자이므로 원자층 정확도는 아닙니다. DirectionalProcess의 directionalVelocity=−rate×(1−비율), isotropicVelocity=−rate×비율. 다른 재료는 maskMaterial로 보호합니다. Pattern transfer는 PR 수직 투영 외부를 깊이 rate×time만큼 자르는 Boolean 기하 모델입니다. Selective removal은 선택 재료의 전체 제거로, 반응 속도 모델이 아닙니다.'),
  dict(id='deposition',title='Deposition',model='SingleParticleProcess / SingleParticleALD',fields=[
   choice('method','증착 조건 프리셋',['PVD','CVD','ALD','Conformal'],'CVD'),choice('material','재료',MATERIALS,'SiO2'),
   n('rate','평면 증착률',.08,.005,.3,'µm/s',.005,{'method':['PVD','CVD','Conformal']}),
@@ -40,22 +44,31 @@ OPS=[
   presets={'PVD':dict(sticking=1.,exponent=20.),'CVD':dict(sticking=.2,exponent=1.)},
   note='PVD/CVD는 공통 SingleParticleProcess의 조건 프리셋입니다. 모든 수치가 같으면 결과도 같습니다. PVD 기본값: sticking=1, sourceExponent=20; CVD: 0.2, 1. Step coverage는 계산된 막 형상에서 측정합니다. ALD는 SingleParticleALD; incomingFlux=2e6, s0=3.36, evaporationFlux=2.5, 무한 평균자유행로를 고정합니다. Conformal은 반경 rate×time의 등방 offset으로 성장시키는 기하 모델이며 단면 밖에서 재료가 공급된다고 가정합니다. 특정 전구체/장비에 보정되지 않았습니다.'),
  dict(id='diffusion',title='Diffusion',model='IonImplantation / Anneal / Oxidation',fields=[
-  choice('method','공정',['Ion implantation','Anneal','Wet oxidation','Dry oxidation'],'Ion implantation'),
-  choice('species','도펀트',['P','B'],'P',{'method':['Ion implantation']}),
+  choice('method','공정',['Ion implantation','Pre-deposition','Drive-in','Anneal','Wet oxidation','Dry oxidation'],'Ion implantation'),
+  choice('species','도펀트',['P','B'],'P',{'method':['Ion implantation','Pre-deposition']}),
   choice('energy','주입 에너지 (keV)',[8,10,30,50,100,130,200],30,{'method':['Ion implantation']}),
   n('dose','주입량',1e13,1e11,1e15,'ions/cm²',1e12,{'method':['Ion implantation']}),
-  n('temperature','온도',1000,950,1100,'°C',25,{'method':['Anneal','Wet oxidation','Dry oxidation']}),
+  choice('implant_mask','주입 마스크',['Existing','Central','Double','Triple','Repeat'],'Existing',{'method':['Ion implantation']}),
+  n('implant_width','개구 폭',.3,.06,1.,'µm',.01,{'method':['Ion implantation'],'implant_mask':['Central','Double','Triple','Repeat']}),
+  n('implant_pitch','개구 간격',.6,.15,1.,'µm',.01,{'method':['Ion implantation'],'implant_mask':['Double','Triple','Repeat']}),
+  n('implant_offset','정렬 위치',0,-.4,.4,'µm',.01,{'method':['Ion implantation'],'implant_mask':['Central','Double','Triple','Repeat']}),
+  n('temperature','온도',1000,950,1100,'°C',25,{'method':['Anneal','Pre-deposition','Drive-in','Wet oxidation','Dry oxidation']}),
   n('time','열처리 시간',30,1,120,'s',1,{'method':['Anneal']}),
-  n('oxidation_time','산화 시간',.03,.01,.12,'h',.01,{'method':['Wet oxidation','Dry oxidation']})],
-  note='이온 주입은 공개 B/P dual-Pearson IV 데이터, 비 Si 차폐, 입사각 7°. Anneal은 Si 내 Arrhenius 확산·고용도 활성화. 산화는 native Oxidation (100), 1 atm. 결함/TED/장비 보정과 전기 특성은 제외합니다.'),
- dict(id='cmp',title='C&C',model='Planarize',fields=[],note='Global planarization만 수행합니다. 마지막 증착 직전의 표면 최고 높이를 고정 stop plane으로 사용합니다. 슬러리·dishing·선택비 모델은 아닙니다.')
+  n('surface_concentration','표면 공급 농도',1e20,1e17,1e21,'cm⁻³',1e19,{'method':['Pre-deposition']}),
+  n('diffusion_time','확산 시간',600,60,3600,'s',60,{'method':['Pre-deposition','Drive-in']}),
+  n('oxidation_time','산화 시간',.03,.01,1.5,'h',.01,{'method':['Wet oxidation','Dry oxidation']})],
+  note='이온 주입은 B/P dual-Pearson IV, 입사각 7°. Pre-deposition은 외부 공기에 연결된 Si 표면에서 고용도로 제한한 농도를 공급합니다. Drive-in은 공급 없이 총량을 보존합니다. FiPy 2D 확산·평형 활성화이며 다른 재료는 완전 차단합니다. Anneal과 열산화는 기존 native 모델입니다. 결함/TED·전기 특성은 제외합니다.'),
+ dict(id='cmp',title='C&C',model='Timed Planarize',fields=[
+  n('rate','제거율',.01,.0001,.05,'µm/s',.0001),
+  n('time','제거 시간',120,1,300,'s',1),
+  choice('slurry','Slurry',['Unspecified','Ceria oxide','Silica oxide','Silica silicon','Silica polysilicon','Silica nitride','Silica SiGe','Silica tungsten','Cobalt formulated','Silica molybdenum','Silica TiN','Silica hafnia','Unverified alumina','Unverified HZO'],'Unspecified')],note='제거 평면=max(마지막 증착 전 최고점, 현재 최고점−제거율×시간). Slurry는 기록용이며 계산에 반영하지 않습니다. 선택비·dishing·압력·패드 모델은 없습니다.')
 ]
 BY_OP={o['id']:o for o in OPS}
 def step(op,**params):return dict(op=op,params=params)
 def dep(material,thickness,method='CVD'):
-    return step('deposition',material=material,method=method,rate=.08,time=thickness/.08,sticking=1. if method=='PVD' else .15,exponent=30 if method=='PVD' else 1.)
+    return step('deposition',material=material,method=method,rate=.08,time=round(thickness/.08,12),sticking=1. if method=='PVD' else .15,exponent=30 if method=='PVD' else 1.)
 def ald(material,thickness):return step('deposition',method='ALD',material=material,cycles=round(thickness/.001),gpc=.001,pulse=.1,ald_sticking=.00005)
-def photo(width,tone='Negative',pattern='Central',pitch=.6):return step('photo',width=width,tone=tone,pattern=pattern,pitch=pitch)
+def photo(width,tone='Negative',pattern='Central',pitch=.6):return step('photo',action='Pattern',width=width,tone=tone,pattern=pattern,pitch=pitch)
 def etch(material,depth,ratio=0):return step('etch',material=material,rate=.1,time=round(depth/.1,4),isotropic=ratio)
 strip=lambda:step('photo',action='Strip')
 remove=lambda m:step('etch',material=m,method='Selective removal')
@@ -75,7 +88,7 @@ dict(id='sti',title='STI',width=1.6,bounds=[-.8,.8,-.55,.25],roi=[-.55,.55,-.45,
  dep('SiO2',.5),step('cmp'),remove('Si3N4')]),
 dict(id='fin',title='Fin',width=1.2,bounds=[-.6,.6,-.48,.15],roi=[-.4,.4,-.4,.1],section='Fin 횡단면',recipe=fin_base),
 dict(id='locos',title='LOCOS',width=1.6,bounds=[-.8,.8,-.3,.35],roi=[-.72,.72,-.18,.3],section='선택 산화 단면',recipe=[
- ald('SiO2',.025),ald('Si3N4',.075),photo(.38,'Negative','Double',.8),etch('Si3N4',.09),strip(),step('diffusion',method='Wet oxidation',temperature=1000,oxidation_time=.03),remove('Si3N4')])
+ ald('SiO2',.025),ald('Si3N4',.075),photo(.38,'Negative','Double',.8),etch('Si3N4',.09),strip(),step('diffusion',method='Wet oxidation',temperature=1000,oxidation_time=.8),remove('Si3N4')])
 ]
 from advanced_devices import targets as advanced_targets
 TARGETS.extend(advanced_targets())
@@ -98,16 +111,26 @@ for target in TARGETS:
             weights=dict(geometry=.2,total=.35,active=.35,process=.1) if target.get('grading')=='doping' else dict(geometry=.5,total=.2,active=.2,process=.1))
 from process_presets import targets as process_targets
 TARGETS.extend(process_targets())
+from library_layout import organize
+organize(TARGETS)
+from structure_recipes import targets as extra_targets, modernize
+import copy,json
+from pathlib import Path
+TARGETS.extend(extra_targets(json.loads((Path(__file__).parent/'catalog.json').read_text(encoding='utf-8'))['examples']))
+SOURCE_RECIPES={t['id']:copy.deepcopy(t['recipe']) for t in TARGETS}
+for t in TARGETS:
+    t['recipe']=modernize(t['recipe'])
 BY_TARGET={t['id']:t for t in TARGETS}
 
 def validate(data):
     if not isinstance(data,dict) or data.get('target') not in BY_TARGET:raise ValueError('목표 예제를 선택하세요.')
     rows=data.get('steps',[])
-    if not isinstance(rows,list) or len(rows)>64:raise ValueError('공정은 최대 64단계입니다.')
+    if not isinstance(rows,list) or len(rows)>96:raise ValueError('공정은 최대 96단계입니다.')
     clean=[]
     for row in rows:
         if not isinstance(row,dict) or row.get('op') not in BY_OP:raise ValueError('지원하지 않는 공정입니다.')
         op=BY_OP[row['op']];given=row.get('params',{})
+        if row['op']=='photo' and isinstance(given,dict) and 'action' not in given:given={**given,'action':'Pattern'}
         if not isinstance(given,dict) or set(given)-{f['key'] for f in op['fields']}:raise ValueError('지원하지 않는 조건입니다.')
         params={}
         for f in op['fields']:

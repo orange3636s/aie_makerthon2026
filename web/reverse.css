@@ -6,7 +6,7 @@
 
 @media(min-width:981px) and (max-height:800px){main{padding-top:20px}.page-heading{margin-bottom:18px}.dual-view canvas{height:255px}.reverse-view{padding:16px}.reverse-view footer{margin-top:10px;padding-top:10px}.reverse-controls{max-height:485px;overflow:auto}.process-panel{margin-top:16px}.flow-step{min-height:108px}.flow-step canvas{height:50px}}
 
-@media(min-width:981px) and (max-height:800px){.reverse-controls{overflow:hidden}.reverse-controls .panel-heading{flex-shrink:0}.reverse-controls form{display:flex;flex-direction:column;min-height:0}.reverse-controls #reverse-fields{overflow:auto;min-height:0;flex:1;padding-right:4px}.reverse-controls .primary,.reverse-controls .reverse-status{flex-shrink:0}}
+@media(min-width:981px) and (max-height:800px){.reverse-controls{overflow:hidden}.reverse-controls .panel-heading{flex-shrink:0}.reverse-controls form{display:flex;flex-direction:column;min-height:0}.reverse-controls .reverse-inputs{overflow:auto;min-height:0;flex:1;padding-right:4px}.reverse-controls #reverse-fields{overflow:visible;flex:none}.reverse-controls .primary,.reverse-controls .reverse-status{flex-shrink:0}}
 
 .flow-card{position:relative;flex:0 0 125px;min-width:0}
 .flow-card .flow-step{height:100%;width:100%}
@@ -59,3 +59,17 @@
 .recommendation-cards button{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:7px;min-width:0;padding:15px;border:1px solid #dce1f0;background:#f8f9fd;border-radius:12px;white-space:normal}
 .recommendation-cards small{font-size:10px;color:#5c6988}.recommendation-cards strong{font-size:13px;overflow-wrap:anywhere}.recommendation-cards span{font-size:11px;color:#4d548d;margin-top:auto}
 @media(max-width:520px){.recommendation-cards{grid-template-columns:1fr}.recommendation-cards button{gap:4px}}
+.process-estimate{margin:16px 0;padding:13px 14px;border:1px solid #cddfed;border-radius:10px;background:#f3f8fc;color:#24415b;overflow-wrap:anywhere}
+.process-estimate[hidden]{display:none}
+.process-estimate .estimate-title{display:block;font-size:12px;font-weight:600;margin-bottom:5px}
+.process-estimate .estimate-value{display:block;font-size:24px;line-height:1.3;font-variant-numeric:tabular-nums}
+.process-estimate .estimate-basis{display:block;font-size:11px;margin-top:3px;color:#49637a}
+.process-estimate p{margin:7px 0 0;font-size:12px;line-height:1.55}
+.process-estimate .estimate-note{padding-top:7px;border-top:1px solid #d9e5ee;color:#526675;font-size:11px}
+.process-estimate.invalid{border-color:#ebd2b5;background:#fff9ef;color:#785128}
+
+.spec-icon{padding:3px 8px!important;min-height:28px!important;font-size:20px;line-height:1;color:#444d91}.rubric-bars{display:grid;gap:10px;margin:20px 0}.rubric-bars>div{display:grid;grid-template-columns:90px 1fr 35px;align-items:center;gap:12px;font-size:13px}.rubric-bars meter{width:100%;height:14px}.efficiency-summary{display:flex;gap:18px;flex-wrap:wrap;padding:14px 0;font-size:13px}.dopant-checks>div{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #edf0f5}.dopant-checks small{display:block;color:#617188;font-size:12px;margin-top:4px}.pass{color:#19705b}.fail{color:#aa4256}.measured-hints{background:#f4f6fd;padding:16px;border-radius:12px;margin:18px 0;font-size:13px;line-height:1.7}#spec-content{padding:12px 24px 24px;overflow:auto;max-height:70vh}.spec-flow{margin-top:18px;line-height:1.9}.spec-flow summary{cursor:pointer;font-weight:600}
+
+.view-cell h3{min-height:32px}
+
+.rubric-bars meter::-webkit-meter-bar{background:#edf0f8;border:0;border-radius:6px}.rubric-bars meter::-webkit-meter-optimum-value{background:#444aa0;border-radius:6px}.rubric-bars meter::-moz-meter-bar{background:#444aa0;border-radius:6px}

@@ -1,5 +1,17 @@
 /* Orthographic extrusion with nearest-surface occlusion, independent of IDs. */
 (function(root){
+ function clipPolygon(points,bounds){
+  let out=points.slice();
+  for(const [axis,edge,sign] of [[0,bounds[0],1],[0,bounds[1],-1],[1,bounds[2],1],[1,bounds[3],-1]]){
+   const input=out;out=[];if(!input.length)break;
+   let a=input.at(-1),aIn=sign*(a[axis]-edge)>=0;
+   for(const b of input){const bIn=sign*(b[axis]-edge)>=0;
+    if(aIn!==bIn){const t=(edge-a[axis])/(b[axis]-a[axis]);out.push([a[0]+t*(b[0]-a[0]),a[1]+t*(b[1]-a[1])])}
+    if(bIn)out.push(b);a=b;aIn=bIn;
+   }
+  }
+  return out.length>=3?[...out,out[0]]:[];
+ }
  function project(front,width,height,depth){
   const out=new Uint8ClampedArray(front.length),distance=new Uint16Array(width*height);distance.fill(depth+1);
   for(let y=height-1;y>=0;y--)for(let x=0;x<width;x++){
@@ -21,5 +33,5 @@
   const bitmap=ctx.getImageData(0,0,width,height);bitmap.data.set(project(bitmap.data,width,height,Math.round(depth*scale)));ctx.putImageData(bitmap,0,0);
   c.drawImage(layer,0,0,w,h);
  }
- const api={project,draw};if(typeof module==='object'&&module.exports)module.exports=api;else root.ProcessExtrusion=api;
+ const api={project,draw,clipPolygon};if(typeof module==='object'&&module.exports)module.exports=api;else root.ProcessExtrusion=api;
 })(typeof window==='object'?window:globalThis);

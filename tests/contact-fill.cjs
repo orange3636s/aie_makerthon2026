@@ -4,7 +4,7 @@ function measureContactFill(data,n=420){
  const indices=data.steps.map((s,i)=>/ contact fill$/.test(s.label||'')?i:-1).filter(i=>i>=0);
  if(!indices.length)return null;
  return indices.flatMap((index,tier)=>{
- const pattern=data.steps.slice(0,index).findLast(s=>s.op==='photo'&&s.params.action!=='Strip').params;
+ const pattern=data.steps.slice(0,index).findLast(s=>s.op==='photo'&&['Pattern','Patterning'].includes(s.params.action)).params;
  const pre=data.frames[index],post=data.frames.at(-1),top=pre.highest;
  const b=[-.72,.72,Math.min(0,pre.lowest),top-.015],a=raster(pre,b,n),z=raster(post,b,n);
  const centers=pattern.pattern==='Double'?[-pattern.pitch/2,pattern.pitch/2]:[-pattern.pitch,0,pattern.pitch];

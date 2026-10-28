@@ -1,14 +1,14 @@
 """Process targets whose observation and reverse answers share native recipes."""
 import json
 from pathlib import Path
-IDS={'photo-lithography','lele','sadp','rie','pvd','cvd','ald','planarization','anneal'}
+IDS={'photo-lithography','lele','sadp','rie','pvd','cvd','ald','planarization','anneal','pre-deposition','drive-in'}
 
 def recipe(kind,p):
     from reverse_catalog import step,photo,etch,strip,dep,ald,remove
     L=lambda name,s:dict(s,label=name)
     if kind=='photo-lithography':
-        mask=photo(p['width'],p['tone'],p['pattern'],p['pitch'])
-        return [L('SiO₂ barrier deposition',ald('SiO2',p['oxide'])),L('Develop · '+p['tone']+' PR',mask),L('SiO₂ pattern transfer',step('etch',material='SiO2',rate=.1,time=p['etch_time'],isotropic=0)),L('PR removal',strip())]
+        mask=step('photo',action='Patterning',width=p['width'],pattern=p['pattern'],pitch=p['pitch'])
+        return [L('SiO₂ barrier deposition',ald('SiO2',p['oxide'])),L('PR coating',step('photo',action='Coat',tone=p['tone'],thickness=.06)),L('Patterning',mask),L('Developing',step('photo',action='Develop',develop_time=70)),L('SiO₂ etch',step('etch',material='SiO2',rate=.1,time=p['etch_time'],isotropic=0)),L('PR strip',strip())]
     if kind=='rie':
         return [L('Double-window PR',photo(p['width'],'Positive','Double',.8)),L('RIE · directional etch',step('etch',material='Si',rate=p['rate'],time=p['duration'],isotropic=p['lateral'])),L('PR removal',strip())]
     if kind=='lele':
@@ -33,6 +33,15 @@ def recipe(kind,p):
         r=[L('Trench PR',photo(p['width'],'Positive')),L('Trench etch',etch('Si',p['depth'])),L('PR removal',strip())]
         if kind=='ald':return r+[L('ALD · SiO₂',step('deposition',method='ALD',material='SiO2',cycles=p['cycles'],gpc=.001,pulse=p['pulse'],ald_sticking=p['sticking']))]
         return r+[L(kind.upper()+' · '+str(i+1)+'/3',step('deposition',method=kind.upper(),material='SiO2',rate=.08,time=round(p['time']/3,12),sticking=p['sticking'],exponent=p['exponent'])) for i in range(3)]
+    if kind in ('pre-deposition','drive-in'):
+        r=[L('SiO₂ diffusion mask',dep('SiO2',.08,'Conformal')),
+           L('Diffusion window photo',photo(p['width'],'Positive')),
+           L('SiO₂ window etch',etch('SiO2',.10)),L('PR removal before furnace',strip())]
+        source=step('diffusion',method='Pre-deposition',species=p['species'],temperature=p['temperature'] if kind=='pre-deposition' else 1000,
+                    surface_concentration=p['surface_concentration'],diffusion_time=p['duration'] if kind=='pre-deposition' else 300)
+        r.append(L('Pre-deposition · '+p['species'],source))
+        if kind=='drive-in':r.append(L('Drive-in · no external source',step('diffusion',method='Drive-in',temperature=p['temperature'],diffusion_time=p['duration'])))
+        return r
     if kind=='anneal':
         r=[L('Implant window',photo(.5,'Positive')),L('Implant · '+p['species'],step('diffusion',species=p['species'],energy=30,dose=p['dose'])),L('PR removal',strip())]
         return r+[L('Anneal · '+str(round(p['time']*f,2))+' s',step('diffusion',method='Anneal',temperature=p['temperature'],time=p['time']*dt)) for f,dt in [(.25,.25),(.5,.25),(1.,.5)]]
@@ -44,7 +53,7 @@ def targets():
         if s['id'] not in IDS:continue
         p={f['key']:f['default'] for f in s['fields']}
         t=dict(id=s['id'],title=s['title'],group=s['group'],width=1.6,bounds=[-.8,.8,-.5,.55],roi=[-.72,.72,-.5,.5],section='공정 패턴 단면',recipe=recipe(s['id'],p))
-        if s['id']=='anneal':t['assessment']=dict(version=2,species=[p['species']],requireAnneal=True,weights=dict(geometry=.2,total=.35,active=.35,process=.1));t['grading']='doping'
+        if s['id'] in ('anneal','pre-deposition','drive-in'):t['assessment']=dict(version=2,species=[p['species']],requireAnneal=True,weights=dict(geometry=.2,total=.35,active=.35,process=.1));t['grading']='doping'
         if s['id'] in ('lele','sadp'):t['projectedMask']=True
         out.append(t)
     return out

@@ -64,6 +64,12 @@ def contour_mesh(mesh, default_material=10, force_material=False, x_bounds=None,
 
 def run(data):
     spec, p = validate(data)
+    from structure_recipes import EXTRA,recipe as structure_recipe
+    if spec['id'] in EXTRA:
+        from reverse_engine import run as sequential
+        result=sequential(dict(target=spec['id'],steps=structure_recipe(spec['id'],p)))
+        result.update(params=p,mode='effective',model='Editable teaching recipe',note='공통 공정 레시피 기반 형상 근사. 전용 식각 화학·재증착 수송은 계산하지 않습니다.',previewFrame=len(result['frames'])-1)
+        return result
     from stage_controls import controls as bosch_controls,validate as validate_stages
     stages=validate_stages(data,p) if spec['id']=='bosch' else {}
     from process_presets import IDS as process_ids,run as process_run

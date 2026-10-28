@@ -1,0 +1,32 @@
+const assert=require('node:assert/strict'),UI=require('../web/ui-contract.js'),Photo=require('../web/photo-preview.js');
+const catalog=require('../catalog.json'),reverse=require('../reverse-catalog.json');
+let n=0;
+for(const spec of [...catalog.examples,...reverse.operations])for(const f of spec.fields.filter(f=>!f.options))for(const v of [f.default,f.min,f.max,f.step].filter(v=>v!==undefined)){
+ const shown=UI.displayValue(f,v),back=UI.inputValue(f,shown);assert(Math.abs(back-v)<=Math.max(1e-14,Math.abs(v)*1e-14));n++;
+}
+assert.equal(UI.displayValue({unit:'µm/s'},.08),80);assert.equal(UI.displayValue({unit:'nm'},80),80);assert.equal(UI.displayValue({unit:'µm²/s'},.001),1000);
+assert.equal(UI.displayValue({unit:'cm⁻³'},1e19),1e19);
+const params={pattern:'Double',width:.2,pitch:.6,offset:0};
+const spans=Photo.windows(params,[-.8,.8]);assert.equal(spans.length,2);assert(Math.abs(spans[0][0]+.4)<1e-12);
+assert.deepEqual(Photo.windows({...params,pattern:'Repeat',width:.8,pitch:.3},[-.8,.8]),[[-.8,.8]]);
+assert.deepEqual(Photo.windows({...params,width:''},[-.8,.8]),[]);
+const p=Photo.build({...params,arrows:true},[-.8,.8,-.5,.5],{highest:.2});assert(p.y>.2&&p.top>p.y&&p.arrows);assert.equal(p.solid.length,3);
+const ops=reverse.operations,dep=ops.find(o=>o.id==='deposition'),photo=ops.find(o=>o.id==='photo'),diff=ops.find(o=>o.id==='diffusion');
+const etch=ops.find(o=>o.id==='etch');
+assert.deepEqual(UI.groups,['구조','소자']);
+assert(catalog.examples.every(e=>UI.groups.includes(e.group)));
+assert(etch.fields.find(f=>f.key==='method').options.includes('ALE'));
+assert(!etch.fields.find(f=>f.key==='method').options.includes('Cryogenic etch'));
+assert.deepEqual(UI.recipeFields(etch,{method:'ALE'}).map(f=>f.key),['material','method','cycles','epc']);
+const estimate=require('../web/process-estimate.js').estimate(etch,{material:'Si',method:'ALE',cycles:100,epc:.0002});
+assert.equal(estimate.nm,20);
+assert(!UI.optionsFor(dep.fields.find(f=>f.key==='method'),'CVD').includes('Conformal'));
+assert(!UI.optionsFor(dep.fields.find(f=>f.key==='material'),'Si').includes('Metal'));
+assert.deepEqual(UI.optionsFor(dep.fields.find(f=>f.key==='material'),'Si').slice(0,2),['Si','PolySi']);
+assert(UI.recipeFields(photo,{action:'Coat'}).some(f=>f.key==='thickness'));
+assert(!UI.recipeFields(photo,{action:'Patterning'}).some(f=>f.key==='thickness'));
+assert(UI.recipeFields(photo,{action:'Develop'}).some(f=>f.key==='develop_time'));
+assert(!UI.recipeFields(diff,{method:'Ion implantation'}).some(f=>f.key==='method'));
+assert.deepEqual(UI.recipeFields(diff,{method:'Anneal'}).find(f=>f.key==='method').options,['Pre-deposition','Drive-in','Anneal']);
+assert.deepEqual(UI.recipeFields(diff,{method:'Wet oxidation'}).find(f=>f.key==='method').options,['Wet oxidation','Dry oxidation']);
+console.log(`${n} unit roundtrips; mask clipping/merging; separated recipe controls passed`);

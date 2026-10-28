@@ -90,6 +90,33 @@ class Doping:
             diagnostics.append({'species':symbol,'massRelativeError':relative,'diffusivityUm2PerS':d0*1e-6*math.exp(-ea/(8.617333262145e-5*temperature))})
         self.last_info={'operation':'anneal','temperatureC':p['temperature'],'timeS':p['time'],'diagnostics':diagnostics,'model':'intrinsic diffusion + equilibrium solid-solubility activation; no TED/defect kinetics'}
 
+    def diffuse(self,p,source=False):
+        from diffusion_solver import evolve
+        if not self.ready:self.sync()
+        temperature=p['temperature']+273.15
+        rows=table('annealing.csv');coefficients={}
+        for symbol,species in SPECIES.items():
+            data={}
+            for row in rows:
+                if row['material']=='silicon' and row['category']=='dopant' and row['name']==species:
+                    data[row['parameter']]=(float(row['prefactor']),float(row['Ea']))
+            d0,ea=data['d'];c0,ec=data['solubility']
+            coefficients[symbol]=dict(diffusivity=d0*1e-6*math.exp(-ea/(8.617333262145e-5*temperature)),
+                                      solubility=c0*1e-12*math.exp(-ec/(8.617333262145e-5*temperature)))
+        dx=self.domain.getCellSet().getGridDelta()
+        self.fields,diagnostics=evolve(self.positions,self.materials,self.fields,dx,coefficients,p['diffusion_time'],
+            source_species=p['species'] if source else None,
+            surface_concentration=p['surface_concentration']*1e-12 if source else None)
+        cs=self.domain.getCellSet()
+        for label,values in self.fields.items():
+            if label not in cs.getScalarDataLabels():cs.addScalarData(label,0.)
+            cs.setScalarData(label,values)
+        self.last_info=dict(operation='pre-deposition' if source else 'drive-in',temperatureC=p['temperature'],
+            timeS=p['diffusion_time'],requestedSurfaceCm3=p['surface_concentration'] if source else None,
+            model='FiPy 2D finite-volume intrinsic diffusion; equilibrium solubility activation; no TED/segregation',
+            boundary='ambient-exposed Si fixed concentration; other faces zero flux' if source else 'all Si interfaces zero flux; no external source',
+            gridDeltaUm=dx,timeSteps=48,diagnostics=diagnostics)
+
     def snapshot(self):
         if not self.ready or not self.fields:return None
         dx=self.domain.getCellSet().getGridDelta();positions=self.positions

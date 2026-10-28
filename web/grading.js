@@ -30,6 +30,7 @@
  }
  function assessDoping(target,actual,roi,policy){
   const issues=[],components={},evidence=actual.processEvidence;
+  const supplied=new Set([...(evidence?.implantedSpecies||[]),...(evidence?.diffusedSpecies||[])]);
   for(const kind of ['total','active']){
    const keys=['net_'+kind,...policy.species.map(s=>s+'_'+kind)];
    if(keys.some(key=>!validField(target,key)))throw Error('목표 농도 데이터가 불완전합니다. 기준 결과를 다시 생성하세요.');
@@ -39,8 +40,8 @@
   }
   let passed=0,required=0;
   for(const species of policy.species){
-   required++;if(evidence?.implantedSpecies?.includes(species))passed++;else issues.push(species+' 주입 미완료');
-   if(policy.requireAnneal){required++;if(evidence?.implantedSpecies?.includes(species)&&evidence?.annealedSpecies?.includes(species))passed++;else issues.push(species+' 최종 주입 후 열처리 미완료');}
+   required++;if(supplied.has(species))passed++;else issues.push(species+' 도핑 미완료');
+   if(policy.requireAnneal){required++;if(supplied.has(species)&&evidence?.annealedSpecies?.includes(species))passed++;else issues.push(species+' 최종 도핑 후 열처리 미완료');}
   }
   components.process=required?passed/required:1;
   return {components,issues};
@@ -51,7 +52,7 @@
   const components={geometry,...assessment.components},w=policy?.weights||{geometry:1};
   let score=Math.round(100*Object.entries(w).reduce((sum,[key,weight])=>sum+weight*components[key],0));
   if(assessment.issues.length)score=Math.min(score,99);
-  return{version:2,score,materials,components,weights:w,issues:assessment.issues,doping:policy?(components.total+components.active)/2:null,method:policy?'Material IoU + signed log10 net and species total/active dopants + completed implantation/anneal evidence; fixed ROI; educational similarity, not electrical validation':'Active-region material IoU; Si weight 0.25; geometry only, not device-function validation'};
+  return{version:2,score,materials,components,weights:w,issues:assessment.issues,doping:policy?(components.total+components.active)/2:null,method:policy?'Material IoU + signed log10 net and species total/active dopants + completed doping/thermal evidence; fixed ROI; educational similarity, not electrical validation':'Active-region material IoU; Si weight 0.25; geometry only, not device-function validation'};
  }
  const api={raster,compare,dopantSimilarity,validField};if(typeof module!=='undefined')module.exports=api;else root.SimulationGrading=api;
 })(typeof window!=='undefined'?window:this);

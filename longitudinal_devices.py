@@ -13,11 +13,11 @@ def recipe(kind, p=None):
     def L(label, row): return dict(row, label=label)
     length = p.get('length', .32)
     dose = p.get('sd_dose', 1e13)
-    thermal_time = p.get('sd_anneal', 5)
+    thermal_time = p.get('sd_anneal', 2)
 
     def implants(species, prefix, energy=8):
         energies=energy if isinstance(energy,tuple) else (energy,)
-        return [L(prefix+' · S/D implant mask', photo(length+.12))]+[
+        return [L(prefix+' · S/D implant mask', photo(min(.9,length+.34)))]+[
                 L(prefix+(f' · S/D {species} {e} keV' if len(energies)>1 else ' · S/D implant '+species), step('diffusion', method='Ion implantation', species=species, dose=dose/len(energies), energy=e)) for e in energies]+[
                 L(prefix+' · implant PR strip', strip()),
                 L(prefix+' · activation anneal', step('diffusion', method='Anneal', temperature=950, time=thermal_time))]
@@ -39,10 +39,10 @@ def recipe(kind, p=None):
                 L('STI oxide fill', dep('SiO2', .35)),
                 L('STI planarization', step('cmp')),
                 L('Fin reveal', etch('SiO2', .10))] + gate_stack('Fin', thickness=p.get('gate', .08)) + [
-            L('S/D extension implant · P', step('diffusion', method='Ion implantation', species='P', energy=8, dose=dose*.1)),
+            L('S/D extension implant · P', step('diffusion', method='Ion implantation', species='P', energy=8, dose=dose*.1,implant_mask='Double',implant_width=.28,implant_pitch=.9)),
             L('Si₃N₄ spacer deposition', ald('Si3N4', .035)),
             L('Spacer etchback', etch('Si3N4', .045)),
-            L('Deep S/D implant · P', step('diffusion', method='Ion implantation', species='P', energy=10, dose=dose)),
+            L('Deep S/D implant · P', step('diffusion', method='Ion implantation', species='P', energy=10, dose=dose,implant_mask='Double',implant_width=.28,implant_pitch=.9)),
             L('S/D activation anneal', step('diffusion', method='Anneal', temperature=950, time=thermal_time))] + contacts(metal='Co',pitch=.40)
 
     def bridge(prefix, species, gate_material='TiN'):
@@ -68,8 +68,9 @@ def recipe(kind, p=None):
             r += [L(f'Stack {i+1} · SiGe', dep('SiGe', gap, 'PVD')),
                   L(f'Stack {i+1} · Si nanosheet', dep('Si', thickness, 'PVD'))]
         r += [L('Nanosheet stack mask', photo(length+.16))]
-        for material in ('Si','SiGe'):
-            r += [L('S/D recess · '+material, step('etch',material=material,method='Pattern transfer',rate=.1,time=(sheets*(gap+thickness)+.015)/.1))]
+        for layer in range(sheets):
+            for material,depth in (('Si',thickness),('SiGe',gap)):
+                r += [L(f'S/D recess {layer+1} · '+material, etch(material,depth+.015))]
         fill=dep('Si', min(.60, sheets*(gap+thickness)+.15));fill['params'].update(sticking=.02, exponent=10.)
         r += [L('Stack PR strip', strip()), L('Si source/drain support fill', fill),
               L('S/D support planarization', step('cmp'))]
@@ -94,5 +95,5 @@ def configure(target):
                   roi=[-.72,.72,-.25,1.05 if kind=='cfet' else .7],
                   section='S/D–채널 길이 방향 단면',recipe=recipe(kind),projectedMask=True)
     target.pop('sections',None)
-    target['assumptions']='S/D 지지부·채널·게이트·컨택이 함께 보이는 2D 길이 방향 학습 단면입니다. Si 채움은 S/D 에피택시의 형상 근사입니다. 채널 내부의 Conformal 성장은 native 등방 offset으로 단면 밖 공급을 가정하며 입자 수송 ALD와 다릅니다. 방향성 식각은 PR 수직 투영을 보존합니다. 결정 성장·strain·3D 게이트·전기 특성을 계산하지 않습니다.'
+    target['assumptions']='S/D 지지부·채널·게이트·컨택이 함께 보이는 2D 길이 방향 학습 단면입니다. Si 채움은 S/D 에피택시의 형상 근사입니다. 게이트 박막은 낮은 부착확률의 CVD 유효 입자 모델로 계산합니다. 방향성 식각은 PR 수직 투영을 보존합니다. 결정 성장·strain·3D 게이트·전기 특성을 계산하지 않습니다.'
     if kind=='cfet':target['assumptions']+=' 하부 n형/상부 p형의 순차 적층 예시이며 상부 Si는 준비된 결정층의 형상 근사입니다.'

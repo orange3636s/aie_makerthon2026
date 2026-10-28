@@ -1,0 +1,164 @@
+{
+  "scope": "Predeployment native reference and regression validation; live postdeployment QA tracked separately",
+  "examples": [
+    {
+      "id": "sti",
+      "steps": 12,
+      "frames": 13,
+      "failure": null
+    },
+    {
+      "id": "fin",
+      "steps": 8,
+      "frames": 9,
+      "failure": null
+    },
+    {
+      "id": "locos",
+      "steps": 9,
+      "frames": 10,
+      "failure": null
+    },
+    {
+      "id": "pn-junction",
+      "steps": 19,
+      "frames": 20,
+      "failure": null
+    },
+    {
+      "id": "mosfet",
+      "steps": 22,
+      "frames": 23,
+      "failure": null
+    },
+    {
+      "id": "fdsoi",
+      "steps": 22,
+      "frames": 23,
+      "failure": null
+    },
+    {
+      "id": "pdsoi",
+      "steps": 22,
+      "frames": 23,
+      "failure": null
+    },
+    {
+      "id": "rcat",
+      "steps": 31,
+      "frames": 32,
+      "failure": null
+    },
+    {
+      "id": "bcat",
+      "steps": 32,
+      "frames": 33,
+      "failure": null
+    },
+    {
+      "id": "finfet",
+      "steps": 31,
+      "frames": 32,
+      "failure": null
+    },
+    {
+      "id": "gaafet",
+      "steps": 33,
+      "frames": 34,
+      "failure": null
+    },
+    {
+      "id": "mbcfet",
+      "steps": 45,
+      "frames": 46,
+      "failure": null
+    },
+    {
+      "id": "charge-trap",
+      "steps": 24,
+      "frames": 25,
+      "failure": null
+    },
+    {
+      "id": "cfet",
+      "steps": 68,
+      "frames": 69,
+      "failure": null
+    },
+    {
+      "id": "photo-lithography",
+      "steps": 6,
+      "frames": 7,
+      "failure": null
+    },
+    {
+      "id": "pvd",
+      "steps": 8,
+      "frames": 9,
+      "failure": null
+    },
+    {
+      "id": "sadp",
+      "steps": 12,
+      "frames": 13,
+      "failure": null
+    },
+    {
+      "id": "planarization",
+      "steps": 8,
+      "frames": 9,
+      "failure": null
+    },
+    {
+      "id": "wet",
+      "steps": 7,
+      "frames": 8,
+      "failure": null
+    },
+    {
+      "id": "regrowth",
+      "steps": 22,
+      "frames": 23,
+      "failure": null
+    },
+    {
+      "id": "sf6",
+      "steps": 7,
+      "frames": 8,
+      "failure": null
+    },
+    {
+      "id": "stack",
+      "steps": 16,
+      "frames": 17,
+      "failure": null
+    },
+    {
+      "id": "bosch",
+      "steps": 21,
+      "frames": 22,
+      "failure": null
+    },
+    {
+      "id": "ale-har",
+      "steps": 11,
+      "frames": 12,
+      "failure": null
+    }
+  ],
+  "regression": "npm test and npm run build passed, including scanline union/occlusion and target specification regressions",
+  "nativeFixes": [
+    "STI nitride removal",
+    "Spacer mandrel removal",
+    "MBCFET SiGe release",
+    "CFET material stack reconstruction",
+    "Cavity 150 nm nominal etch budget",
+    "LOCOS 0.8 h wet oxidation",
+    "MBCFET/FINFET implant masks and shorter anneal"
+  ],
+  "limits": [
+    "2D geometry and effective access approximation",
+    "No electrical short-circuit or I-V qualification",
+    "Target specifications measured from example result, not manufacturer recipe"
+  ]
+}

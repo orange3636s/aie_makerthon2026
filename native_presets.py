@@ -1,6 +1,6 @@
 """Observation presets and reverse-design answers share one native recipe."""
 import copy
-from reverse_catalog import BY_TARGET,dep,ald,photo,etch,strip,remove,step
+from reverse_catalog import BY_TARGET,SOURCE_RECIPES,dep,ald,photo,etch,strip,remove,step
 
 def run(spec,p):
     from reverse_engine import run as simulate
@@ -16,7 +16,7 @@ def run(spec,p):
         result=section_run(dict(target=spec['id'],view='sd-p' if p['section']=='p형 S/D·콘택' else 'sd',steps=section['recipe']))
         result.update(params=p,mode='physics',note=section['assumptions'],source=spec['source'],previewFrame=len(result['frames'])-1)
         return result
-    kind=spec['id'];recipe=copy.deepcopy(BY_TARGET[kind]['recipe'])
+    kind=spec['id'];recipe=copy.deepcopy(SOURCE_RECIPES[kind])
     if kind=='mosfet':
         recipe[0]=ald('SiO2',p['oxide']);recipe[2]=photo(p['length']);recipe[5]=etch('SiO2',p['oxide']+.01);recipe[8]=ald('Si3N4',p['spacer']);recipe[9]=etch('Si3N4',p['spacer']+.005)
     elif kind in ('fin','finfet'):

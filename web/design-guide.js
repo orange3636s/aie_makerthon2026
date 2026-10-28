@@ -44,7 +44,7 @@
    // Resolve broad edges while retaining thin gate-dielectric outlines.
    const tolerance=Math.max(1e-7,Math.min(Math.max(w,h)*.012,Math.min(w,h)*.16));
    let points=curved?ring(poly.points,tolerance):straighten(poly.points,tolerance);
-   if(!points){points=straighten(poly.points,tolerance*.2);if(!points)return[]}
+   if(!points){points=straighten(poly.points,tolerance*.2);if(!points){if(w<1e-10||h<1e-10)return[];const x=Math.min(...xs),y=Math.min(...ys);points=[[x,y],[x+w,y],[x+w,y+h],[x,y+h],[x,y]]}}
    if(curved)points=[...points,points[0]];
    return[{material:poly.material,closed:true,points}];
   });
