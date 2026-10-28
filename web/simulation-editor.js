@@ -40,8 +40,8 @@
    status('단계 조건 변경 · 공정 계산으로 반영하세요.');if(f.options)paint();
   })}
  }
- $('obs-basic').onclick=()=>{if(busy)return;stepMode=false;paint()};
- $('obs-step').onclick=()=>{if(busy)return;stepMode=true;paint()};
+ $('obs-basic').onclick=()=>{if(busy)return;stop();stepMode=false;paint()};
+ $('obs-step').onclick=()=>{if(busy)return;stop();stepMode=true;paint()};
  form.onsubmit=async e=>{
   e.preventDefault();if(busy||(!runnable()&&!cyclic()))return;
   const bad=cyclic()?null:RecipeState.invalid(draft,operations);if(bad){status(`STEP ${bad.step} · ${bad.message}`,true);return}
