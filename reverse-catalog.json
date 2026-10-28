@@ -191,7 +191,7 @@
       "fields": [
         {
           "key": "method",
-          "label": "증착 방식",
+          "label": "증착 조건 프리셋",
           "options": [
             "PVD",
             "CVD",
@@ -332,7 +332,17 @@
           }
         }
       ],
-      "note": "PVD/CVD는 SingleParticleProcess의 유효 입자 모델입니다. PVD 기본값: sticking=1, sourceExponent=20; CVD: 0.2, 1. Step coverage는 계산된 막 형상에서 측정합니다. ALD는 SingleParticleALD; incomingFlux=2e6, s0=3.36, evaporationFlux=2.5, 무한 평균자유행로를 고정합니다. 특정 전구체/장비에 보정되지 않았습니다."
+      "presets": {
+        "PVD": {
+          "sticking": 1.0,
+          "exponent": 20.0
+        },
+        "CVD": {
+          "sticking": 0.2,
+          "exponent": 1.0
+        }
+      },
+      "note": "PVD/CVD는 공통 SingleParticleProcess의 조건 프리셋입니다. 모든 수치가 같으면 결과도 같습니다. PVD 기본값: sticking=1, sourceExponent=20; CVD: 0.2, 1. Step coverage는 계산된 막 형상에서 측정합니다. ALD는 SingleParticleALD; incomingFlux=2e6, s0=3.36, evaporationFlux=2.5, 무한 평균자유행로를 고정합니다. 특정 전구체/장비에 보정되지 않았습니다."
     },
     {
       "id": "diffusion",
@@ -801,7 +811,21 @@
         }
       ],
       "assumptions": "좌우 B/P 주입과 열처리로 만든 lateral PN 단면. 농도는 계산하며 공핍층·I–V는 계산하지 않습니다.",
-      "grading": "doping"
+      "grading": "doping",
+      "assessment": {
+        "version": 2,
+        "species": [
+          "B",
+          "P"
+        ],
+        "requireAnneal": true,
+        "weights": {
+          "geometry": 0.2,
+          "total": 0.35,
+          "active": 0.35,
+          "process": 0.1
+        }
+      }
     },
     {
       "id": "mosfet",
@@ -967,7 +991,20 @@
           "op": "cmp",
           "params": {}
         }
-      ]
+      ],
+      "assessment": {
+        "version": 2,
+        "species": [
+          "P"
+        ],
+        "requireAnneal": true,
+        "weights": {
+          "geometry": 0.5,
+          "total": 0.2,
+          "active": 0.2,
+          "process": 0.1
+        }
+      }
     },
     {
       "id": "fdsoi",
@@ -1102,7 +1139,20 @@
         "body": 0.04,
         "box": 0.15
       },
-      "initialLabel": "SOI wafer · Si / BOX / Si"
+      "initialLabel": "SOI wafer · Si / BOX / Si",
+      "assessment": {
+        "version": 2,
+        "species": [
+          "P"
+        ],
+        "requireAnneal": true,
+        "weights": {
+          "geometry": 0.5,
+          "total": 0.2,
+          "active": 0.2,
+          "process": 0.1
+        }
+      }
     },
     {
       "id": "pdsoi",
@@ -1237,7 +1287,20 @@
         "body": 0.16,
         "box": 0.15
       },
-      "initialLabel": "SOI wafer · Si / BOX / Si"
+      "initialLabel": "SOI wafer · Si / BOX / Si",
+      "assessment": {
+        "version": 2,
+        "species": [
+          "P"
+        ],
+        "requireAnneal": true,
+        "weights": {
+          "geometry": 0.5,
+          "total": 0.2,
+          "active": 0.2,
+          "process": 0.1
+        }
+      }
     },
     {
       "id": "rcat",
@@ -1434,7 +1497,20 @@
           "figure": "recess channel / gate cross-sections; Fig. 13 array"
         }
       ],
-      "assumptions": "Recessed channel의 게이트 길이 방향 단면. 접촉·커패시터는 제외합니다."
+      "assumptions": "Recessed channel의 게이트 길이 방향 단면. 접촉·커패시터는 제외합니다.",
+      "assessment": {
+        "version": 2,
+        "species": [
+          "P"
+        ],
+        "requireAnneal": true,
+        "weights": {
+          "geometry": 0.5,
+          "total": 0.2,
+          "active": 0.2,
+          "process": 0.1
+        }
+      }
     },
     {
       "id": "bcat",
@@ -1606,7 +1682,20 @@
           "figure": "Fig. 1 · buried gate / capping cross-section"
         }
       ],
-      "assumptions": "Si 표면 아래의 게이트와 질화막 cap을 관찰합니다. DRAM 전체 셀·air gap은 제외합니다."
+      "assumptions": "Si 표면 아래의 게이트와 질화막 cap을 관찰합니다. DRAM 전체 셀·air gap은 제외합니다.",
+      "assessment": {
+        "version": 2,
+        "species": [
+          "P"
+        ],
+        "requireAnneal": true,
+        "weights": {
+          "geometry": 0.5,
+          "total": 0.2,
+          "active": 0.2,
+          "process": 0.1
+        }
+      }
     },
     {
       "id": "finfet",
@@ -2182,7 +2271,20 @@
           "figure": "Fig. 1 · vertical NAND cell; 본 예제는 평면 단일 셀"
         }
       ],
-      "assumptions": "평면 SONOS 단일 셀의 tunnel oxide / trap nitride / blocking oxide. 3D NAND 전체 적층과 전하 포획·program/erase는 계산하지 않습니다."
+      "assumptions": "평면 SONOS 단일 셀의 tunnel oxide / trap nitride / blocking oxide. 3D NAND 전체 적층과 전하 포획·program/erase는 계산하지 않습니다.",
+      "assessment": {
+        "version": 2,
+        "species": [
+          "P"
+        ],
+        "requireAnneal": true,
+        "weights": {
+          "geometry": 0.5,
+          "total": 0.2,
+          "active": 0.2,
+          "process": 0.1
+        }
+      }
     },
     {
       "id": "cfet",

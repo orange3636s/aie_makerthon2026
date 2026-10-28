@@ -1,12 +1,13 @@
 'use strict';
 // Shared, side-effect-free checks for saved drafts and every step in a recipe.
 (function(root){
+ function defaults(op,method){return {...Object.fromEntries(op.fields.map(f=>[f.key,f.default])),...(op.presets?.[method]||{})};}
  function restore(rows,operations){
   if(!Array.isArray(rows)||rows.length>28)throw Error('저장된 flow 형식이 올바르지 않습니다.');
   return rows.map(s=>{
    const op=operations.find(o=>o.id===s?.op);
    if(!op||!s.params||typeof s.params!=='object'||Array.isArray(s.params)||Object.keys(s.params).some(k=>!op.fields.some(f=>f.key===k)))throw Error('저장된 flow를 읽지 못했습니다.');
-   const params=Object.fromEntries(op.fields.map(f=>[f.key,Object.hasOwn(s.params,f.key)?s.params[f.key]:f.default]));
+   const params={...defaults(op,s.params.method),...s.params};
    for(const f of op.fields){const v=params[f.key];if(f.options?!f.options.includes(v):!(typeof v==='number'||v===''||v===null))throw Error('저장된 조건을 읽지 못했습니다.');}
    if(s.label!==undefined&&(typeof s.label!=='string'||s.label.length>80))throw Error('공정 이름을 읽지 못했습니다.');
    return {op:op.id,params,...(s.label?{label:s.label}:{})};
@@ -22,5 +23,5 @@
   }
   return null;
  }
- const api={restore,invalid};if(typeof module==='object'&&module.exports)module.exports=api;else root.RecipeState=api;
+ const api={restore,invalid,defaults};if(typeof module==='object'&&module.exports)module.exports=api;else root.RecipeState=api;
 })(typeof window==='object'?window:globalThis);

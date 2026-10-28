@@ -29,6 +29,7 @@ def run(data):
             ps.MakePlane(d,-body,ps.Material.SiO2,True).apply()
         ps.MakePlane(d,0.,ps.Material.Si,True).apply()
     frames=[];cmp_stop=None;doping_state=None;concentration=None;failure=None;oxidized=False
+    implanted=set();annealed=set()
     def box(x0,y0,x1,y1):
         level=ls.Domain(d.getGrid());geom=ls.MakeGeometry(level,ls.Box([x0,y0],[x1,y1]));geom.setIgnoreBoundaryConditions([True,True,False]);geom.apply();return level
     def surface_top():return max(p[1] for p in d.getSurfaceMesh(False).getNodes())
@@ -51,6 +52,8 @@ def run(data):
         frame=dict(label=label,polygons=polygons,lowest=min(p[1] for p in surface),highest=max(p[1] for p in surface),metrics=extra or {})
         if frame['highest']>1.5 or frame['lowest']<-.9:raise ValueError('학습 영역을 벗어났습니다. 공정 시간이나 식각률을 줄이세요.')
         if concentration:frame['concentration']=concentration
+        # Evidence records completed operations only, independently of user labels.
+        frame['processEvidence']=dict(implantedSpecies=sorted(implanted),annealedSpecies=sorted(annealed))
         frames.append(frame)
     def transport(op,params):
         nonlocal doping_state,concentration
@@ -127,10 +130,12 @@ def run(data):
                 label=f"{p['method']} · {p['material']}"
                 metric={'topGrowthUm':round(surface_top()-cmp_stop,5),'nominalGrowthUm':p['gpc']*p['cycles'] if p['method']=='ALD' else p['rate']*p['time']}
             elif op=='diffusion':
-                if p['method']=='Ion implantation':transport('implant',p);label=f"Implant · {p['species']}"
+                if p['method']=='Ion implantation':
+                    transport('implant',p);label=f"Implant · {p['species']}"
+                    implanted.add(p['species']);annealed.discard(p['species'])
                 elif p['method']=='Anneal':
                     if ps.Material.Mask in mats:raise ValueError('고온 열처리 전에 PR을 제거하세요.')
-                    transport('anneal',p);label='Anneal'
+                    transport('anneal',p);label='Anneal';annealed.update(implanted)
                 else:
                     if doping_state:raise ValueError('도핑 후 열산화의 재분배는 지원하지 않습니다. 산화와 도핑 실험을 분리하세요.')
                     if ps.Material.SiO2 not in mats:raise ValueError('산화 전에 SiO₂ seed 막이 필요합니다.')

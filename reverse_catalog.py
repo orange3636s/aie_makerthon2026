@@ -28,7 +28,7 @@ OPS=[
   n('isotropic','등방성 비율',.05,0,1,'',.05,{'method':['Directional']})],
   note='DirectionalProcess의 directionalVelocity=−rate×(1−비율), isotropicVelocity=−rate×비율. 다른 재료는 maskMaterial로 보호합니다. Selective removal은 선택 재료의 전체 제거로, 반응 속도 모델이 아닙니다.'),
  dict(id='deposition',title='Deposition',model='SingleParticleProcess / SingleParticleALD',fields=[
-  choice('method','증착 방식',['PVD','CVD','ALD'],'CVD'),choice('material','재료',MATERIALS,'SiO2'),
+  choice('method','증착 조건 프리셋',['PVD','CVD','ALD'],'CVD'),choice('material','재료',MATERIALS,'SiO2'),
   n('rate','평면 증착률',.08,.005,.3,'µm/s',.005,{'method':['PVD','CVD']}),
   n('time','증착 시간',1.,.1,8.,'s',.1,{'method':['PVD','CVD']}),
   n('sticking','부착 확률',.2,.01,1.,'',.01,{'method':['PVD','CVD']}),
@@ -37,7 +37,8 @@ OPS=[
   n('gpc','사이클당 성장량',.001,.0005,.003,'µm/cycle',.0005,{'method':['ALD']}),
   n('pulse','전구체 펄스 시간',.1,.05,.5,'s',.05,{'method':['ALD']}),
   n('ald_sticking','초기 부착 확률',.00005,.00001,.001,'',.00001,{'method':['ALD']})],
-  note='PVD/CVD는 SingleParticleProcess의 유효 입자 모델입니다. PVD 기본값: sticking=1, sourceExponent=20; CVD: 0.2, 1. Step coverage는 계산된 막 형상에서 측정합니다. ALD는 SingleParticleALD; incomingFlux=2e6, s0=3.36, evaporationFlux=2.5, 무한 평균자유행로를 고정합니다. 특정 전구체/장비에 보정되지 않았습니다.'),
+  presets={'PVD':dict(sticking=1.,exponent=20.),'CVD':dict(sticking=.2,exponent=1.)},
+  note='PVD/CVD는 공통 SingleParticleProcess의 조건 프리셋입니다. 모든 수치가 같으면 결과도 같습니다. PVD 기본값: sticking=1, sourceExponent=20; CVD: 0.2, 1. Step coverage는 계산된 막 형상에서 측정합니다. ALD는 SingleParticleALD; incomingFlux=2e6, s0=3.36, evaporationFlux=2.5, 무한 평균자유행로를 고정합니다. 특정 전구체/장비에 보정되지 않았습니다.'),
  dict(id='diffusion',title='Diffusion',model='IonImplantation / Anneal / Oxidation',fields=[
   choice('method','공정',['Ion implantation','Anneal','Wet oxidation','Dry oxidation'],'Ion implantation'),
   choice('species','도펀트',['P','B'],'P',{'method':['Ion implantation']}),
@@ -80,6 +81,12 @@ from advanced_devices import targets as advanced_targets
 TARGETS.extend(advanced_targets())
 DEVICE_ORDER=('pn-junction','mosfet','fdsoi','pdsoi','rcat','bcat','finfet','gaafet','mbcfet','charge-trap','cfet')
 TARGETS.sort(key=lambda target: (target['id'] in DEVICE_ORDER, DEVICE_ORDER.index(target['id']) if target['id'] in DEVICE_ORDER else 0))
+for target in TARGETS:
+    species=sorted({s['params'].get('species','P') for s in target['recipe'] if s['op']=='diffusion' and s['params'].get('method')=='Ion implantation'})
+    if species:
+        # Educational similarity weights, not a device-performance prediction.
+        target['assessment']=dict(version=2,species=species,requireAnneal=True,
+            weights=dict(geometry=.2,total=.35,active=.35,process=.1) if target.get('grading')=='doping' else dict(geometry=.5,total=.2,active=.2,process=.1))
 BY_TARGET={t['id']:t for t in TARGETS}
 
 def validate(data):
@@ -93,7 +100,8 @@ def validate(data):
         if not isinstance(given,dict) or set(given)-{f['key'] for f in op['fields']}:raise ValueError('지원하지 않는 조건입니다.')
         params={}
         for f in op['fields']:
-            v=given.get(f['key'],f['default'])
+            preset=op.get('presets',{}).get(given.get('method','CVD'),{})
+            v=given.get(f['key'],preset.get(f['key'],f['default']))
             if 'options' in f:
                 if v not in f['options']:raise ValueError(f['label']+': 지원하지 않는 값입니다.')
             elif isinstance(v,bool) or not isinstance(v,(int,float)) or not math.isfinite(v) or not f['min']<=v<=f['max']:raise ValueError(f['label']+': 범위를 확인하세요.')
