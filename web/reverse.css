@@ -70,6 +70,51 @@
 
 .spec-icon{padding:3px 8px!important;min-height:28px!important;font-size:20px;line-height:1;color:#444d91}.rubric-bars{display:grid;gap:10px;margin:20px 0}.rubric-bars>div{display:grid;grid-template-columns:90px 1fr 35px;align-items:center;gap:12px;font-size:13px}.rubric-bars meter{width:100%;height:14px}.efficiency-summary{display:flex;gap:18px;flex-wrap:wrap;padding:14px 0;font-size:13px}.dopant-checks>div{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #edf0f5}.dopant-checks small{display:block;color:#617188;font-size:12px;margin-top:4px}.pass{color:#19705b}.fail{color:#aa4256}.measured-hints{background:#f4f6fd;padding:16px;border-radius:12px;margin:18px 0;font-size:13px;line-height:1.7}#spec-content{padding:12px 24px 24px;overflow:auto;max-height:70vh}.spec-flow{margin-top:18px;line-height:1.9}.spec-flow summary{cursor:pointer;font-weight:600}
 
+/* A desktop workspace keeps the structure, recipe and flow visible together. */
+@media(min-width:981px) and (min-height:650px){
+ body:has(#observation) .app-header{height:60px;padding:0 20px}
+ .workspace-layout:has(#observation){grid-template-columns:210px minmax(0,1fr)}
+ .workspace-layout:has(#observation) .library{max-height:calc(100dvh - 60px);padding:16px 12px;min-height:0}
+ .workspace-layout:has(#observation) main{height:calc(100dvh - 60px);padding:12px 18px;display:flex;flex-direction:column;max-width:none}
+ .workspace-layout:has(#observation) .page-heading{margin-bottom:10px;gap:10px;flex-shrink:0}
+ .workspace-layout:has(#observation) .page-heading h1{font-size:25px}
+ #observation:not([hidden]),#reverse-lab:not([hidden]){display:grid;grid-template-rows:minmax(0,1fr) 180px;gap:10px;flex:1;min-height:0}
+ .lab-grid,.reverse-grid{min-height:0;gap:12px;align-items:stretch;grid-template-columns:minmax(0,1fr) clamp(250px,24vw,310px)}
+ .lab-grid>.panel,.reverse-grid>.panel{min-height:0;padding:14px}
+ .viewer,.reverse-view{display:flex;flex-direction:column;overflow:hidden}
+ .viewer .panel-heading,.reverse-view .panel-heading{margin-bottom:8px;flex-shrink:0}
+ .canvas-wrap{flex:1;min-height:120px}
+ .canvas-wrap canvas{height:100%;min-height:0}
+ .dual-view{flex:1;min-height:120px;gap:10px}
+ .view-cell{display:flex;flex-direction:column;min-height:0}
+ .view-cell h3{margin-bottom:6px;flex-shrink:0}
+ .dual-view canvas{flex:1;min-height:0;height:0}
+ .viewer .legend,.reverse-view .legend{gap:8px 12px;margin:7px 0 4px;flex-shrink:0}
+ .viewer .doping-tools{margin:3px 0}
+ .result-tools{padding-top:5px;gap:8px}
+ .reverse-view footer{margin-top:5px;padding-top:7px;flex-shrink:0}
+ .controls,.reverse-controls{display:flex;flex-direction:column;overflow:hidden;max-height:none}
+ .controls h2,.reverse-controls .panel-heading{margin-bottom:10px;flex-shrink:0}
+ #obs-step-form,#condition-form,.reverse-controls form{display:flex;flex-direction:column;flex:1;min-height:0}
+ #obs-step-fields,#fields,.reverse-controls .reverse-inputs{overflow:auto;flex:1;min-height:0;padding-right:5px;overscroll-behavior:contain}
+ #obs-step-title{margin-bottom:8px;flex-shrink:0}
+ .controls .field,.reverse-controls .field{margin-bottom:12px}
+ #obs-step-form .primary,.controls form>button,.reverse-controls .primary{position:static;flex-shrink:0;margin-top:8px;min-height:38px}
+ #run-status,.reverse-status{margin-top:6px;min-height:0;max-height:36px;overflow:auto;flex-shrink:0}
+ .process-panel{position:relative;margin-top:0!important;padding:12px 14px;display:flex;flex-direction:column;min-height:0}
+ .process-panel .panel-heading{margin-bottom:6px;flex-shrink:0}
+ .timeline,.flow-builder{min-height:0;flex:1;gap:9px;padding:2px 2px 6px;overflow-y:hidden}
+ .frame-card{flex:0 0 145px;min-height:0;padding:7px 9px;max-width:none}
+ .frame-card canvas{height:44px;min-height:0;margin:16px 0 3px;flex:1}
+ .frame-name,.flow-step strong{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4}
+ .flow-card{flex-basis:132px;min-height:0}
+ .flow-step{min-height:0;padding:6px 8px;gap:2px}
+ .flow-step canvas,.flow-step .pending-shape{height:35px;min-height:0;flex:1}
+ .flow-step small{line-height:1.3}
+ .flow-meta{margin-top:4px;flex-shrink:0}
+ .operation-picker:not([hidden]){position:absolute;bottom:calc(100% - 44px);left:14px;right:14px;z-index:5;padding:12px;background:#fff;border:1px solid #dfe3ef;border-radius:12px;box-shadow:0 8px 28px #25315220}
+}
+
 .view-cell h3{min-height:32px}
 
 .rubric-bars meter::-webkit-meter-bar{background:#edf0f8;border:0;border-radius:6px}.rubric-bars meter::-webkit-meter-optimum-value{background:#444aa0;border-radius:6px}.rubric-bars meter::-moz-meter-bar{background:#444aa0;border-radius:6px}
