@@ -4,9 +4,10 @@
 (() => {
 const output=document.getElementById('results');
 let rows=[],w=window,d=document,originalFetch,fault=null,calls=[];
+const runtimeErrors=[];window.addEventListener('error',e=>runtimeErrors.push(e.message));window.addEventListener('unhandledrejection',e=>runtimeErrors.push(String(e.reason)));
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
 async function until(fn,label){for(let n=0;n<300;n++){if(fn())return;await delay(100)}throw Error('Timeout: '+label)}
-function check(name,pass,detail=''){rows.push({name,pass:!!pass,detail});output.textContent=JSON.stringify({passed:rows.filter(r=>r.pass).length,failed:rows.filter(r=>!r.pass).length,rows},null,2);if(!pass)throw Error(name+': '+detail)}
+function check(name,pass,detail=''){if(runtimeErrors.length){pass=false;detail=runtimeErrors.join('; ')}rows.push({name,pass:!!pass,detail});output.textContent=JSON.stringify({passed:rows.filter(r=>r.pass).length,failed:rows.filter(r=>!r.pass).length,rows},null,2);if(!pass)throw Error(name+': '+detail)}
 const $=id=>d.getElementById(id);
 async function click(id){$(id).click();await delay(50)}
 function input(id,value,event='input'){const e=$(id);e.value=String(value);e.dispatchEvent(new w.Event(event,{bubbles:true}));}
@@ -118,6 +119,7 @@ document.getElementById('run-tests').onclick=async()=>{
   await observe('photo-lithography');d.querySelector('.frame-card').click();w.scrollTo(0,0);await click('play');await delay(1900);
   check('Playback never scrolls document',w.scrollY===0);await click('play');
   check('Observation export label restored',$('export-json').textContent==='결과 저장');
+  check('No uncaught browser errors',runtimeErrors.length===0);
   document.getElementById('summary').textContent='COMPLETE: '+rows.length+' passed';
  }catch(e){document.getElementById('summary').textContent='FAILED: '+e.message;output.textContent=JSON.stringify({error:e.stack,rows},null,2)}
  finally{document.getElementById('run-tests').disabled=false}

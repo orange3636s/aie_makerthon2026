@@ -300,5 +300,17 @@
     "2.5D is an extruded 2D view, not a 3D device solution",
     "Fin/GAA/MBC/CFET gate and S/D sections remain independent educational modules",
     "Geometry and doping comparison does not verify electrical operation"
-  ]
+  ],
+  "followUp": {
+    "date": "2026-10-28",
+    "reason": "Example flow application exposed an uncaught horizontal-scroll exception that earlier DOM assertions did not detect.",
+    "fix": "Remove out-of-scope focus state from revealStep; retain focus handling only in renderFlow.",
+    "verification": {
+      "browserAssertions": 84,
+      "uncaughtErrors": 0,
+      "scrollUnitCases": 3,
+      "designGuideReferences": 26
+    },
+    "scope": "Display-only rectilinear guides; native geometry, dopants and grading inputs unchanged."
+  }
 }
