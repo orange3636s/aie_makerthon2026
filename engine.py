@@ -64,6 +64,8 @@ def contour_mesh(mesh, default_material=10, force_material=False, x_bounds=None,
 
 def run(data):
     spec, p = validate(data)
+    from stage_controls import controls as bosch_controls,validate as validate_stages
+    stages=validate_stages(data,p) if spec['id']=='bosch' else {}
     from process_presets import IDS as process_ids,run as process_run
     if spec['id'] in process_ids:return process_run(spec,p)
     from advanced_devices import SOURCES,simulate
@@ -123,15 +125,16 @@ def run(data):
             direction=[0.,-1.,0.]
             etch=ps.DirectionalProcess(direction=direction,directionalVelocity=-.1,isotropicVelocity=-.2,maskMaterial=[ps.Material.Mask,ps.Material.Polymer])
             cycles=int(p["cycles"])
-            advance(etch,p["etch_time"])
+            advance(etch,stages.get('1',p["etch_time"]))
             snap("초기 트렌치 식각",.05)
             for n in range(cycles):
                 domain.duplicateTopLevelSet(ps.Material.Polymer)
-                advance(ps.SphereDistribution(radius=p["coating"]),1)
+                coating=stages.get(str(2+3*n),p['coating'])
+                advance(ps.SphereDistribution(radius=coating),1)
                 snap(f"{n+1}회 · 보호막 형성",.05+.95*(n+.25)/cycles)
-                advance(ps.DirectionalProcess(direction=direction,directionalVelocity=-(p["coating"]+.04),isotropicVelocity=0.,maskMaterial=ps.Material.Mask),1)
+                advance(ps.DirectionalProcess(direction=direction,directionalVelocity=-stages.get(str(3+3*n),coating+.04),isotropicVelocity=0.,maskMaterial=ps.Material.Mask),1)
                 snap(f"{n+1}회 · 바닥 개방",.05+.95*(n+.5)/cycles)
-                advance(ps.DirectionalProcess(direction=direction,directionalVelocity=-.1,isotropicVelocity=-.2,maskMaterial=[ps.Material.Mask,ps.Material.Polymer]),p["etch_time"])
+                advance(ps.DirectionalProcess(direction=direction,directionalVelocity=-.1,isotropicVelocity=-.2,maskMaterial=[ps.Material.Mask,ps.Material.Polymer]),stages.get(str(4+3*n),p["etch_time"]))
                 domain.removeTopLevelSet()
                 snap(f"{n+1}회 · 식각·보호막 제거",.05+.95*(n+1)/cycles)
         else:
@@ -304,7 +307,7 @@ def run(data):
     if kind=='locos':bounds=[-.86,.86,-.28,max(.24,max(f['highest'] for f in frames)+.05)]
     if kind=='rie':bounds=[-1.65,1.65,-.3,1.05]
     return compact_native(dict(example=kind,params=p,frames=frames,bounds=bounds,previewFrame=len(frames)-2 if kind=='locos' else len(frames)-1,
-                unit=spec["unit"],elapsed=round(time.perf_counter()-start,3),
+                unit=spec["unit"],stages=stages,stageControls=bosch_controls(p,stages) if kind=="bosch" else [],elapsed=round(time.perf_counter()-start,3),
                 engine="ViennaPS "+version("ViennaPS"),viennals=version("ViennaLS"),
                 mode=spec.get("mode","physics"),model=spec["model"],note=spec["note"],source=spec["source"]))
 

@@ -1,10 +1,10 @@
 """Native teaching modules for dopant activation and front-side contacts."""
 CONTACT_METALS={'finfet':'Co','gaafet':'Mo','mbcfet':'Mo','cfet':'Mo'}
 
-def contacts(gate=True,cap=False,metal='W'):
+def contacts(gate=True,cap=False,metal='W',pitch=.50):
     from reverse_catalog import dep,photo,etch,strip,step
     def L(label,s):return dict(s,label=label)
-    opening=photo(.20,'Positive','Repeat' if gate else 'Double',.50 if gate else 1.0)
+    opening=photo(.16 if pitch<.50 else .20,'Positive','Triple' if pitch<.50 else 'Repeat' if gate else 'Double',pitch if gate else 1.0)
     flow=[L('ILD deposition',dep('SiO2',.32)),L('ILD planarization',step('cmp')),
           L('Contact dielectric cap',dep('SiO2',.10)),
           L('S/D + gate contact openings' if gate else 'P/N contact openings',opening),

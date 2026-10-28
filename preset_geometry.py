@@ -178,7 +178,7 @@ def compact_native(result):
     """Expose major operations only; keep native result geometry unchanged."""
     frames=result['frames'];kind=result['example'];n=len(frames)
     selections={
-        'bosch':[(0,'마스크 · Si'),(1,'초기 식각'),(3,'보호막 증착 · 바닥 개방'),(4,'1회 식각'),(n-1,'반복 식각 · 최종')],
+        'bosch':[(i,f['label']) for i,f in enumerate(frames)],
         'wet':[(0,'마스크 · Si'),(3,'습식 식각 · 중간'),(n-1,'습식 식각 · 최종')],
         'sf6':[(0,'마스크 · Si'),(3,'SF₆/O₂ 식각 · 중간'),(n-1,'SF₆/O₂ 식각 · 최종')],
         'locos':[(0,'Pad oxide · 질화막'),(3,'선택 열산화'),(4,'질화막 제거')],

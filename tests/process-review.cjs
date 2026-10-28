@@ -20,6 +20,6 @@ await assert.rejects(explain(report,{env,fetchImpl:async()=>({ok:false,status:40
 await assert.rejects(explain(report,{env,fetchImpl:async()=>response({summary:'test',suggestions:[{id:'invented',analysis:'bad',action:'bad'}]})}),/근거/);
 await assert.rejects(classify('not-an-image',targets,{env}),/이미지/);
 await assert.rejects(classify('data:image/png;base64,YQ==',targets,{env,fetchImpl:async()=>response({target:'invented',confidence:1,reason:'bad',ambiguous:false})}),/형식/);
-const unknown=await classify('data:image/png;base64,YQ==',targets,{env,fetchImpl:async()=>response({target:'unknown',confidence:.1,reason:'정보 부족',ambiguous:true})});assert.equal(unknown.target,'unknown');
+const unknown=await classify('data:image/png;base64,YQ==',targets,{env,fetchImpl:async()=>response({identification:'정보 부족',confidence:.1,recommendations:[],ambiguous:true})});assert.equal(unknown.recommendations.length,0);
 await assert.rejects(explain(report,{env,fetchImpl:async()=>response({summary:'',suggestions:[]})}),/형식/);
 console.log('Gemini request schema, missing key, auth failure, invented finding/target rejection and unknown fallback passed');})().catch(e=>{console.error(e);process.exitCode=1});

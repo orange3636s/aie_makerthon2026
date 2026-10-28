@@ -18,3 +18,13 @@ const rect=(material,x0,y0,x1,y1)=>({material,closed:true,points:[[x0,y0],[x1,y0
 const stacked=[rect(5,-1,.4,1,.5),rect(79,-.2,.1,.2,.3)];
 assert.deepEqual(render(stacked),render([...stacked].reverse()),'buried gate must not paint over upper metal when material enumeration changes');
 console.log('2.5D material-order-independent occlusion verified');
+const {project}=require('../web/extrusion');
+const n=16,front=new Uint8ClampedArray(n*n*4),put=(x,y,c)=>front.set([...c,255],(y*n+x)*4);
+put(3,12,[220,100,80]);put(6,9,[80,160,220]);
+const rendered=project(front,n,n,6),pixel=(x,y)=>Array.from(rendered.slice((y*n+x)*4,(y*n+x)*4+4));
+assert.deepEqual(pixel(6,9),[80,160,220,255],'closer front surface occludes the farther extrusion');
+assert.deepEqual(pixel(7,8),[53,106,145,255],'side is shaded once, not exponentially darkened');
+assert.equal(pixel(13,2)[3],0,'extrusion ends at its specified depth');
+assert.equal(pixel(5,12)[3],0,'separate line-pattern gaps remain open');
+assert.equal(rendered.length,front.length,'small viewports stay within the bitmap');
+console.log('Nearest-surface 2.5D occlusion, shading, pattern gaps and bounds passed');

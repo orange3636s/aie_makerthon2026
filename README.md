@@ -19,7 +19,7 @@
 - flow의 **+**에서 Photo / Etch / Diffusion / Deposition / C&C를 추가합니다.
 - 선택한 단계의 조건만 오른쪽에 표시됩니다. 공정 계산 후 각 단계를 클릭하여 중간 단면을 확인합니다.
 - 예시 flow는 별도로 펼쳐 보고 적용할 수 있습니다. 변경한 flow는 브라우저에 자동 저장됩니다.
-- 유사도는 같은 좌표의 주요 영역에서 재료별 IoU를 계산합니다. Si 기판 가중치는 0.25입니다. 주입이 포함된 소자 목표는 형상 50% + 총농도 20% + 활성농도 20% + 완료된 주입/열처리 이력 10%, PN Junction·Thermal Anneal은 20/35/35/10%입니다. 농도는 순농도와 각 도펀트 분포를 함께 비교하고, 마지막 주입 뒤의 열처리가 필요합니다. 누락/불완전한 농도 필드는 0%입니다. 가중치는 교육용 기준이며 전기 동작이나 제조 가능성을 보증하지 않습니다. 도핑이 없는 게이트 횡단면 목표는 형상만 평가합니다.
+- 유사도는 같은 좌표의 주요 영역에서 재료별 IoU를 계산합니다. Si 기판 가중치는 0.25입니다. 주입이 포함된 소자 목표는 형상 50% + 총농도 20% + 활성농도 20% + 완료된 주입/열처리 이력 10%, PN Junction·Thermal Anneal은 20/35/35/10%입니다. 농도는 순농도와 각 도펀트 분포를 함께 비교하고, 마지막 주입 뒤의 열처리가 필요합니다. 누락/불완전한 농도 필드는 0%입니다. 가중치는 교육용 기준이며 전기 동작이나 제조 가능성을 보증하지 않습니다. 공정·구조 목표 중 주입이 없는 경우에는 형상만 평가합니다.
 
 ## Gemini 이미지 추천·공정 분석
 
@@ -57,7 +57,7 @@
 
 `.venv/Scripts/python tests/native_flows.py`: 순차 recipe, 닫힌 재료 경계, 증착→도핑→열처리의 연결 확인.
 
-`python tests/all-device-audit.py`: 11개 소자와 5개 독립 S/D 단면의 실제 계산, 농도, 컨택 채움 검사. `python tests/process-targets.py`: 공정 목표 7종의 관찰/역설계 일치, Photo 6개 조합, 경계 조건 검사. 두 테스트는 설치된 native runtime이 필요합니다.
+`python tests/all-device-audit.py`: 11개 소자의 통합 단면의 실제 계산, 농도, 컨택 채움 검사. `python tests/process-targets.py`: 공정 목표 7종의 관찰/역설계 일치, Photo 6개 조합, 경계 조건 검사. 두 테스트는 설치된 native runtime이 필요합니다.
 
 Linux의 native 4.7 패키지는 공식 CI artifact를 checksum 검증 후 추출했습니다. 원본 commit, workflow, artifact, 재포장 checksum은 `vendor/manifest.json`에 기록되어 있습니다. 상용 TCAD 정확도 검증을 통과했다는 의미는 아닙니다.
 
@@ -90,7 +90,7 @@ RCAT, BCAT, FD-SOI FET, PD-SOI FET, GAAFET, CFET, Charge Trap Flash (평면 SONO
 
 재료 색상은 `web/materials.js` 하나로 관리합니다. HfO₂, TiN, SiO₂, Si₃N₄, Si, Poly-Si, SiGe, W, Co, Mo를 표시하며 역할명은 재료명에 붙이지 않습니다.
 
-MOSFET·SOI·RCAT·BCAT·CTF·PN 목표에 주입, 활성화, 절연막, 콘택 개구, 금속 충전, CMP를 포함합니다. BCAT는 캡으로 주입이 차단되지 않도록 노출 Si에서 S/D를 먼저 형성합니다. FINFET·GAAFET·MBCFET·CFET의 게이트 횡단면과 S/D·콘택 단면은 **독립된 2D 교육 모듈**입니다. 두 단면이 결합된 3D 소자 해석이 아닙니다.
+MOSFET·SOI·RCAT·BCAT·CTF·PN 목표에 주입, 활성화, 절연막, 콘택 개구, 금속 충전, CMP를 포함합니다. BCAT는 캡으로 주입이 차단되지 않도록 노출 Si에서 S/D를 먼저 형성합니다. FINFET·GAAFET·MBCFET·CFET은 S/D–채널 길이 방향의 하나의 2D 단면에서 게이트·도핑·컨택을 표시합니다. Si 채움은 S/D 에피택시 형상 근사, Conformal은 단면 밖 공급을 가정한 등방 성장, Pattern transfer는 PR 투영 Boolean 연산입니다. 3D 소자나 제조사 레시피의 재현이 아닙니다.
 
 콘택 예제는 W(평면·SOI·RCAT·BCAT·CTF·PN), Co(FINFET S/D), Mo(GAA·MBCFET·CFET S/D)를 사용합니다. 이는 공개된 재료 동향을 반영한 교육용 선택이며 특정 제조사의 양산 레시피를 재현했다는 의미가 아닙니다. 재료별 고유 반응식, 장벽층, 실리사이드 접촉저항, I–V는 계산하지 않습니다. [Applied Materials의 Mo 콘택 공개 설명](https://www.appliedmaterials.com/us/en/newsroom/blogs/powering-the-next-era-of-contact-scaling-with-ald-molybdenum.html).
 

@@ -10,17 +10,20 @@ async function call(path,body,expected=200,headers={}){
 (async()=>{
  assert((await call('/api/health')).ok);
  assert.equal((await call('/api/catalog')).examples.length,30);
- assert.equal((await call('/api/reverse-catalog')).targets.length,21);
+ assert.equal((await call('/api/reverse-catalog')).targets.length,23);
  for(const id of ['pn-junction','charge-trap','fdsoi','pdsoi','rcat','bcat','gaafet','cfet']){const ref=await call('/api/reference/'+id);assert.equal(ref.failure,null);assert(ref.frames.length>5)}
  await call('/api/reference/missing',undefined,404);await call('/api/jobs/missing',undefined,404);
  await call('/api/reverse','{',400);
  await call('/api/reverse',null,400);
- await call('/api/reverse',{target:'sti',steps:Array(29).fill({op:'cmp'})},400);
+ await call('/api/reverse',{target:'sti',steps:Array(65).fill({op:'cmp'})},400);
  await call('/api/reverse',{target:'sti',steps:[{op:'etch',params:{time:null}}]},400);
  await call('/api/reverse',{target:'sti',steps:[{op:'etch',params:{time:-1}}]},400);
  await call('/api/reverse',{target:'sti',steps:[{op:'deposition',params:{cycles:5.2}}]},400);
  await call('/api/reverse',{target:'sti',steps:[{op:'photo',params:{injection:1}}]},400);
  await call('/api/run',{example:'unknown'},400);
+ await call('/api/run',{example:'bosch',stages:{2:100}},400);
+ await call('/api/run',{example:'bosch',stages:{99:.1}},400);
+ await call('/api/run',{example:'mosfet',stages:{2:.1}},400);
  await call('/api/run',{example:'implant',params:{species:'As'}},400);
  await call('/api/run',{example:'implant',params:{energy:20}},400);
  await call('/api/run',{example:'implant',params:{energy:'30'}},400);

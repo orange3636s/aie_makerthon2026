@@ -42,7 +42,7 @@ def recipe(kind, p=None):
                   L('Nitride gate cap',dep('Si3N4',.3)),L('Cap CMP',step('cmp'))]
             # Pre-implant S/D windows while Si is exposed; later cap/liner layers
             # block a top-down implant. Gate recess is etched inside the protected channel.
-            pre=[L('S/D implant mask',photo(w+.14)),L('Source / drain implant · P',implant()),L('Implant PR strip',strip()),L('Dopant activation',anneal())]
+            pre=[L('S/D implant mask',photo(w+.26)),L('Source / drain implant · P',implant(energy=8)),L('Implant PR strip',strip()),L('Dopant activation',step('diffusion',method='Anneal',temperature=950,time=5))]
             return pre+r+contacts(cap=True)
         return r+[L('Source / drain implant · P',implant()),L('Dopant activation',anneal())]+contacts(cap=kind=='bcat')
     if kind in ('fdsoi','pdsoi'):
@@ -111,6 +111,11 @@ def targets():
 
 def simulate(spec,p):
     from reverse_engine import run
+    from longitudinal_devices import IDS,recipe as longitudinal_recipe
+    if spec['id'] in IDS:
+        result=run(dict(target=spec['id'],steps=longitudinal_recipe(spec['id'],p)))
+        result.update(params=p,mode='physics',note=spec['note'],source=spec['source'],previewFrame=len(result['frames'])-1)
+        return result
     if p.get('section','게이트 단면')!='게이트 단면':
         from contact_modules import sd_section
         section=sd_section(spec['id'],'B' if p['section']=='p형 S/D·콘택' else 'P',p)

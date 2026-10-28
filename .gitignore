@@ -13,3 +13,5 @@ public/
 # Local responsive browser fixture
 web/qa.html
 web/qa.js
+
+web/qa-frame.html

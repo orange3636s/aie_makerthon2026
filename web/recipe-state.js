@@ -3,7 +3,7 @@
 (function(root){
  function defaults(op,method){return {...Object.fromEntries(op.fields.map(f=>[f.key,f.default])),...(op.presets?.[method]||{})};}
  function restore(rows,operations){
-  if(!Array.isArray(rows)||rows.length>28)throw Error('저장된 flow 형식이 올바르지 않습니다.');
+  if(!Array.isArray(rows)||rows.length>64)throw Error('저장된 flow 형식이 올바르지 않습니다.');
   return rows.map(s=>{
    const op=operations.find(o=>o.id===s?.op);
    if(!op||!s.params||typeof s.params!=='object'||Array.isArray(s.params)||Object.keys(s.params).some(k=>!op.fields.some(f=>f.key===k)))throw Error('저장된 flow를 읽지 못했습니다.');

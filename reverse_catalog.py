@@ -13,24 +13,24 @@ MATERIALS=['Si','SiO2','Si3N4','SiGe','PolySi','HfO2','TiN','W','Co','Mo','Metal
 OPS=[
  dict(id='photo',title='Photo',model='Conformal PR + Boolean mask',fields=[
   choice('action','작업',['Pattern','Strip'],'Pattern'),
-  choice('pattern','마스크',['Central','Double','Repeat'],'Central',{'action':['Pattern']}),
+  choice('pattern','마스크',['Central','Double','Triple','Repeat'],'Central',{'action':['Pattern']}),
   choice('tone','PR 극성',['Positive','Negative'],'Positive',{'action':['Pattern']}),
   n('width','패턴 폭',.3,.06,1.,'µm',.01,{'action':['Pattern']}),
-  n('pitch','패턴 간격',.6,.15,1.,'µm',.01,{'action':['Pattern'],'pattern':['Double','Repeat']}),
+  n('pitch','패턴 간격',.6,.15,1.,'µm',.01,{'action':['Pattern'],'pattern':['Double','Triple','Repeat']}),
   n('offset','정렬 위치',0,-.4,.4,'µm',.01,{'action':['Pattern']}),
   n('thickness','PR 두께',.06,.03,.15,'µm',.01,{'action':['Pattern']})],
-  note='노광 창: Central은 중앙 1개, Double은 ±pitch/2, Repeat는 pitch 간격입니다. Positive PR은 창에서 제거되고 Negative PR은 창에 남습니다. 광학 노광/현상 화학은 계산하지 않습니다.'),
+  note='노광 창: Central은 중앙 1개, Double은 ±pitch/2, Triple은 −pitch·0·+pitch, Repeat는 pitch 간격입니다. Positive PR은 창에서 제거되고 Negative PR은 창에 남습니다. 광학 노광/현상 화학은 계산하지 않습니다.'),
  dict(id='etch',title='Etch',model='DirectionalProcess / material-selective geometric etch',fields=[
   choice('material','식각 재료',MATERIALS,'Si'),
-  choice('method','방식',['Directional','Isotropic','Selective removal'],'Directional'),
-  n('rate','식각률',.15,.005,.5,'µm/s',.005,{'method':['Directional','Isotropic']}),
-  n('time','식각 시간',1.,.05,8.,'s',.05,{'method':['Directional','Isotropic']}),
+  choice('method','방식',['Directional','Isotropic','Pattern transfer','Selective removal'],'Directional'),
+  n('rate','식각률',.15,.005,.5,'µm/s',.005,{'method':['Directional','Isotropic','Pattern transfer']}),
+  n('time','식각 시간',1.,.05,8.,'s',.05,{'method':['Directional','Isotropic','Pattern transfer']}),
   n('isotropic','등방성 비율',.05,0,1,'',.05,{'method':['Directional']})],
-  note='DirectionalProcess의 directionalVelocity=−rate×(1−비율), isotropicVelocity=−rate×비율. 다른 재료는 maskMaterial로 보호합니다. Selective removal은 선택 재료의 전체 제거로, 반응 속도 모델이 아닙니다.'),
+  note='DirectionalProcess의 directionalVelocity=−rate×(1−비율), isotropicVelocity=−rate×비율. 다른 재료는 maskMaterial로 보호합니다. Pattern transfer는 PR 수직 투영 외부를 깊이 rate×time만큼 자르는 Boolean 기하 모델입니다. Selective removal은 선택 재료의 전체 제거로, 반응 속도 모델이 아닙니다.'),
  dict(id='deposition',title='Deposition',model='SingleParticleProcess / SingleParticleALD',fields=[
-  choice('method','증착 조건 프리셋',['PVD','CVD','ALD'],'CVD'),choice('material','재료',MATERIALS,'SiO2'),
-  n('rate','평면 증착률',.08,.005,.3,'µm/s',.005,{'method':['PVD','CVD']}),
-  n('time','증착 시간',1.,.1,8.,'s',.1,{'method':['PVD','CVD']}),
+  choice('method','증착 조건 프리셋',['PVD','CVD','ALD','Conformal'],'CVD'),choice('material','재료',MATERIALS,'SiO2'),
+  n('rate','평면 증착률',.08,.005,.3,'µm/s',.005,{'method':['PVD','CVD','Conformal']}),
+  n('time','증착 시간',1.,.1,8.,'s',.1,{'method':['PVD','CVD','Conformal']}),
   n('sticking','부착 확률',.2,.01,1.,'',.01,{'method':['PVD','CVD']}),
   n('exponent','입사 방향성 지수',1.,0,40,'',1,{'method':['PVD','CVD']}),
   n('cycles','ALD 사이클',30,5,120,'cycle',1,{'method':['ALD']}),
@@ -38,7 +38,7 @@ OPS=[
   n('pulse','전구체 펄스 시간',.1,.05,.5,'s',.05,{'method':['ALD']}),
   n('ald_sticking','초기 부착 확률',.00005,.00001,.001,'',.00001,{'method':['ALD']})],
   presets={'PVD':dict(sticking=1.,exponent=20.),'CVD':dict(sticking=.2,exponent=1.)},
-  note='PVD/CVD는 공통 SingleParticleProcess의 조건 프리셋입니다. 모든 수치가 같으면 결과도 같습니다. PVD 기본값: sticking=1, sourceExponent=20; CVD: 0.2, 1. Step coverage는 계산된 막 형상에서 측정합니다. ALD는 SingleParticleALD; incomingFlux=2e6, s0=3.36, evaporationFlux=2.5, 무한 평균자유행로를 고정합니다. 특정 전구체/장비에 보정되지 않았습니다.'),
+  note='PVD/CVD는 공통 SingleParticleProcess의 조건 프리셋입니다. 모든 수치가 같으면 결과도 같습니다. PVD 기본값: sticking=1, sourceExponent=20; CVD: 0.2, 1. Step coverage는 계산된 막 형상에서 측정합니다. ALD는 SingleParticleALD; incomingFlux=2e6, s0=3.36, evaporationFlux=2.5, 무한 평균자유행로를 고정합니다. Conformal은 반경 rate×time의 등방 offset으로 성장시키는 기하 모델이며 단면 밖에서 재료가 공급된다고 가정합니다. 특정 전구체/장비에 보정되지 않았습니다.'),
  dict(id='diffusion',title='Diffusion',model='IonImplantation / Anneal / Oxidation',fields=[
   choice('method','공정',['Ion implantation','Anneal','Wet oxidation','Dry oxidation'],'Ion implantation'),
   choice('species','도펀트',['P','B'],'P',{'method':['Ion implantation']}),
@@ -79,15 +79,15 @@ dict(id='locos',title='LOCOS',width=1.6,bounds=[-.8,.8,-.3,.35],roi=[-.72,.72,-.
 ]
 from advanced_devices import targets as advanced_targets
 TARGETS.extend(advanced_targets())
-from contact_modules import contacts,sd_section
+from contact_modules import contacts
+from longitudinal_devices import IDS as LONGITUDINAL_IDS, configure as configure_longitudinal
 for t in TARGETS:
     if t['id']=='mosfet':
         t['recipe']=t['recipe'][:10]+contacts()
         t['recipe'][6]['label']='Source / drain implant · P'
         t['recipe'][7]['label']='Dopant activation'
-    if t['id'] in ('finfet','gaafet','mbcfet','cfet'):
-        t['sections']={'sd':sd_section(t['id'])}
-        if t['id']=='cfet':t['sections']['sd-p']=sd_section(t['id'],'B')
+    if t['id'] in LONGITUDINAL_IDS:
+        configure_longitudinal(t)
 DEVICE_ORDER=('pn-junction','mosfet','fdsoi','pdsoi','rcat','bcat','finfet','gaafet','mbcfet','charge-trap','cfet')
 TARGETS.sort(key=lambda target: (target['id'] in DEVICE_ORDER, DEVICE_ORDER.index(target['id']) if target['id'] in DEVICE_ORDER else 0))
 for target in TARGETS:
@@ -103,7 +103,7 @@ BY_TARGET={t['id']:t for t in TARGETS}
 def validate(data):
     if not isinstance(data,dict) or data.get('target') not in BY_TARGET:raise ValueError('목표 예제를 선택하세요.')
     rows=data.get('steps',[])
-    if not isinstance(rows,list) or len(rows)>28:raise ValueError('공정은 최대 28단계입니다.')
+    if not isinstance(rows,list) or len(rows)>64:raise ValueError('공정은 최대 64단계입니다.')
     clean=[]
     for row in rows:
         if not isinstance(row,dict) or row.get('op') not in BY_OP:raise ValueError('지원하지 않는 공정입니다.')

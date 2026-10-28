@@ -29,7 +29,7 @@ def run(data):
             ps.MakePlane(d,-body,ps.Material.SiO2,True).apply()
         ps.MakePlane(d,0.,ps.Material.Si,True).apply()
     frames=[];cmp_stop=None;doping_state=None;concentration=None;failure=None;oxidized=False
-    implanted=set();annealed=set()
+    implanted=set();annealed=set();mask_intervals=None;current_step=0
     def box(x0,y0,x1,y1):
         level=ls.Domain(d.getGrid());geom=ls.MakeGeometry(level,ls.Box([x0,y0],[x1,y1]));geom.setIgnoreBoundaryConditions([True,True,False]);geom.apply();return level
     def surface_top():return max(p[1] for p in d.getSurfaceMesh(False).getNodes())
@@ -49,7 +49,7 @@ def run(data):
         if periodic:
             polygons=[dict(material=q['material'],closed=q['closed'],points=[[round(sign*x+shift,6),y] for x,y in q['points']]) for q in polygons for sign,shift in [(-1,-.6),(1,-.2),(-1,.2),(1,.6)]]
         surface=d.getSurfaceMesh(False).getNodes()
-        frame=dict(label=label,polygons=polygons,lowest=min(p[1] for p in surface),highest=max(p[1] for p in surface),metrics=extra or {})
+        frame=dict(label=label,stepIndex=current_step,polygons=polygons,lowest=min(p[1] for p in surface),highest=max(p[1] for p in surface),metrics=extra or {})
         if frame['highest']>1.5 or frame['lowest']<-.9:raise ValueError('학습 영역을 벗어났습니다. 공정 시간이나 식각률을 줄이세요.')
         if concentration:frame['concentration']=concentration
         # Evidence records completed operations only, independently of user labels.
@@ -72,12 +72,13 @@ def run(data):
         result=json.loads(out.read_text(encoding='utf-8'));doping_state=result['state'];concentration=result['concentration']
     snap(target.get('initialLabel','Si substrate'))
     for i,row in enumerate(steps):
+        current_step=i+1
         try:
             op=row['op'];p=row['params'];mats=d.getMaterialsInDomain();metric={};label=BY_OP[op]['title']
             if op=='photo':
                 if p['action']=='Strip':
                     if ps.Material.Mask not in mats:raise ValueError('제거할 PR이 없습니다.')
-                    d.removeMaterial(ps.Material.Mask);label='PR strip'
+                    d.removeMaterial(ps.Material.Mask);label='PR strip';mask_intervals=None
                 else:
                     if ps.Material.Mask in mats:raise ValueError('기존 PR을 먼저 제거하세요.')
                     d.duplicateTopLevelSet(ps.Material.Mask);advance(ps.SphereDistribution(radius=p['thickness']),0)
@@ -86,7 +87,7 @@ def run(data):
                         snap('Mask alignment / exposure · schematic')
                         frames[-1]['exposure']=dict(pattern=p['pattern'],width=p['width'],pitch=p['pitch'],offset=p['offset'],tone=p['tone'])
                     pr=d.getMaterialLevelSet(ps.Material.Mask)
-                    centers=[p['offset']] if p['pattern']=='Central' else [p['offset']-p['pitch']/2,p['offset']+p['pitch']/2] if p['pattern']=='Double' else [p['offset']+j*p['pitch'] for j in range(-8,9) if abs(p['offset']+j*p['pitch'])<target['width']/2+p['width']/2]
+                    centers=[p['offset']] if p['pattern']=='Central' else [p['offset']-p['pitch']/2,p['offset']+p['pitch']/2] if p['pattern']=='Double' else [p['offset']+j*p['pitch'] for j in (-1,0,1)] if p['pattern']=='Triple' else [p['offset']+j*p['pitch'] for j in range(-8,9) if abs(p['offset']+j*p['pitch'])<target['width']/2+p['width']/2]
                     if periodic:
                         if p['pattern']!='Double' or p['offset']!=0 or p['pitch']!=.8:raise ValueError('LOCOS 대칭 계산은 Double 마스크, pitch 0.8 µm, offset 0을 사용합니다.')
                         centers=[-.2]
@@ -99,6 +100,7 @@ def run(data):
                             end=max(end,b)
                         if end<width/2:kept.append((end,width/2))
                         intervals=kept
+                    mask_intervals=intervals
                     pattern=None
                     # Intersect retained intervals then unite the finite PR
                     # pieces. Avoid the signed-run complement edge case in LS.
@@ -117,13 +119,44 @@ def run(data):
                 if p['method']=='Selective removal':
                     if m==ps.Material.Si:raise ValueError('기판 전체 제거는 지원하지 않습니다. 식각률·시간을 지정하세요.')
                     d.removeMaterial(m)
+                elif p['method']=='Pattern transfer':
+                    if not mask_intervals:raise ValueError('패턴 전사 식각 전에 PR 마스크를 추가하세요.')
+                    material=d.getMaterialLevelSet(m)
+                    mesh=ls.Mesh();ls.ToSurfaceMesh(material,mesh).apply()
+                    top=max(v[1] for v in mesh.getNodes())
+                    # Ideal vertical pattern transfer, explicitly geometric.
+                    # The finite etch budget prevents erasing the bulk substrate.
+                    windows=[];end=-width/2
+                    for a,b in mask_intervals:
+                        if a>end:windows.append((end,a))
+                        end=max(end,b)
+                    if end<width/2:windows.append((end,width/2))
+                    for a,b in windows:
+                        ls.BooleanOperation(material,box(a,top-p['rate']*p['time'],b,2),ls.BooleanOperationEnum.RELATIVE_COMPLEMENT).apply()
+                    d.removeMaterial(m);d.insertNextLevelSetAsMaterial(material,m,True)
                 else:
                     ratio=1. if p['method']=='Isotropic' else p['isotropic']
+                    protected=None
+                    if target.get('projectedMask') and mask_intervals and p['method']=='Directional':
+                        before=d.getMaterialLevelSet(m)
+                        undercut=p['rate']*p['time']*ratio
+                        for a,b in mask_intervals:
+                            if b-a<=2*undercut:continue
+                            piece=ls.Domain();piece.deepCopy(before)
+                            ls.BooleanOperation(piece,box(a+undercut,-2,b-undercut,2),ls.BooleanOperationEnum.INTERSECT).apply()
+                            if protected is None:protected=piece
+                            else:ls.BooleanOperation(protected,piece,ls.BooleanOperationEnum.UNION).apply()
                     advance(ps.DirectionalProcess(direction=[0.,-1.,0.],directionalVelocity=-p['rate']*(1-ratio),isotropicVelocity=-p['rate']*ratio,maskMaterial=[a for a in mats if a!=m]),p['time'])
+                    if protected is not None:
+                        remaining=d.getMaterialLevelSet(m)
+                        ls.BooleanOperation(remaining,protected,ls.BooleanOperationEnum.UNION).apply()
+                        d.removeMaterial(m);d.insertNextLevelSetAsMaterial(remaining,m,True)
                 label=f"Etch · {p['material']}"
             elif op=='deposition':
                 cmp_stop=surface_top();m=getattr(ps.Material,p['material']);d.duplicateTopLevelSet(m)
-                if p['method'] in ('PVD','CVD'):
+                if p['method']=='Conformal':
+                    advance(ps.SphereDistribution(radius=p['rate']*p['time']),0)
+                elif p['method'] in ('PVD','CVD'):
                     advance(ps.SingleParticleProcess(rate=p['rate'],stickingProbability=p['sticking'],sourceExponent=p['exponent']),p['time'],True)
                 else:
                     ap=ps.SingleParticleALDParams();ap.stickingProbability=p['ald_sticking'];ap.s0=3.36;ap.incomingFlux=2e6;ap.evaporationFlux=2.5

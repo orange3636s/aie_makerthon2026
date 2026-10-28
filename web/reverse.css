@@ -55,3 +55,7 @@
 }
 .grade-note,.image-dialog p,.view-cell h3,.review-score small{color:var(--ui-muted);font-size:12px}
 .image-dialog .close-dialog{width:36px;min-height:36px;padding:0;font-size:24px}
+.recommendation-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0 20px}
+.recommendation-cards button{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:7px;min-width:0;padding:15px;border:1px solid #dce1f0;background:#f8f9fd;border-radius:12px;white-space:normal}
+.recommendation-cards small{font-size:10px;color:#5c6988}.recommendation-cards strong{font-size:13px;overflow-wrap:anywhere}.recommendation-cards span{font-size:11px;color:#4d548d;margin-top:auto}
+@media(max-width:520px){.recommendation-cards{grid-template-columns:1fr}.recommendation-cards button{gap:4px}}

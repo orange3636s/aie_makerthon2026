@@ -4,6 +4,11 @@ from reverse_catalog import BY_TARGET,dep,ald,photo,etch,strip,remove,step
 
 def run(spec,p):
     from reverse_engine import run as simulate
+    from longitudinal_devices import IDS,recipe as longitudinal_recipe
+    if spec['id'] in IDS:
+        result=simulate(dict(target=spec['id'],steps=longitudinal_recipe(spec['id'],p)))
+        result.update(params=p,mode='physics',note=spec['note'],source=spec['source'],previewFrame=len(result['frames'])-1)
+        return result
     if p.get('section','게이트 단면')!='게이트 단면':
         from contact_modules import sd_section
         section=sd_section(spec['id'],'B' if p['section']=='p형 S/D·콘택' else 'P',p)

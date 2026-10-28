@@ -11,3 +11,5 @@ vendor/transport-windows-x64.zip
 web/qa.html
 *.png
 web/qa.js
+
+web/qa-frame.html

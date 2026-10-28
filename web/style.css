@@ -83,3 +83,10 @@ html{overflow-anchor:none}
 button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ui-focus);outline-offset:3px}
 button:disabled{cursor:not-allowed}
 .section-caption,.range-labels,.frame-index,.theme-meta,.caption{color:var(--ui-muted)}
+/* One parameter pane for global presets and editable sequential steps. */
+.simulation-condition-tabs{display:flex;gap:6px;margin:12px 0 18px;background:#f4f5fa;padding:4px;border-radius:10px}
+.simulation-condition-tabs button{flex:1;border:0;background:transparent;padding:9px 6px;font-size:12px;color:#526078}
+.simulation-condition-tabs button.active{background:#fff;color:#343e83;box-shadow:0 1px 4px #17244513}
+#obs-step-form .field input,#obs-step-form .field select{width:100%;min-width:0;margin-top:7px}
+#obs-step-form .primary{width:100%;position:sticky;bottom:12px}
+#obs-step-title{white-space:normal;line-height:1.6;font-size:12px;margin-bottom:16px}

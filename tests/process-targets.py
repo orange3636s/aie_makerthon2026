@@ -15,7 +15,7 @@ for key in sorted(IDS):
     score=json.loads(subprocess.check_output([node,str(ROOT/'tests/grade-result.cjs'),str(file)],encoding='utf-8'))['score'];assert score==100,(key,score)
     rows.append(dict(example=key,frames=len(d['frames']),score=score,seconds=d['elapsed']));print(rows[-1],flush=True)
 for tone in ['Positive','Negative']:
-    for pattern in ['Central','Double','Repeat']:
+    for pattern in ['Central','Double','Triple','Repeat']:
         d=run(dict(example='photo-lithography',params=dict(tone=tone,pattern=pattern)),'engine.py');assert not d.get('failure'),d.get('failure')
         assert len(d['frames'])==7 and d['frames'][3].get('exposure')
         assert all(p['material']!=0 for p in d['frames'][-1]['polygons'])

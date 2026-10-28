@@ -3,3 +3,5 @@ const html=fs.readFileSync(path.join(root,'web/index.html'),'utf8').replace('</b
 fs.writeFileSync(path.join(root,'web/qa.html'),html);
 fs.copyFileSync(path.join(__dirname,'browser-scenarios.js'),path.join(root,'web/qa.js'));
 console.log('Open http://127.0.0.1:3012/qa.html and run scenarios. QA assets are local-only and never published.');
+
+fs.writeFileSync(path.join(root,'web/qa-frame.html'),'<html lang="ko"><head><meta charset="utf-8"><title>Responsive test fixture</title></head><body><iframe title="390px UI tests" src="/qa.html#lele" style="width:390px;height:844px;border:1px solid #ccc"></iframe><iframe title="768px UI tests" src="/qa.html#lele" style="width:768px;height:1024px;border:1px solid #ccc"></iframe></body></html>');
