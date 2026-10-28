@@ -2,6 +2,7 @@
 const assert=require('node:assert/strict'),{explain}=require('../gemini.cjs'),memoFactory=require('../ai-cache.cjs');
 const report={findings:[]},env={GEMINI_API_KEY:'test'},good=()=>({ok:true,json:async()=>({candidates:[{content:{parts:[{text:JSON.stringify({summary:'일치',suggestions:[]})}]}}]})});
 (async()=>{
+ await assert.rejects(explain(report,{env,fetchImpl:async()=>({ok:true,json:async()=>({candidates:[{content:{parts:[{text:JSON.stringify({summary:'일치',suggestions:[],score:100})}]}}]})})}),/허용되지/);
  let n=0,delays=[];const opts={env,random:()=>0,sleep:async ms=>delays.push(ms),fetchImpl:async()=>++n<3?{ok:false,status:503,json:async()=>({})}:good()};
  assert.equal((await explain(report,opts)).summary,'일치');assert.equal(n,3);assert.deepEqual(delays,[1000,2000]);
  n=0;await assert.rejects(explain(report,{...opts,fetchImpl:async()=>{n++;return{ok:false,status:401,json:async()=>({})}}}),/인증/);assert.equal(n,1);

@@ -1,5 +1,5 @@
 /* One material palette for every preset, thumbnail and free experiment. */
-window.SIMULATION_MATERIALS=Object.freeze({
+(function(root){const materials=Object.freeze({
  0:{name:'PR',color:'#D5B5EE'},
  1:{name:'Polymer',color:'#EEC5D3'},
  4:{name:'Dielectric',color:'#DCE7B5'},
@@ -17,3 +17,6 @@ window.SIMULATION_MATERIALS=Object.freeze({
  80:{name:'Mo',color:'#BB9DAE'},
  79:{name:'TiN',color:'#9A94C4'}
 });
+
+if(typeof module==='object'&&module.exports)module.exports=materials;else root.SIMULATION_MATERIALS=materials;
+})(typeof window==='object'?window:globalThis);

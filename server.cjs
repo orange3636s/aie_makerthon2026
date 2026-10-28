@@ -4,6 +4,7 @@ const root=__dirname;
 const RecipeState=require('./web/recipe-state.js');
 const ProcessReview=require('./web/process-review.js'), Gemini=require('./gemini.cjs');
 const aiMemo=require('./ai-cache.cjs')();
+const Evidence=require('./analysis-evidence.cjs');
 const runtimeRoot=path.join(require('node:os').tmpdir(),'simulation-runtime');
 const zlib=require('node:zlib');
 if(process.loadEnvFile&&fs.existsSync(path.join(root,'.env')))process.loadEnvFile(path.join(root,'.env'));
@@ -13,7 +14,7 @@ const python=process.env.SIMULATION_PYTHON||(fs.existsSync(localPython)?localPyt
 const catalog=JSON.parse(fs.readFileSync(path.join(root,'catalog.json'))),reverse=JSON.parse(fs.readFileSync(path.join(root,'reverse-catalog.json')));
 const jobs=new Map(),cache=new Map(),queue=[],limits=new Map(),waiters=new Map();let activeTask=null,running=false,aiToday=0,aiDay='';
 const assets={'/':'index.html','/tutorial':'parameters.html','/challenge':'index.html'};
-for(const f of ['index.html','app.js','style.css','materials.js','ui-contract.js','process-estimate.js','photo-preview.js','design-guide.js','simulation-editor.js','extrusion.js','parameters.html','tutorial.js','process-guide.js','tutorial-guide.js','reverse.js','reverse.css','grading.js','learning-score.js','recipe-state.js','process-review.js'])assets['/'+f]=f;
+for(const f of ['viewport.js','parameter-preview.js','studio.css','index.html','app.js','style.css','materials.js','ui-contract.js','process-estimate.js','photo-preview.js','design-guide.js','simulation-editor.js','extrusion.js','parameters.html','tutorial.js','process-guide.js','tutorial-guide.js','reverse.js','reverse.css','grading.js','learning-score.js','recipe-state.js','process-review.js'])assets['/'+f]=f;
 if(host==='127.0.0.1'){assets['/qa.html']='qa.html';assets['/qa.js']='qa.js';assets['/qa-frame.html']='qa-frame.html';}
 function send(res,status,data,type='application/json; charset=utf-8'){
  let body=Buffer.isBuffer(data)?data:Buffer.from(JSON.stringify(data));if(res.canGzip&&body.length>32000){body=zlib.gzipSync(body);res.setHeader('Content-Encoding','gzip');res.setHeader('Vary','Accept-Encoding')}
@@ -45,6 +46,9 @@ async function analyze(data,ip){
  const input=validate(data,true),base=reverse.targets.find(t=>t.id===input.target),target=input.view==='gate'?base:{...base,...base.sections[input.view]};
  const concise=rows=>ProcessReview.describeFlow(rows,reverse.operations);
  const report={referenceFlow:concise(target.recipe),actualFlow:concise(input.steps),target:target.title,section:target.section,scope:target.assumptions||'공정 학습 단면; 전기 동작 검증 제외',...ProcessReview.compare(target,input.steps,reverse.operations)};
+ const reference=JSON.parse(fs.readFileSync(path.join(root,'references',input.target+(input.view==='gate'?'':'-'+input.view)+'.json')));
+ const recipeKey=Evidence.signature(input.steps),matching=[...cache.values()].find(r=>r.target===input.target&&(r.view||'gate')===input.view&&Evidence.signature(r.steps)===recipeKey)|| (Evidence.signature(reference.steps)===recipeKey?reference:null);
+ report.numericalEvidence=Evidence.evidence(reference,matching,target);
  const explanation=await aiMemo(JSON.stringify([ip,'review',process.env.GEMINI_MODEL,report]),async()=>{consumeAI(ip,'review');return Gemini.explain(report)});
  return {...report,ai:explanation};
 }

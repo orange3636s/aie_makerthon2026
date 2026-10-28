@@ -10,7 +10,7 @@ let catalog=[],selected=null,current=null,frame=0,busy=false,mode='2d',timer=nul
 const references=new Map(),lastResults=new Map();
 let calculationGeneration=0,calculationJob=null,calculationTick=null,calculationController=null;
 function cancelJob(id){return id?request('/api/cancel',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({job:id})}).catch(()=>{}):Promise.resolve();}
-function cancelCalculation(){calculationGeneration++;calculationController?.abort();calculationController=null;clearInterval(calculationTick);calculationTick=null;const old=calculationJob;calculationJob=null;if(busy)setBusy(false);return cancelJob(old);}
+function cancelCalculation(){const previewCancellation=window.ParameterPreview?.cancelAll();calculationGeneration++;calculationController?.abort();calculationController=null;clearInterval(calculationTick);calculationTick=null;const old=calculationJob;calculationJob=null;if(busy)setBusy(false);return Promise.all([previewCancellation,cancelJob(old)]);}
 async function calculateJob(path,payload,mine){
  const controller=new AbortController();calculationController=controller;const requestId=crypto.randomUUID();calculationJob=requestId;
  const job=await request(path,{method:'POST',signal:AbortSignal.any([controller.signal,AbortSignal.timeout(190000)]),headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,requestId})});
@@ -71,21 +71,23 @@ function draw(canvas,data,bounds,options={}){
  }
  canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);const c=canvas.getContext('2d');c.scale(dpr,dpr);c.fillStyle='#ffffff';c.fillRect(0,0,w,h);
  if(!data||!bounds){c.fillStyle='#536981';c.font='12px Segoe UI';c.textAlign='center';c.fillText('조건을 선택하고 실행해 주세요',w/2,h/2);return}
+ if(!options.mini&&!options.fitted&&window.SectionViewport)bounds=SectionViewport.fit(data,bounds,options.reference);
  const overlay=PhotoPreview.build(options.maskPreview||data.photoMask||data.exposure,bounds,data);
  if(overlay)bounds=[bounds[0],bounds[1],bounds[2],Math.max(bounds[3],overlay.top)];
  const axisUnit=options.unit||selected?.unit||current?.unit||'µm',axisField={unit:axisUnit};
- const mini=!!options.mini,margin=mini?6:43,top=mini?7:39,bottom=mini?6:35;
+ const mini=!!options.mini,margin=mini?6:36,top=mini?7:25,bottom=mini?6:42;
  const extra=options.extrude&&!mini?Math.min(70,w*.12):0;
- const scale=Math.min((w-margin*2-extra)/(bounds[1]-bounds[0]),(h-top-bottom-extra)/(bounds[3]-bounds[2]));
+ const camera=!mini&&window.SectionViewport?SectionViewport.attach(canvas,()=>draw(canvas,data,arguments[2],options),selected?.id||''):{zoom:1,x:0,y:0};
+ const scale=camera.zoom*Math.min((w-margin*2-extra)/(bounds[1]-bounds[0]),(h-top-bottom-extra)/(bounds[3]-bounds[2]));
  const centerX=(bounds[0]+bounds[1])/2,centerY=(bounds[2]+bounds[3])/2;
- const px=x=>w/2-extra/2+(x-centerX)*scale,py=y=>(h+top-bottom)/2+extra/2-(y-centerY)*scale;
+ const px=x=>w/2-extra/2+(x-centerX)*scale+camera.x,py=y=>(h+top-bottom)/2+extra/2-(y-centerY)*scale+camera.y;
  if(!mini){
   c.strokeStyle='#edf0f5';c.lineWidth=.7;c.fillStyle='#526b84';c.font='9px Segoe UI';
   const step=Math.pow(10,Math.floor(Math.log10((bounds[1]-bounds[0])/4)))*((bounds[1]-bounds[0])/Math.pow(10,Math.floor(Math.log10((bounds[1]-bounds[0])/4)))/4>5?5:1);
   const raw=(bounds[1]-bounds[0])/5,pow=Math.pow(10,Math.floor(Math.log10(raw))),gridStep=Math.ceil(raw/pow)*pow;
   for(let x=Math.ceil(bounds[0]/gridStep)*gridStep;x<=bounds[1];x+=gridStep){const xp=px(x);c.beginPath();c.moveTo(xp,top);c.lineTo(xp,h-bottom);c.stroke();c.textAlign='center';c.fillText(ProcessUI.displayValue(axisField,Number(x.toFixed(6))),xp,h-bottom+17)}
   for(let y=Math.ceil(bounds[2]/gridStep)*gridStep;y<=bounds[3];y+=gridStep){const yp=py(y);if(yp<top||yp>h-bottom)continue;c.beginPath();c.moveTo(margin-7,yp);c.lineTo(w-margin+7,yp);c.stroke();c.textAlign='right';c.fillText(ProcessUI.displayValue(axisField,Number(y.toFixed(6))),margin-13,yp+3)}
-  c.fillStyle='#526b84';c.textAlign='right';c.fillText(`x (${ProcessUI.displayUnit(axisUnit)})`,w-margin+8,h-9);
+  c.fillStyle='#526b84';c.textAlign='right';c.fillText(`x (${ProcessUI.displayUnit(axisUnit)})`,w-margin+8,h-5);
   c.textAlign='left';c.fillText(`y (${ProcessUI.displayUnit(axisUnit)})`,12,top-10);
  }
  c.save();c.beginPath();c.rect(mini?0:margin-7,mini?0:top,w-(mini?0:(margin-7)*2),h-(mini?0:top+bottom));c.clip();
@@ -127,10 +129,11 @@ function draw(canvas,data,bounds,options={}){
  // Reference contours are drawn once on the front 2D plane, never extruded.
  if(options.reference){c.strokeStyle='#a85b00';c.lineWidth=1.4;c.setLineDash([5,4]);for(const poly of options.reference.polygons){c.beginPath();poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.stroke()}c.setLineDash([]);}
  c.restore();
+ if(window.ParameterPreview?.active(canvas.id)){c.fillStyle='#087f76';c.font='bold 11px Segoe UI';c.fillText('미리보기',50,17)}
 }
 function drawMain(){
  renderSectionViews();
- const data=current?.frames[frame],hasDoping=!!data?.concentration,field=dopingFieldFor(data);
+ const data=window.ParameterPreview?.frame('section',current?.frames[frame])||current?.frames[frame],hasDoping=!!data?.concentration,field=dopingFieldFor(data);
  $('doping-tools').hidden=!hasDoping;
  const saved=references.get(ProcessUI.referenceKey(selected?.id,current?.params)),reference=$('compare').checked&&saved?.params?.section===current?.params?.section?saved:null;
  draw($('section'),data,current?combinedBounds(current,reference):null,{maskPreview:window.simulationEditor?.maskPreview(),extrude:mode==='2.5d',reference:reference?refFrame():null,doping:$('show-doping').checked,dopingField:field});
@@ -162,3 +165,7 @@ new ResizeObserver(()=>{drawMain();if(current)document.querySelectorAll('.frame-
 (async()=>{try{const info=await request('/api/catalog');catalog=info.examples;$('example-total').textContent=catalog.length;$('library-count').textContent=catalog.length;$('engine').innerHTML=info.engine;const requested=location.hash.slice(1);await select(catalog.some(s=>s.id===requested)?requested:'mosfet')}catch(e){$('loading').hidden=true;status('서버에 연결하지 못했습니다. 시작 파일을 실행해 주세요.',true);toast(e.message)}})();
 
 window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(!busy&&id!==selected?.id&&catalog.some(s=>s.id===id))select(id)});
+
+$('library-toggle').onclick=()=>{const collapsed=document.body.classList.toggle('library-collapsed');$('library-toggle').setAttribute('aria-expanded',String(!collapsed));$('library-toggle').setAttribute('aria-label',collapsed?'예제 목록 펼치기':'예제 목록 접기');};
+
+if(window.matchMedia('(max-width:650px)').matches)$('library-toggle').click();

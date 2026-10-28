@@ -3,7 +3,7 @@
 (() => {
  const panel=$('condition-form').parentElement;
  const form=document.createElement('form');form.id='obs-step-form';form.hidden=true;
- form.innerHTML='<p id="obs-step-title" class="step-kicker"></p><div id="obs-step-fields"></div><div id="obs-step-estimate" hidden></div><button class="primary" id="obs-step-run" type="submit">공정 계산</button>';
+ form.innerHTML='<p id="obs-step-title" class="step-kicker"></p><div id="obs-step-scroll"><div id="obs-step-fields"></div><div id="obs-preview" hidden></div><div id="obs-step-estimate" hidden></div></div><button class="primary" id="obs-step-run" type="submit">공정 계산</button>';
  panel.insertBefore(form,$('reset'));
  let operations=[],draft=[],stageDraft={},source=null;
  fetch('/api/reverse-catalog').then(r=>r.json()).then(d=>{operations=d.operations;source=null;paint()}).catch(()=>{});
@@ -29,16 +29,18 @@
   $('obs-step-title').textContent=index?`STEP ${index} · ${ProcessUI.text(current.frames[frame].label)}`:'START · Si substrate';
   $('obs-step-fields').innerHTML=op?ProcessUI.groupControls(ProcessUI.recipeFields(op,row.params),raw=>{const f=ProcessUI.displayField(raw);return `<div class="field"><label for="obs-p-${f.key}">${esc(ProcessUI.text(f.label))}${f.unit?' · '+esc(f.unit):''}</label>${f.options?`<select id="obs-p-${f.key}">${ProcessUI.optionsFor(f,row.params[f.key]).map(v=>`<option value="${esc(v)}" ${v===row.params[f.key]?'selected':''} ${ProcessUI.legacy(v)?'disabled':''}>${esc(ProcessUI.label(v))}</option>`).join('')}</select>`:`<input id="obs-p-${f.key}" type="number" min="${f.min}" max="${f.max}" step="${ProcessUI.integer(f)?1:'any'}" value="${esc(row.params[f.key]===''?'':shortNumber(ProcessUI.displayValue(raw,row.params[f.key])))}" required>`}${ProcessUI.hint(raw)?`<p class="field-help">${esc(ProcessUI.hint(raw))}</p>`:''}</div>`},advancedOpen):'<p class="caption">공정 단계를 선택하세요.</p>';
   $('obs-step-run').disabled=busy||!op;
-  const preview=()=>ProcessEstimate.render($('obs-step-estimate'),op?ProcessEstimate.estimate(op,row.params):null);preview();
+  function mountPreview(){ParameterPreview.mount($('obs-preview'),{id:'section',target:current.target||selected.id,steps:draft,index:index||0,operation:op,disabled:busy,draw:()=>{drawMain();ProcessEstimate.render($('obs-step-estimate'),ParameterPreview.active('section')?null:op?ProcessEstimate.estimate(op,row.params):null)},apply:(f,v)=>{const input=$('obs-p-'+f.key);input.value=ProcessUI.displayValue(f,v);input.dispatchEvent(new Event('input',{bubbles:true}))}});}
+  const preview=()=>ProcessEstimate.render($('obs-step-estimate'),op?ProcessEstimate.estimate(op,row.params):null);preview();mountPreview();
   if(op)for(const f of op.fields){const input=$('obs-p-'+f.key);if(!input)continue;input.disabled=busy;input.addEventListener(f.options?'change':'input',()=>{
    row.params[f.key]=f.options?f.options.find(v=>String(v)===input.value):input.value===''?'':ProcessUI.inputValue(f,Number(input.value));
    if(f.key==='method')Object.assign(row.params,op.presets?.[row.params.method]||{});
    row.params=ProcessUI.normalizeInactive(op.fields,row.params);delete row.label;
-   status('');if(f.options)paint();else preview();drawMain();
+   ParameterPreview.cancelAll();status('');if(f.options)paint();else {preview();mountPreview()}drawMain();
   })}
+
  }
  form.onsubmit=async e=>{
-  e.preventDefault();if(busy||(!runnable()&&!cyclic()))return;
+  e.preventDefault();await ParameterPreview.cancelAll();if(busy||(!runnable()&&!cyclic()))return;
   const bad=cyclic()?null:RecipeState.invalid(draft,operations);if(bad){status(`STEP ${bad.step} · ${bad.message}`,true);return}
   if(!form.reportValidity())return;
   const isCyclic=cyclic(),selectedStep=at(),selectedFrame=frame,params=current.params,id=selected.id,mine=++calculationGeneration;setBusy(true);paint();status('변경한 단계와 이후 흐름을 계산 중…');

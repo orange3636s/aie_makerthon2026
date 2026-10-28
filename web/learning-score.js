@@ -43,12 +43,19 @@
   const error=Math.abs(measured-p.target)/p.target,score=error<=.05?100:clamp(100*(.5-error)/.45);
   return {...p,actual:measured,error,score,pass:error<=.05};
  })}
- const costWeights={photo:1,etch:2,deposition:3,diffusion:3,cmp:2};
- function cost(steps){return steps.reduce((sum,s)=>{const p=s.params||{};let weight=costWeights[s.op]||1;
-  if(s.op==='deposition')weight={PVD:2,CVD:3,ALD:4}[p.method]||3;
-  if(s.op==='photo')weight={Coat:1,Patterning:2,Develop:1,Strip:.5}[p.action]||2;
-  return sum+weight;
- },0)}
+ // Teaching effort units, not fab prices. ALD includes cycle/pulse burden;
+ // no complete ALD cycle time is claimed because purge/co-reactant times are absent.
+ function resources(steps){const rows=steps.map((s,index)=>{const p=s.params||{};let effort=1,seconds=0,partial=false;
+  if(s.op==='deposition'){
+   if(p.method==='ALD'){seconds=(p.cycles||0)*(p.pulse||0);partial=true;effort=3+(p.cycles||0)*.05+seconds*.1}
+   else {seconds=p.time||0;effort=(p.method==='PVD'?2:3)+seconds*.25}
+  }else if(s.op==='etch'){if(p.method==='ALE'){effort=2+(p.cycles||0)*.025;partial=true}else{seconds=p.time||0;effort=2+seconds*.25}}
+  else if(s.op==='photo'){effort={Coat:1,Patterning:2,Develop:1,Strip:.5}[p.action]||2;seconds=p.action==='Develop'?(p.develop_time||0):0;partial=p.action!=='Develop'}
+  else if(s.op==='cmp'){seconds=p.time||0;effort=2+seconds/120}
+  else if(s.op==='diffusion'){seconds=/oxidation/.test(p.method)?(p.oxidation_time||0)*3600:p.method==='Anneal'?(p.time||0):['Drive-in','Pre-deposition'].includes(p.method)?(p.diffusion_time||0):0;partial=p.method==='Ion implantation';effort=3+seconds/600}
+  return {index:index+1,op:s.op,method:p.method||p.action,effort,seconds,partial,cycles:p.method==='ALD'?(p.cycles||0):0};
+ });return {rows,cost:rows.reduce((a,r)=>a+r.effort,0),knownSeconds:rows.reduce((a,r)=>a+r.seconds,0),partial:rows.some(r=>r.partial),aldCycles:rows.reduce((a,r)=>a+r.cycles,0)}}
+ function cost(steps){return resources(steps).cost}
  function assess(target,actual,roi,options,referenceSteps,actualSteps){
   const core=G.compare(target,actual,roi,options),measures=dimensions(target,actual,roi);
   const cd=measures.length?measures.reduce((sum,m)=>sum+m.score,0)/measures.length:core.components.geometry*100;
@@ -76,7 +83,10 @@
   if(!checks.every(c=>c.pass))hints.push({text:'도핑종·주입 마스크·에너지와 마지막 열처리 순서를 확인하세요.'});
   if(eligible&&actualCost>referenceCost)hints.push({text:'목표 조건은 충족했습니다. 추가 증착·식각·마스크 단계 중 결과에 필요하지 않은 단계를 비교해 보세요.'});
   if(!hints.length)hints.push({text:eligible?'현재 형상·치수와 필수 조건이 목표 범위에 있습니다.':'재료별 형상 차이와 공정 누락을 먼저 확인하세요.'});
-  return {version:3,score,core,weights,measures,checks,eligible,referenceCost,actualCost,referenceSteps:referenceSteps.length,actualSteps:actualSteps.length,components,hints:hints.slice(0,3)};
+  const referenceResources=resources(referenceSteps),actualResources=resources(actualSteps),tradeoffs=[];
+  if(actualResources.aldCycles>referenceResources.aldCycles)tradeoffs.push(`ALD ${actualResources.aldCycles} cycles · 예시 ${referenceResources.aldCycles} cycles. 반복량 증가가 비용 지수에 반영됩니다.`);
+  if(actualCost>referenceCost*1.01)tradeoffs.push(`교육용 비용 지수 ${referenceCost.toFixed(1)} → ${actualCost.toFixed(1)} (+${((actualCost/referenceCost-1)*100).toFixed(0)}%). ${eligible?'효율 점수에 반영했습니다.':'목표 조건 충족 전까지 효율 평가는 보류합니다.'}`);
+  return {version:4,score,core,weights,measures,checks,eligible,referenceCost,actualCost,referenceSteps:referenceSteps.length,actualSteps:actualSteps.length,components,hints:hints.slice(0,3),referenceResources,actualResources,tradeoffs};
  }
  function layers(frame){
   const points=frame.polygons.flatMap(p=>p.points),xs=points.map(p=>p[0]),left=Math.min(...xs),right=Math.max(...xs),center=(left+right)/2;
@@ -87,5 +97,5 @@
   }
   return rows.sort((a,b)=>a.x-b.x||a.y-b.y).map(p=>({...p,region:counts[p.id]=(counts[p.id]||0)+1}));
  }
- const api={assess,dimensions,layers,cost,intervals};if(typeof module==='object'&&module.exports)module.exports=api;else root.LearningScore=api;
+ const api={assess,dimensions,layers,cost,resources,intervals};if(typeof module==='object'&&module.exports)module.exports=api;else root.LearningScore=api;
 })(typeof window==='object'?window:globalThis);
