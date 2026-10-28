@@ -550,6 +550,71 @@
       "section": "2D 단면"
     },
     {
+      "id": "pn-junction",
+      "title": "PN Junction",
+      "subtitle": "",
+      "group": "소자",
+      "mode": "physics",
+      "model": "Native process flow",
+      "source": "https://toshiba-semicon-storage.com/content/dam/toshiba-ss-v3/master/en/semiconductor/knowledge/e-learning/discrete/discrete-basic-chap1_en.pdf",
+      "description": "Lateral PN · 순 도펀트 농도",
+      "note": "좌우 B/P 주입과 열처리로 만든 lateral PN 단면. 농도는 계산하며 공핍층·I–V는 계산하지 않습니다.",
+      "fields": [
+        {
+          "key": "donor_dose",
+          "label": "P 주입량",
+          "default": 10000000000000.0,
+          "min": 100000000000.0,
+          "max": 1000000000000000.0,
+          "unit": "ions/cm²",
+          "step": 1000000000000.0
+        },
+        {
+          "key": "acceptor_dose",
+          "label": "B 주입량",
+          "default": 10000000000000.0,
+          "min": 100000000000.0,
+          "max": 1000000000000000.0,
+          "unit": "ions/cm²",
+          "step": 1000000000000.0
+        },
+        {
+          "key": "temperature",
+          "label": "열처리 온도",
+          "default": 1000,
+          "min": 950,
+          "max": 1100,
+          "unit": "°C",
+          "step": 25
+        },
+        {
+          "key": "time",
+          "label": "열처리 시간",
+          "default": 30,
+          "min": 1,
+          "max": 120,
+          "unit": "s",
+          "step": 1
+        }
+      ],
+      "flow": [
+        "N-region opening",
+        "Phosphorus implant",
+        "PR strip",
+        "P-region opening",
+        "Boron implant",
+        "PR strip",
+        "Junction anneal"
+      ],
+      "sources": [
+        {
+          "title": "Toshiba · PN junction",
+          "url": "https://toshiba-semicon-storage.com/content/dam/toshiba-ss-v3/master/en/semiconductor/knowledge/e-learning/discrete/discrete-basic-chap1_en.pdf",
+          "figure": "PN junction fundamentals"
+        }
+      ]
+    },
+    {
       "id": "mosfet",
       "title": "MOSFET",
       "subtitle": "",
@@ -592,106 +657,63 @@
       "section": "게이트 · 접촉부 단면"
     },
     {
-      "id": "finfet",
-      "title": "FINFET",
+      "id": "fdsoi",
+      "title": "FD-SOI FET",
       "subtitle": "",
       "group": "소자",
-      "model": "Native sequential process",
-      "source": "https://github.com/ViennaTools/ViennaPS/tree/v4.6.2/examples/emulation/FinFET.py",
-      "description": "fin 패터닝부터 STI, high-k, 게이트 증착까지 단계를 살펴봅니다. 게이트 중앙을 가로지르는 횡단면으로 fin의 양쪽 측벽과 상부를 관찰합니다.",
+      "mode": "physics",
+      "model": "Native process flow",
+      "source": "https://www.st.com/content/st_com/en/about/innovation-and-technology/fd-soi.html",
+      "description": "게이트 길이 방향 단면",
+      "note": "준비된 SOI 웨이퍼의 얇은 Si body. BOX 아래 handle은 수동 영역입니다. 실제 완전 공핍 여부는 바이어스·도핑에 의존하며 여기서는 계산하지 않습니다.",
       "fields": [
         {
-          "key": "width",
-          "label": "Fin 패턴 폭",
-          "default": 0.14,
-          "min": 0.08,
-          "max": 0.3,
+          "key": "body",
+          "label": "Si body 두께",
+          "default": 0.04,
+          "min": 0.03,
+          "max": 0.06,
           "unit": "µm",
           "step": 0.01
         },
         {
-          "key": "depth",
-          "label": "Si 식각 깊이",
-          "default": 0.35,
-          "min": 0.2,
+          "key": "length",
+          "label": "게이트 패턴 폭",
+          "default": 0.32,
+          "min": 0.22,
           "max": 0.5,
           "unit": "µm",
           "step": 0.01
         },
         {
           "key": "oxide",
-          "label": "High-k 성장량",
+          "label": "게이트 절연막",
           "default": 0.02,
           "min": 0.015,
-          "max": 0.04,
+          "max": 0.035,
           "unit": "µm",
           "step": 0.005
-        },
-        {
-          "key": "gate",
-          "label": "게이트 성장량",
-          "default": 0.08,
-          "min": 0.03,
-          "max": 0.12,
-          "unit": "µm",
-          "step": 0.01
         }
       ],
-      "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다.",
-      "unit": "µm",
-      "mode": "physics",
-      "section": "게이트 중심 횡단면"
-    },
-    {
-      "id": "mbcfet",
-      "title": "MBCFET",
-      "subtitle": "",
-      "group": "소자",
-      "model": "Native sequential process",
-      "source": "https://viennatools.github.io/ViennaPS/examples/",
-      "description": "분리된 Si nanosheet를 게이트가 둘러싸는 구조입니다.",
-      "fields": [
-        {
-          "key": "sheets",
-          "label": "Si 채널 수",
-          "default": 3,
-          "min": 2,
-          "max": 4,
-          "unit": "층",
-          "step": 1
-        },
-        {
-          "key": "width",
-          "label": "적층 패턴 폭",
-          "default": 0.24,
-          "min": 0.14,
-          "max": 0.4,
-          "unit": "µm",
-          "step": 0.01
-        },
-        {
-          "key": "thickness",
-          "label": "Si 증착량",
-          "default": 0.035,
-          "min": 0.025,
-          "max": 0.06,
-          "unit": "µm",
-          "step": 0.005
-        },
-        {
-          "key": "gap",
-          "label": "SiGe 증착량",
-          "default": 0.05,
-          "min": 0.04,
-          "max": 0.08,
-          "unit": "µm",
-          "step": 0.01
-        }
+      "flow": [
+        "Gate dielectric",
+        "Gate deposition",
+        "Gate pattern",
+        "Gate etch",
+        "PR strip",
+        "Exposed oxide removal",
+        "Spacer deposition",
+        "Spacer etchback",
+        "Source / drain implant",
+        "Activation anneal"
       ],
-      "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다.",
-      "unit": "µm",
-      "mode": "physics",
-      "section": "게이트 중심 횡단면"
+      "sources": [
+        {
+          "title": "STMicroelectronics · FD-SOI",
+          "url": "https://www.st.com/content/st_com/en/about/innovation-and-technology/fd-soi.html",
+          "figure": "FD-SOI transistor illustration"
+        }
+      ]
     },
     {
       "subtitle": "",
@@ -1046,6 +1068,65 @@
       "section": "주입·확산 단면"
     },
     {
+      "id": "pdsoi",
+      "title": "PD-SOI FET",
+      "subtitle": "",
+      "group": "소자",
+      "mode": "physics",
+      "model": "Native process flow",
+      "source": "https://patents.google.com/patent/US7460422B2/en",
+      "description": "게이트 길이 방향 단면",
+      "note": "준비된 SOI 웨이퍼의 두꺼운 Si body. BOX 아래 handle은 수동 영역입니다. 부분 공핍·floating-body 전기 효과는 계산하지 않습니다.",
+      "fields": [
+        {
+          "key": "body",
+          "label": "Si body 두께",
+          "default": 0.16,
+          "min": 0.12,
+          "max": 0.22,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "length",
+          "label": "게이트 패턴 폭",
+          "default": 0.32,
+          "min": 0.22,
+          "max": 0.5,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "oxide",
+          "label": "게이트 절연막",
+          "default": 0.02,
+          "min": 0.015,
+          "max": 0.035,
+          "unit": "µm",
+          "step": 0.005
+        }
+      ],
+      "flow": [
+        "Gate dielectric",
+        "Gate deposition",
+        "Gate pattern",
+        "Gate etch",
+        "PR strip",
+        "Exposed oxide removal",
+        "Spacer deposition",
+        "Spacer etchback",
+        "Source / drain implant",
+        "Activation anneal"
+      ],
+      "sources": [
+        {
+          "title": "IBM · partially depleted SOI",
+          "url": "https://patents.google.com/patent/US7460422B2/en",
+          "figure": "Fig. 1"
+        }
+      ]
+    },
+    {
       "id": "rcat",
       "title": "RCAT",
       "subtitle": "",
@@ -1176,126 +1257,59 @@
       ]
     },
     {
-      "id": "fdsoi",
-      "title": "FD-SOI FET",
+      "id": "finfet",
+      "title": "FINFET",
       "subtitle": "",
       "group": "소자",
-      "mode": "physics",
-      "model": "Native process flow",
-      "source": "https://www.st.com/content/st_com/en/about/innovation-and-technology/fd-soi.html",
-      "description": "게이트 길이 방향 단면",
-      "note": "준비된 SOI 웨이퍼의 얇은 Si body. BOX 아래 handle은 수동 영역입니다. 실제 완전 공핍 여부는 바이어스·도핑에 의존하며 여기서는 계산하지 않습니다.",
+      "model": "Native sequential process",
+      "source": "https://github.com/ViennaTools/ViennaPS/tree/v4.6.2/examples/emulation/FinFET.py",
+      "description": "fin 패터닝부터 STI, high-k, 게이트 증착까지 단계를 살펴봅니다. 게이트 중앙을 가로지르는 횡단면으로 fin의 양쪽 측벽과 상부를 관찰합니다.",
       "fields": [
         {
-          "key": "body",
-          "label": "Si body 두께",
-          "default": 0.04,
+          "key": "width",
+          "label": "Fin 패턴 폭",
+          "default": 0.14,
+          "min": 0.08,
+          "max": 0.3,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "depth",
+          "label": "Si 식각 깊이",
+          "default": 0.35,
+          "min": 0.2,
+          "max": 0.5,
+          "unit": "µm",
+          "step": 0.01
+        },
+        {
+          "key": "oxide",
+          "label": "High-k 성장량",
+          "default": 0.02,
+          "min": 0.015,
+          "max": 0.04,
+          "unit": "µm",
+          "step": 0.005
+        },
+        {
+          "key": "gate",
+          "label": "게이트 성장량",
+          "default": 0.08,
           "min": 0.03,
-          "max": 0.06,
+          "max": 0.12,
           "unit": "µm",
           "step": 0.01
-        },
-        {
-          "key": "length",
-          "label": "게이트 패턴 폭",
-          "default": 0.32,
-          "min": 0.22,
-          "max": 0.5,
-          "unit": "µm",
-          "step": 0.01
-        },
-        {
-          "key": "oxide",
-          "label": "게이트 절연막",
-          "default": 0.02,
-          "min": 0.015,
-          "max": 0.035,
-          "unit": "µm",
-          "step": 0.005
         }
       ],
-      "flow": [
-        "Gate dielectric",
-        "Gate deposition",
-        "Gate pattern",
-        "Gate etch",
-        "PR strip",
-        "Exposed oxide removal",
-        "Spacer deposition",
-        "Spacer etchback",
-        "Source / drain implant",
-        "Activation anneal"
-      ],
-      "sources": [
-        {
-          "title": "STMicroelectronics · FD-SOI",
-          "url": "https://www.st.com/content/st_com/en/about/innovation-and-technology/fd-soi.html",
-          "figure": "FD-SOI transistor illustration"
-        }
-      ]
-    },
-    {
-      "id": "pdsoi",
-      "title": "PD-SOI FET",
-      "subtitle": "",
-      "group": "소자",
+      "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다.",
+      "unit": "µm",
       "mode": "physics",
-      "model": "Native process flow",
-      "source": "https://patents.google.com/patent/US7460422B2/en",
-      "description": "게이트 길이 방향 단면",
-      "note": "준비된 SOI 웨이퍼의 두꺼운 Si body. BOX 아래 handle은 수동 영역입니다. 부분 공핍·floating-body 전기 효과는 계산하지 않습니다.",
-      "fields": [
-        {
-          "key": "body",
-          "label": "Si body 두께",
-          "default": 0.16,
-          "min": 0.12,
-          "max": 0.22,
-          "unit": "µm",
-          "step": 0.01
-        },
-        {
-          "key": "length",
-          "label": "게이트 패턴 폭",
-          "default": 0.32,
-          "min": 0.22,
-          "max": 0.5,
-          "unit": "µm",
-          "step": 0.01
-        },
-        {
-          "key": "oxide",
-          "label": "게이트 절연막",
-          "default": 0.02,
-          "min": 0.015,
-          "max": 0.035,
-          "unit": "µm",
-          "step": 0.005
-        }
-      ],
-      "flow": [
-        "Gate dielectric",
-        "Gate deposition",
-        "Gate pattern",
-        "Gate etch",
-        "PR strip",
-        "Exposed oxide removal",
-        "Spacer deposition",
-        "Spacer etchback",
-        "Source / drain implant",
-        "Activation anneal"
-      ],
-      "sources": [
-        {
-          "title": "IBM · partially depleted SOI",
-          "url": "https://patents.google.com/patent/US7460422B2/en",
-          "figure": "Fig. 1"
-        }
-      ]
+      "section": "게이트 중심 횡단면"
     },
     {
       "id": "gaafet",
-      "title": "GAAFET · Nanowire",
+      "title": "GAAFET",
       "subtitle": "",
       "group": "소자",
       "mode": "physics",
@@ -1343,74 +1357,55 @@
       ]
     },
     {
-      "id": "cfet",
-      "title": "CFET",
+      "id": "mbcfet",
+      "title": "MBCFET",
       "subtitle": "",
       "group": "소자",
-      "mode": "physics",
-      "model": "Native process flow",
-      "source": "https://download.intel.com/newsroom/archive/2025/en-us-2023-12-09-intel-demonstrates-breakthroughs-in-nextgeneration-transistor-scaling-for-future-nodes.pdf",
-      "description": "게이트 중심 횡단면 · S/D는 화면 밖",
-      "note": "상하 채널과 분리된 게이트를 갖는 순차 적층 학습 단면. 상부 결정층 형성은 준비된 층의 형상 근사입니다. N/P 전기 동작·접촉·backside power는 제외합니다.",
+      "model": "Native sequential process",
+      "source": "https://viennatools.github.io/ViennaPS/examples/",
+      "description": "분리된 Si nanosheet를 게이트가 둘러싸는 구조입니다.",
       "fields": [
         {
+          "key": "sheets",
+          "label": "Si 채널 수",
+          "default": 3,
+          "min": 2,
+          "max": 4,
+          "unit": "층",
+          "step": 1
+        },
+        {
           "key": "width",
-          "label": "채널 패턴 폭",
-          "default": 0.18,
-          "min": 0.12,
-          "max": 0.24,
+          "label": "적층 패턴 폭",
+          "default": 0.24,
+          "min": 0.14,
+          "max": 0.4,
           "unit": "µm",
           "step": 0.01
         },
         {
-          "key": "channel",
-          "label": "채널 층 두께",
-          "default": 0.06,
+          "key": "thickness",
+          "label": "Si 증착량",
+          "default": 0.035,
+          "min": 0.025,
+          "max": 0.06,
+          "unit": "µm",
+          "step": 0.005
+        },
+        {
+          "key": "gap",
+          "label": "SiGe 증착량",
+          "default": 0.05,
           "min": 0.04,
           "max": 0.08,
           "unit": "µm",
           "step": 0.01
-        },
-        {
-          "key": "isolation",
-          "label": "층간 절연 cap",
-          "default": 0.06,
-          "min": 0.04,
-          "max": 0.09,
-          "unit": "µm",
-          "step": 0.01
         }
       ],
-      "flow": [
-        "Lower FET · sacrificial layer",
-        "Lower FET · Si channel layer",
-        "Lower FET · channel pattern",
-        "Lower FET · Si etch",
-        "Lower FET · SiGe etch",
-        "Lower FET · PR strip",
-        "Lower FET · channel release",
-        "Lower FET · gate dielectric",
-        "Lower FET · wrap gate",
-        "Inter-tier dielectric fill",
-        "Inter-tier CMP",
-        "Inter-tier isolation cap",
-        "Upper FET · sacrificial layer",
-        "Upper FET · Si channel layer",
-        "Upper FET · channel pattern",
-        "Upper FET · Si etch",
-        "Upper FET · SiGe etch",
-        "Upper FET · PR strip",
-        "Upper FET · channel release",
-        "Upper FET · gate dielectric",
-        "Upper FET · wrap gate"
-      ],
-      "sources": [
-        {
-          "title": "Intel · stacked complementary transistors",
-          "url": "https://download.intel.com/newsroom/archive/2025/en-us-2023-12-09-intel-demonstrates-breakthroughs-in-nextgeneration-transistor-scaling-for-future-nodes.pdf",
-          "figure": "p. 3 · stacked CMOS"
-        }
-      ]
+      "note": "역설계 정답과 동일한 순차 공정 모델입니다. PVD/CVD 입자 수송, ALD 표면 반응, 방향성 식각을 계산합니다. 10 nm 격자의 교육용 공정이며 특정 장비에 보정되지 않았습니다. 2D 단면이며 전기 특성은 계산하지 않습니다.",
+      "unit": "µm",
+      "mode": "physics",
+      "section": "게이트 중심 횡단면"
     },
     {
       "id": "charge-trap",
@@ -1488,67 +1483,72 @@
       ]
     },
     {
-      "id": "pn-junction",
-      "title": "PN Junction",
+      "id": "cfet",
+      "title": "CFET",
       "subtitle": "",
       "group": "소자",
       "mode": "physics",
       "model": "Native process flow",
-      "source": "https://toshiba-semicon-storage.com/content/dam/toshiba-ss-v3/master/en/semiconductor/knowledge/e-learning/discrete/discrete-basic-chap1_en.pdf",
-      "description": "Lateral PN · 순 도펀트 농도",
-      "note": "좌우 B/P 주입과 열처리로 만든 lateral PN 단면. 농도는 계산하며 공핍층·I–V는 계산하지 않습니다.",
+      "source": "https://download.intel.com/newsroom/archive/2025/en-us-2023-12-09-intel-demonstrates-breakthroughs-in-nextgeneration-transistor-scaling-for-future-nodes.pdf",
+      "description": "게이트 중심 횡단면 · S/D는 화면 밖",
+      "note": "상하 채널과 분리된 게이트를 갖는 순차 적층 학습 단면. 상부 결정층 형성은 준비된 층의 형상 근사입니다. N/P 전기 동작·접촉·backside power는 제외합니다.",
       "fields": [
         {
-          "key": "donor_dose",
-          "label": "P 주입량",
-          "default": 10000000000000.0,
-          "min": 100000000000.0,
-          "max": 1000000000000000.0,
-          "unit": "ions/cm²",
-          "step": 1000000000000.0
+          "key": "width",
+          "label": "채널 패턴 폭",
+          "default": 0.18,
+          "min": 0.12,
+          "max": 0.24,
+          "unit": "µm",
+          "step": 0.01
         },
         {
-          "key": "acceptor_dose",
-          "label": "B 주입량",
-          "default": 10000000000000.0,
-          "min": 100000000000.0,
-          "max": 1000000000000000.0,
-          "unit": "ions/cm²",
-          "step": 1000000000000.0
+          "key": "channel",
+          "label": "채널 층 두께",
+          "default": 0.06,
+          "min": 0.04,
+          "max": 0.08,
+          "unit": "µm",
+          "step": 0.01
         },
         {
-          "key": "temperature",
-          "label": "열처리 온도",
-          "default": 1000,
-          "min": 950,
-          "max": 1100,
-          "unit": "°C",
-          "step": 25
-        },
-        {
-          "key": "time",
-          "label": "열처리 시간",
-          "default": 30,
-          "min": 1,
-          "max": 120,
-          "unit": "s",
-          "step": 1
+          "key": "isolation",
+          "label": "층간 절연 cap",
+          "default": 0.06,
+          "min": 0.04,
+          "max": 0.09,
+          "unit": "µm",
+          "step": 0.01
         }
       ],
       "flow": [
-        "N-region opening",
-        "Phosphorus implant",
-        "PR strip",
-        "P-region opening",
-        "Boron implant",
-        "PR strip",
-        "Junction anneal"
+        "Lower FET · sacrificial layer",
+        "Lower FET · Si channel layer",
+        "Lower FET · channel pattern",
+        "Lower FET · Si etch",
+        "Lower FET · SiGe etch",
+        "Lower FET · PR strip",
+        "Lower FET · channel release",
+        "Lower FET · gate dielectric",
+        "Lower FET · wrap gate",
+        "Inter-tier dielectric fill",
+        "Inter-tier CMP",
+        "Inter-tier isolation cap",
+        "Upper FET · sacrificial layer",
+        "Upper FET · Si channel layer",
+        "Upper FET · channel pattern",
+        "Upper FET · Si etch",
+        "Upper FET · SiGe etch",
+        "Upper FET · PR strip",
+        "Upper FET · channel release",
+        "Upper FET · gate dielectric",
+        "Upper FET · wrap gate"
       ],
       "sources": [
         {
-          "title": "Toshiba · PN junction",
-          "url": "https://toshiba-semicon-storage.com/content/dam/toshiba-ss-v3/master/en/semiconductor/knowledge/e-learning/discrete/discrete-basic-chap1_en.pdf",
-          "figure": "PN junction fundamentals"
+          "title": "Intel · stacked complementary transistors",
+          "url": "https://download.intel.com/newsroom/archive/2025/en-us-2023-12-09-intel-demonstrates-breakthroughs-in-nextgeneration-transistor-scaling-for-future-nodes.pdf",
+          "figure": "p. 3 · stacked CMOS"
         }
       ]
     }

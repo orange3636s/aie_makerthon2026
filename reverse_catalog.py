@@ -78,6 +78,8 @@ dict(id='locos',title='LOCOS',width=1.6,bounds=[-.8,.8,-.3,.35],roi=[-.72,.72,-.
 ]
 from advanced_devices import targets as advanced_targets
 TARGETS.extend(advanced_targets())
+DEVICE_ORDER=('pn-junction','mosfet','fdsoi','pdsoi','rcat','bcat','finfet','gaafet','mbcfet','charge-trap','cfet')
+TARGETS.sort(key=lambda target: (target['id'] in DEVICE_ORDER, DEVICE_ORDER.index(target['id']) if target['id'] in DEVICE_ORDER else 0))
 BY_TARGET={t['id']:t for t in TARGETS}
 
 def validate(data):

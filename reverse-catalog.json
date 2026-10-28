@@ -455,470 +455,6 @@
   ],
   "targets": [
     {
-      "id": "mosfet",
-      "title": "MOSFET",
-      "width": 1.6,
-      "bounds": [
-        -0.8,
-        0.8,
-        -0.45,
-        0.48
-      ],
-      "roi": [
-        -0.72,
-        0.72,
-        -0.18,
-        0.42
-      ],
-      "section": "채널 길이 방향 단면",
-      "recipe": [
-        {
-          "op": "deposition",
-          "params": {
-            "method": "ALD",
-            "material": "SiO2",
-            "cycles": 25,
-            "gpc": 0.001,
-            "pulse": 0.1,
-            "ald_sticking": 5e-05
-          }
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "material": "PolySi",
-            "method": "PVD",
-            "rate": 0.08,
-            "time": 1.875,
-            "sticking": 1.0,
-            "exponent": 30
-          }
-        },
-        {
-          "op": "photo",
-          "params": {
-            "width": 0.3,
-            "tone": "Negative",
-            "pattern": "Central",
-            "pitch": 0.6
-          }
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "PolySi",
-            "rate": 0.1,
-            "time": 1.8,
-            "isotropic": 0
-          }
-        },
-        {
-          "op": "photo",
-          "params": {
-            "action": "Strip"
-          }
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "SiO2",
-            "rate": 0.1,
-            "time": 0.35,
-            "isotropic": 0
-          }
-        },
-        {
-          "op": "diffusion",
-          "params": {
-            "method": "Ion implantation",
-            "species": "P",
-            "energy": 30,
-            "dose": 10000000000000.0
-          }
-        },
-        {
-          "op": "diffusion",
-          "params": {
-            "method": "Anneal",
-            "temperature": 1000,
-            "time": 30
-          }
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "method": "ALD",
-            "material": "Si3N4",
-            "cycles": 40,
-            "gpc": 0.001,
-            "pulse": 0.1,
-            "ald_sticking": 5e-05
-          }
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "Si3N4",
-            "rate": 0.1,
-            "time": 0.45,
-            "isotropic": 0
-          }
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "material": "Dielectric",
-            "method": "CVD",
-            "rate": 0.08,
-            "time": 2.875,
-            "sticking": 0.15,
-            "exponent": 1.0
-          }
-        },
-        {
-          "op": "cmp",
-          "params": {}
-        },
-        {
-          "op": "photo",
-          "params": {
-            "width": 0.38,
-            "tone": "Positive",
-            "pattern": "Double",
-            "pitch": 1.0
-          }
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "Dielectric",
-            "rate": 0.1,
-            "time": 3.0,
-            "isotropic": 0
-          }
-        },
-        {
-          "op": "photo",
-          "params": {
-            "action": "Strip"
-          }
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "material": "Metal",
-            "method": "CVD",
-            "rate": 0.08,
-            "time": 3.75,
-            "sticking": 0.15,
-            "exponent": 1.0
-          }
-        },
-        {
-          "op": "cmp",
-          "params": {}
-        }
-      ]
-    },
-    {
-      "id": "finfet",
-      "title": "FINFET",
-      "width": 1.2,
-      "bounds": [
-        -0.6,
-        0.6,
-        -0.48,
-        0.2
-      ],
-      "roi": [
-        -0.36,
-        0.36,
-        -0.3,
-        0.16
-      ],
-      "section": "게이트 중심 횡단면",
-      "recipe": [
-        {
-          "op": "photo",
-          "params": {
-            "width": 0.14,
-            "tone": "Negative",
-            "pattern": "Central",
-            "pitch": 0.6
-          }
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "Si",
-            "rate": 0.1,
-            "time": 3.5,
-            "isotropic": 0
-          }
-        },
-        {
-          "op": "photo",
-          "params": {
-            "action": "Strip"
-          }
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "material": "SiO2",
-            "method": "CVD",
-            "rate": 0.08,
-            "time": 5.0,
-            "sticking": 0.15,
-            "exponent": 1.0
-          }
-        },
-        {
-          "op": "cmp",
-          "params": {}
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "SiO2",
-            "rate": 0.1,
-            "time": 2.2,
-            "isotropic": 0
-          }
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "method": "ALD",
-            "material": "HfO2",
-            "cycles": 20,
-            "gpc": 0.001,
-            "pulse": 0.1,
-            "ald_sticking": 5e-05
-          }
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "method": "ALD",
-            "material": "TiN",
-            "cycles": 80,
-            "gpc": 0.001,
-            "pulse": 0.1,
-            "ald_sticking": 5e-05
-          }
-        }
-      ]
-    },
-    {
-      "id": "mbcfet",
-      "title": "MBCFET",
-      "width": 1.2,
-      "bounds": [
-        -0.6,
-        0.6,
-        -0.25,
-        0.5
-      ],
-      "roi": [
-        -0.35,
-        0.35,
-        -0.05,
-        0.45
-      ],
-      "section": "Gate-all-around 중심 횡단면",
-      "recipe": [
-        {
-          "op": "deposition",
-          "params": {
-            "material": "SiGe",
-            "method": "PVD",
-            "rate": 0.08,
-            "time": 0.625,
-            "sticking": 1.0,
-            "exponent": 30
-          }
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "material": "Si",
-            "method": "PVD",
-            "rate": 0.08,
-            "time": 0.43750000000000006,
-            "sticking": 1.0,
-            "exponent": 30
-          }
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "material": "SiGe",
-            "method": "PVD",
-            "rate": 0.08,
-            "time": 0.625,
-            "sticking": 1.0,
-            "exponent": 30
-          }
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "material": "Si",
-            "method": "PVD",
-            "rate": 0.08,
-            "time": 0.43750000000000006,
-            "sticking": 1.0,
-            "exponent": 30
-          }
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "material": "SiGe",
-            "method": "PVD",
-            "rate": 0.08,
-            "time": 0.625,
-            "sticking": 1.0,
-            "exponent": 30
-          }
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "material": "Si",
-            "method": "PVD",
-            "rate": 0.08,
-            "time": 0.43750000000000006,
-            "sticking": 1.0,
-            "exponent": 30
-          }
-        },
-        {
-          "op": "photo",
-          "params": {
-            "width": 0.24,
-            "tone": "Negative",
-            "pattern": "Central",
-            "pitch": 0.6
-          }
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "Si",
-            "rate": 0.1,
-            "time": 0.4,
-            "isotropic": 0
-          }
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "SiGe",
-            "rate": 0.1,
-            "time": 0.6,
-            "isotropic": 0
-          }
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "Si",
-            "rate": 0.1,
-            "time": 0.4,
-            "isotropic": 0
-          }
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "SiGe",
-            "rate": 0.1,
-            "time": 0.6,
-            "isotropic": 0
-          }
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "Si",
-            "rate": 0.1,
-            "time": 0.4,
-            "isotropic": 0
-          }
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "SiGe",
-            "rate": 0.1,
-            "time": 0.6,
-            "isotropic": 0
-          }
-        },
-        {
-          "op": "photo",
-          "params": {
-            "action": "Strip"
-          }
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "material": "SiO2",
-            "method": "CVD",
-            "rate": 0.08,
-            "time": 3.125,
-            "sticking": 0.15,
-            "exponent": 1.0
-          }
-        },
-        {
-          "op": "cmp",
-          "params": {}
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "SiO2",
-            "rate": 0.1,
-            "time": 2.7,
-            "isotropic": 0
-          }
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "SiGe",
-            "method": "Selective removal"
-          }
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "method": "ALD",
-            "material": "HfO2",
-            "cycles": 15,
-            "gpc": 0.001,
-            "pulse": 0.1,
-            "ald_sticking": 5e-05
-          }
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "method": "ALD",
-            "material": "TiN",
-            "cycles": 40,
-            "gpc": 0.001,
-            "pulse": 0.1,
-            "ald_sticking": 5e-05
-          }
-        }
-      ]
-    },
-    {
       "id": "sti",
       "title": "STI",
       "width": 1.6,
@@ -1172,6 +708,536 @@
           }
         }
       ]
+    },
+    {
+      "id": "pn-junction",
+      "title": "PN Junction",
+      "width": 1.6,
+      "bounds": [
+        -0.8,
+        0.8,
+        -0.5,
+        0.15
+      ],
+      "roi": [
+        -0.72,
+        0.72,
+        -0.35,
+        0.02
+      ],
+      "section": "Lateral PN · 순 도펀트 농도",
+      "recipe": [
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.8,
+            "tone": "Positive",
+            "pattern": "Central",
+            "pitch": 0.6,
+            "offset": -0.4
+          },
+          "label": "N-region opening"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Ion implantation",
+            "species": "P",
+            "energy": 30,
+            "dose": 10000000000000.0
+          },
+          "label": "Phosphorus implant"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "PR strip"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.8,
+            "tone": "Positive",
+            "pattern": "Central",
+            "pitch": 0.6,
+            "offset": 0.4
+          },
+          "label": "P-region opening"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Ion implantation",
+            "species": "B",
+            "energy": 10,
+            "dose": 10000000000000.0
+          },
+          "label": "Boron implant"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "PR strip"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Anneal",
+            "temperature": 1000,
+            "time": 30
+          },
+          "label": "Junction anneal"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Toshiba · PN junction",
+          "url": "https://toshiba-semicon-storage.com/content/dam/toshiba-ss-v3/master/en/semiconductor/knowledge/e-learning/discrete/discrete-basic-chap1_en.pdf",
+          "figure": "PN junction fundamentals"
+        }
+      ],
+      "assumptions": "좌우 B/P 주입과 열처리로 만든 lateral PN 단면. 농도는 계산하며 공핍층·I–V는 계산하지 않습니다.",
+      "grading": "doping"
+    },
+    {
+      "id": "mosfet",
+      "title": "MOSFET",
+      "width": 1.6,
+      "bounds": [
+        -0.8,
+        0.8,
+        -0.45,
+        0.48
+      ],
+      "roi": [
+        -0.72,
+        0.72,
+        -0.18,
+        0.42
+      ],
+      "section": "채널 길이 방향 단면",
+      "recipe": [
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "SiO2",
+            "cycles": 25,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 5e-05
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "PolySi",
+            "method": "PVD",
+            "rate": 0.08,
+            "time": 1.875,
+            "sticking": 1.0,
+            "exponent": 30
+          }
+        },
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.3,
+            "tone": "Negative",
+            "pattern": "Central",
+            "pitch": 0.6
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "PolySi",
+            "rate": 0.1,
+            "time": 1.8,
+            "isotropic": 0
+          }
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "rate": 0.1,
+            "time": 0.35,
+            "isotropic": 0
+          }
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Ion implantation",
+            "species": "P",
+            "energy": 30,
+            "dose": 10000000000000.0
+          }
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Anneal",
+            "temperature": 1000,
+            "time": 30
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "Si3N4",
+            "cycles": 40,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 5e-05
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "Si3N4",
+            "rate": 0.1,
+            "time": 0.45,
+            "isotropic": 0
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "Dielectric",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 2.875,
+            "sticking": 0.15,
+            "exponent": 1.0
+          }
+        },
+        {
+          "op": "cmp",
+          "params": {}
+        },
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.38,
+            "tone": "Positive",
+            "pattern": "Double",
+            "pitch": 1.0
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "Dielectric",
+            "rate": 0.1,
+            "time": 3.0,
+            "isotropic": 0
+          }
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "Metal",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 3.75,
+            "sticking": 0.15,
+            "exponent": 1.0
+          }
+        },
+        {
+          "op": "cmp",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "fdsoi",
+      "title": "FD-SOI FET",
+      "width": 1.6,
+      "bounds": [
+        -0.8,
+        0.8,
+        -0.45,
+        0.65
+      ],
+      "roi": [
+        -0.55,
+        0.55,
+        -0.4,
+        0.3
+      ],
+      "section": "게이트 길이 방향 단면",
+      "recipe": [
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "SiO2",
+            "cycles": 20,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 5e-05
+          },
+          "label": "Gate dielectric"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "PolySi",
+            "method": "PVD",
+            "rate": 0.08,
+            "time": 1.7500000000000002,
+            "sticking": 1.0,
+            "exponent": 30
+          },
+          "label": "Gate deposition"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.32,
+            "tone": "Negative",
+            "pattern": "Central",
+            "pitch": 0.6
+          },
+          "label": "Gate pattern"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "PolySi",
+            "rate": 0.1,
+            "time": 1.7,
+            "isotropic": 0
+          },
+          "label": "Gate etch"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "PR strip"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "rate": 0.1,
+            "time": 0.3,
+            "isotropic": 0
+          },
+          "label": "Exposed oxide removal"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "Si3N4",
+            "cycles": 25,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 5e-05
+          },
+          "label": "Spacer deposition"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "Si3N4",
+            "rate": 0.1,
+            "time": 0.35,
+            "isotropic": 0
+          },
+          "label": "Spacer etchback"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Ion implantation",
+            "species": "P",
+            "energy": 8,
+            "dose": 10000000000000.0
+          },
+          "label": "Source / drain implant"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Anneal",
+            "temperature": 1000,
+            "time": 20
+          },
+          "label": "Activation anneal"
+        }
+      ],
+      "sources": [
+        {
+          "title": "STMicroelectronics · FD-SOI",
+          "url": "https://www.st.com/content/st_com/en/about/innovation-and-technology/fd-soi.html",
+          "figure": "FD-SOI transistor illustration"
+        }
+      ],
+      "assumptions": "준비된 SOI 웨이퍼의 얇은 Si body. BOX 아래 handle은 수동 영역입니다. 실제 완전 공핍 여부는 바이어스·도핑에 의존하며 여기서는 계산하지 않습니다.",
+      "wafer": {
+        "body": 0.04,
+        "box": 0.15
+      },
+      "initialLabel": "SOI wafer · Si / BOX / Si"
+    },
+    {
+      "id": "pdsoi",
+      "title": "PD-SOI FET",
+      "width": 1.6,
+      "bounds": [
+        -0.8,
+        0.8,
+        -0.45,
+        0.65
+      ],
+      "roi": [
+        -0.55,
+        0.55,
+        -0.4,
+        0.3
+      ],
+      "section": "게이트 길이 방향 단면",
+      "recipe": [
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "SiO2",
+            "cycles": 20,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 5e-05
+          },
+          "label": "Gate dielectric"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "PolySi",
+            "method": "PVD",
+            "rate": 0.08,
+            "time": 1.7500000000000002,
+            "sticking": 1.0,
+            "exponent": 30
+          },
+          "label": "Gate deposition"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.32,
+            "tone": "Negative",
+            "pattern": "Central",
+            "pitch": 0.6
+          },
+          "label": "Gate pattern"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "PolySi",
+            "rate": 0.1,
+            "time": 1.7,
+            "isotropic": 0
+          },
+          "label": "Gate etch"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "PR strip"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "rate": 0.1,
+            "time": 0.3,
+            "isotropic": 0
+          },
+          "label": "Exposed oxide removal"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "Si3N4",
+            "cycles": 25,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 5e-05
+          },
+          "label": "Spacer deposition"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "Si3N4",
+            "rate": 0.1,
+            "time": 0.35,
+            "isotropic": 0
+          },
+          "label": "Spacer etchback"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Ion implantation",
+            "species": "P",
+            "energy": 8,
+            "dose": 10000000000000.0
+          },
+          "label": "Source / drain implant"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Anneal",
+            "temperature": 1000,
+            "time": 20
+          },
+          "label": "Activation anneal"
+        }
+      ],
+      "sources": [
+        {
+          "title": "IBM · partially depleted SOI",
+          "url": "https://patents.google.com/patent/US7460422B2/en",
+          "figure": "Fig. 1"
+        }
+      ],
+      "assumptions": "준비된 SOI 웨이퍼의 두꺼운 Si body. BOX 아래 handle은 수동 영역입니다. 부분 공핍·floating-body 전기 효과는 계산하지 않습니다.",
+      "wafer": {
+        "body": 0.16,
+        "box": 0.15
+      },
+      "initialLabel": "SOI wafer · Si / BOX / Si"
     },
     {
       "id": "rcat",
@@ -1543,278 +1609,98 @@
       "assumptions": "Si 표면 아래의 게이트와 질화막 cap을 관찰합니다. DRAM 전체 셀·air gap은 제외합니다."
     },
     {
-      "id": "fdsoi",
-      "title": "FD-SOI FET",
-      "width": 1.6,
+      "id": "finfet",
+      "title": "FINFET",
+      "width": 1.2,
       "bounds": [
-        -0.8,
-        0.8,
-        -0.45,
-        0.65
+        -0.6,
+        0.6,
+        -0.48,
+        0.2
       ],
       "roi": [
-        -0.55,
-        0.55,
-        -0.4,
-        0.3
+        -0.36,
+        0.36,
+        -0.3,
+        0.16
       ],
-      "section": "게이트 길이 방향 단면",
+      "section": "게이트 중심 횡단면",
       "recipe": [
-        {
-          "op": "deposition",
-          "params": {
-            "method": "ALD",
-            "material": "SiO2",
-            "cycles": 20,
-            "gpc": 0.001,
-            "pulse": 0.1,
-            "ald_sticking": 5e-05
-          },
-          "label": "Gate dielectric"
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "material": "PolySi",
-            "method": "PVD",
-            "rate": 0.08,
-            "time": 1.7500000000000002,
-            "sticking": 1.0,
-            "exponent": 30
-          },
-          "label": "Gate deposition"
-        },
         {
           "op": "photo",
           "params": {
-            "width": 0.32,
+            "width": 0.14,
             "tone": "Negative",
             "pattern": "Central",
             "pitch": 0.6
-          },
-          "label": "Gate pattern"
+          }
         },
         {
           "op": "etch",
           "params": {
-            "material": "PolySi",
+            "material": "Si",
             "rate": 0.1,
-            "time": 1.7,
+            "time": 3.5,
             "isotropic": 0
-          },
-          "label": "Gate etch"
+          }
         },
         {
           "op": "photo",
           "params": {
             "action": "Strip"
-          },
-          "label": "PR strip"
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "SiO2",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 5.0,
+            "sticking": 0.15,
+            "exponent": 1.0
+          }
+        },
+        {
+          "op": "cmp",
+          "params": {}
         },
         {
           "op": "etch",
           "params": {
             "material": "SiO2",
             "rate": 0.1,
-            "time": 0.3,
+            "time": 2.2,
             "isotropic": 0
-          },
-          "label": "Exposed oxide removal"
+          }
         },
         {
           "op": "deposition",
           "params": {
             "method": "ALD",
-            "material": "Si3N4",
-            "cycles": 25,
-            "gpc": 0.001,
-            "pulse": 0.1,
-            "ald_sticking": 5e-05
-          },
-          "label": "Spacer deposition"
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "Si3N4",
-            "rate": 0.1,
-            "time": 0.35,
-            "isotropic": 0
-          },
-          "label": "Spacer etchback"
-        },
-        {
-          "op": "diffusion",
-          "params": {
-            "method": "Ion implantation",
-            "species": "P",
-            "energy": 8,
-            "dose": 10000000000000.0
-          },
-          "label": "Source / drain implant"
-        },
-        {
-          "op": "diffusion",
-          "params": {
-            "method": "Anneal",
-            "temperature": 1000,
-            "time": 20
-          },
-          "label": "Activation anneal"
-        }
-      ],
-      "sources": [
-        {
-          "title": "STMicroelectronics · FD-SOI",
-          "url": "https://www.st.com/content/st_com/en/about/innovation-and-technology/fd-soi.html",
-          "figure": "FD-SOI transistor illustration"
-        }
-      ],
-      "assumptions": "준비된 SOI 웨이퍼의 얇은 Si body. BOX 아래 handle은 수동 영역입니다. 실제 완전 공핍 여부는 바이어스·도핑에 의존하며 여기서는 계산하지 않습니다.",
-      "wafer": {
-        "body": 0.04,
-        "box": 0.15
-      },
-      "initialLabel": "SOI wafer · Si / BOX / Si"
-    },
-    {
-      "id": "pdsoi",
-      "title": "PD-SOI FET",
-      "width": 1.6,
-      "bounds": [
-        -0.8,
-        0.8,
-        -0.45,
-        0.65
-      ],
-      "roi": [
-        -0.55,
-        0.55,
-        -0.4,
-        0.3
-      ],
-      "section": "게이트 길이 방향 단면",
-      "recipe": [
-        {
-          "op": "deposition",
-          "params": {
-            "method": "ALD",
-            "material": "SiO2",
+            "material": "HfO2",
             "cycles": 20,
             "gpc": 0.001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
-          },
-          "label": "Gate dielectric"
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "material": "PolySi",
-            "method": "PVD",
-            "rate": 0.08,
-            "time": 1.7500000000000002,
-            "sticking": 1.0,
-            "exponent": 30
-          },
-          "label": "Gate deposition"
-        },
-        {
-          "op": "photo",
-          "params": {
-            "width": 0.32,
-            "tone": "Negative",
-            "pattern": "Central",
-            "pitch": 0.6
-          },
-          "label": "Gate pattern"
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "PolySi",
-            "rate": 0.1,
-            "time": 1.7,
-            "isotropic": 0
-          },
-          "label": "Gate etch"
-        },
-        {
-          "op": "photo",
-          "params": {
-            "action": "Strip"
-          },
-          "label": "PR strip"
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "SiO2",
-            "rate": 0.1,
-            "time": 0.3,
-            "isotropic": 0
-          },
-          "label": "Exposed oxide removal"
+          }
         },
         {
           "op": "deposition",
           "params": {
             "method": "ALD",
-            "material": "Si3N4",
-            "cycles": 25,
+            "material": "TiN",
+            "cycles": 80,
             "gpc": 0.001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
-          },
-          "label": "Spacer deposition"
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "Si3N4",
-            "rate": 0.1,
-            "time": 0.35,
-            "isotropic": 0
-          },
-          "label": "Spacer etchback"
-        },
-        {
-          "op": "diffusion",
-          "params": {
-            "method": "Ion implantation",
-            "species": "P",
-            "energy": 8,
-            "dose": 10000000000000.0
-          },
-          "label": "Source / drain implant"
-        },
-        {
-          "op": "diffusion",
-          "params": {
-            "method": "Anneal",
-            "temperature": 1000,
-            "time": 20
-          },
-          "label": "Activation anneal"
+          }
         }
-      ],
-      "sources": [
-        {
-          "title": "IBM · partially depleted SOI",
-          "url": "https://patents.google.com/patent/US7460422B2/en",
-          "figure": "Fig. 1"
-        }
-      ],
-      "assumptions": "준비된 SOI 웨이퍼의 두꺼운 Si body. BOX 아래 handle은 수동 영역입니다. 부분 공핍·floating-body 전기 효과는 계산하지 않습니다.",
-      "wafer": {
-        "body": 0.16,
-        "box": 0.15
-      },
-      "initialLabel": "SOI wafer · Si / BOX / Si"
+      ]
     },
     {
       "id": "gaafet",
-      "title": "GAAFET · Nanowire",
+      "title": "GAAFET",
       "width": 1.2,
       "bounds": [
         -0.6,
@@ -1932,6 +1818,371 @@
         }
       ],
       "assumptions": "Nanowire GAA 게이트 횡단면. Si/SiGe 적층은 형상 성장 근사이며 결정 성장·strain은 제외합니다. S/D는 화면 밖에 있습니다."
+    },
+    {
+      "id": "mbcfet",
+      "title": "MBCFET",
+      "width": 1.2,
+      "bounds": [
+        -0.6,
+        0.6,
+        -0.25,
+        0.5
+      ],
+      "roi": [
+        -0.35,
+        0.35,
+        -0.05,
+        0.45
+      ],
+      "section": "Gate-all-around 중심 횡단면",
+      "recipe": [
+        {
+          "op": "deposition",
+          "params": {
+            "material": "SiGe",
+            "method": "PVD",
+            "rate": 0.08,
+            "time": 0.625,
+            "sticking": 1.0,
+            "exponent": 30
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "Si",
+            "method": "PVD",
+            "rate": 0.08,
+            "time": 0.43750000000000006,
+            "sticking": 1.0,
+            "exponent": 30
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "SiGe",
+            "method": "PVD",
+            "rate": 0.08,
+            "time": 0.625,
+            "sticking": 1.0,
+            "exponent": 30
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "Si",
+            "method": "PVD",
+            "rate": 0.08,
+            "time": 0.43750000000000006,
+            "sticking": 1.0,
+            "exponent": 30
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "SiGe",
+            "method": "PVD",
+            "rate": 0.08,
+            "time": 0.625,
+            "sticking": 1.0,
+            "exponent": 30
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "Si",
+            "method": "PVD",
+            "rate": 0.08,
+            "time": 0.43750000000000006,
+            "sticking": 1.0,
+            "exponent": 30
+          }
+        },
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.24,
+            "tone": "Negative",
+            "pattern": "Central",
+            "pitch": 0.6
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "Si",
+            "rate": 0.1,
+            "time": 0.4,
+            "isotropic": 0
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiGe",
+            "rate": 0.1,
+            "time": 0.6,
+            "isotropic": 0
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "Si",
+            "rate": 0.1,
+            "time": 0.4,
+            "isotropic": 0
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiGe",
+            "rate": 0.1,
+            "time": 0.6,
+            "isotropic": 0
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "Si",
+            "rate": 0.1,
+            "time": 0.4,
+            "isotropic": 0
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiGe",
+            "rate": 0.1,
+            "time": 0.6,
+            "isotropic": 0
+          }
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "SiO2",
+            "method": "CVD",
+            "rate": 0.08,
+            "time": 3.125,
+            "sticking": 0.15,
+            "exponent": 1.0
+          }
+        },
+        {
+          "op": "cmp",
+          "params": {}
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "rate": 0.1,
+            "time": 2.7,
+            "isotropic": 0
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiGe",
+            "method": "Selective removal"
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "HfO2",
+            "cycles": 15,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 5e-05
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "TiN",
+            "cycles": 40,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 5e-05
+          }
+        }
+      ]
+    },
+    {
+      "id": "charge-trap",
+      "title": "Charge Trap Flash",
+      "width": 1.6,
+      "bounds": [
+        -0.8,
+        0.8,
+        -0.45,
+        0.65
+      ],
+      "roi": [
+        -0.55,
+        0.55,
+        -0.32,
+        0.55
+      ],
+      "section": "게이트 길이 방향 단면",
+      "recipe": [
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "SiO2",
+            "cycles": 20,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 5e-05
+          },
+          "label": "Tunnel oxide"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "Si3N4",
+            "cycles": 35,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 5e-05
+          },
+          "label": "Charge-trap nitride"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "SiO2",
+            "cycles": 30,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 5e-05
+          },
+          "label": "Blocking oxide"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "material": "PolySi",
+            "method": "PVD",
+            "rate": 0.08,
+            "time": 1.875,
+            "sticking": 1.0,
+            "exponent": 30
+          },
+          "label": "Control gate"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "width": 0.4,
+            "tone": "Negative",
+            "pattern": "Central",
+            "pitch": 0.6
+          },
+          "label": "Cell gate pattern"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "PolySi",
+            "rate": 0.1,
+            "time": 1.8,
+            "isotropic": 0
+          },
+          "label": "Control-gate etch"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "rate": 0.1,
+            "time": 0.4,
+            "isotropic": 0
+          },
+          "label": "Blocking-oxide etch"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "Si3N4",
+            "rate": 0.1,
+            "time": 0.45,
+            "isotropic": 0
+          },
+          "label": "Trap-layer etch"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "rate": 0.1,
+            "time": 0.3,
+            "isotropic": 0
+          },
+          "label": "Tunnel-oxide etch"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip"
+          },
+          "label": "PR strip"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Ion implantation",
+            "species": "P",
+            "energy": 10,
+            "dose": 10000000000000.0
+          },
+          "label": "Source / drain implant"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Anneal",
+            "temperature": 1000,
+            "time": 20
+          },
+          "label": "Activation anneal"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Samsung · SONOS cell",
+          "url": "https://patents.google.com/patent/US20060043469A1/en",
+          "figure": "Fig. 1 · conventional planar SONOS reference"
+        },
+        {
+          "title": "SK hynix · 3D NAND와의 구조 비교",
+          "url": "https://news.skhynix.com/en/research-inside-ep1/",
+          "figure": "Fig. 1 · vertical NAND cell; 본 예제는 평면 단일 셀"
+        }
+      ],
+      "assumptions": "평면 SONOS 단일 셀의 tunnel oxide / trap nitride / blocking oxide. 3D NAND 전체 적층과 전하 포획·program/erase는 계산하지 않습니다."
     },
     {
       "id": "cfet",
@@ -2175,257 +2426,6 @@
         }
       ],
       "assumptions": "상하 채널과 분리된 게이트를 갖는 순차 적층 학습 단면. 상부 결정층 형성은 준비된 층의 형상 근사입니다. N/P 전기 동작·접촉·backside power는 제외합니다."
-    },
-    {
-      "id": "charge-trap",
-      "title": "Charge Trap Flash",
-      "width": 1.6,
-      "bounds": [
-        -0.8,
-        0.8,
-        -0.45,
-        0.65
-      ],
-      "roi": [
-        -0.55,
-        0.55,
-        -0.32,
-        0.55
-      ],
-      "section": "게이트 길이 방향 단면",
-      "recipe": [
-        {
-          "op": "deposition",
-          "params": {
-            "method": "ALD",
-            "material": "SiO2",
-            "cycles": 20,
-            "gpc": 0.001,
-            "pulse": 0.1,
-            "ald_sticking": 5e-05
-          },
-          "label": "Tunnel oxide"
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "method": "ALD",
-            "material": "Si3N4",
-            "cycles": 35,
-            "gpc": 0.001,
-            "pulse": 0.1,
-            "ald_sticking": 5e-05
-          },
-          "label": "Charge-trap nitride"
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "method": "ALD",
-            "material": "SiO2",
-            "cycles": 30,
-            "gpc": 0.001,
-            "pulse": 0.1,
-            "ald_sticking": 5e-05
-          },
-          "label": "Blocking oxide"
-        },
-        {
-          "op": "deposition",
-          "params": {
-            "material": "PolySi",
-            "method": "PVD",
-            "rate": 0.08,
-            "time": 1.875,
-            "sticking": 1.0,
-            "exponent": 30
-          },
-          "label": "Control gate"
-        },
-        {
-          "op": "photo",
-          "params": {
-            "width": 0.4,
-            "tone": "Negative",
-            "pattern": "Central",
-            "pitch": 0.6
-          },
-          "label": "Cell gate pattern"
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "PolySi",
-            "rate": 0.1,
-            "time": 1.8,
-            "isotropic": 0
-          },
-          "label": "Control-gate etch"
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "SiO2",
-            "rate": 0.1,
-            "time": 0.4,
-            "isotropic": 0
-          },
-          "label": "Blocking-oxide etch"
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "Si3N4",
-            "rate": 0.1,
-            "time": 0.45,
-            "isotropic": 0
-          },
-          "label": "Trap-layer etch"
-        },
-        {
-          "op": "etch",
-          "params": {
-            "material": "SiO2",
-            "rate": 0.1,
-            "time": 0.3,
-            "isotropic": 0
-          },
-          "label": "Tunnel-oxide etch"
-        },
-        {
-          "op": "photo",
-          "params": {
-            "action": "Strip"
-          },
-          "label": "PR strip"
-        },
-        {
-          "op": "diffusion",
-          "params": {
-            "method": "Ion implantation",
-            "species": "P",
-            "energy": 10,
-            "dose": 10000000000000.0
-          },
-          "label": "Source / drain implant"
-        },
-        {
-          "op": "diffusion",
-          "params": {
-            "method": "Anneal",
-            "temperature": 1000,
-            "time": 20
-          },
-          "label": "Activation anneal"
-        }
-      ],
-      "sources": [
-        {
-          "title": "Samsung · SONOS cell",
-          "url": "https://patents.google.com/patent/US20060043469A1/en",
-          "figure": "Fig. 1 · conventional planar SONOS reference"
-        },
-        {
-          "title": "SK hynix · 3D NAND와의 구조 비교",
-          "url": "https://news.skhynix.com/en/research-inside-ep1/",
-          "figure": "Fig. 1 · vertical NAND cell; 본 예제는 평면 단일 셀"
-        }
-      ],
-      "assumptions": "평면 SONOS 단일 셀의 tunnel oxide / trap nitride / blocking oxide. 3D NAND 전체 적층과 전하 포획·program/erase는 계산하지 않습니다."
-    },
-    {
-      "id": "pn-junction",
-      "title": "PN Junction",
-      "width": 1.6,
-      "bounds": [
-        -0.8,
-        0.8,
-        -0.5,
-        0.15
-      ],
-      "roi": [
-        -0.72,
-        0.72,
-        -0.35,
-        0.02
-      ],
-      "section": "Lateral PN · 순 도펀트 농도",
-      "recipe": [
-        {
-          "op": "photo",
-          "params": {
-            "width": 0.8,
-            "tone": "Positive",
-            "pattern": "Central",
-            "pitch": 0.6,
-            "offset": -0.4
-          },
-          "label": "N-region opening"
-        },
-        {
-          "op": "diffusion",
-          "params": {
-            "method": "Ion implantation",
-            "species": "P",
-            "energy": 30,
-            "dose": 10000000000000.0
-          },
-          "label": "Phosphorus implant"
-        },
-        {
-          "op": "photo",
-          "params": {
-            "action": "Strip"
-          },
-          "label": "PR strip"
-        },
-        {
-          "op": "photo",
-          "params": {
-            "width": 0.8,
-            "tone": "Positive",
-            "pattern": "Central",
-            "pitch": 0.6,
-            "offset": 0.4
-          },
-          "label": "P-region opening"
-        },
-        {
-          "op": "diffusion",
-          "params": {
-            "method": "Ion implantation",
-            "species": "B",
-            "energy": 10,
-            "dose": 10000000000000.0
-          },
-          "label": "Boron implant"
-        },
-        {
-          "op": "photo",
-          "params": {
-            "action": "Strip"
-          },
-          "label": "PR strip"
-        },
-        {
-          "op": "diffusion",
-          "params": {
-            "method": "Anneal",
-            "temperature": 1000,
-            "time": 30
-          },
-          "label": "Junction anneal"
-        }
-      ],
-      "sources": [
-        {
-          "title": "Toshiba · PN junction",
-          "url": "https://toshiba-semicon-storage.com/content/dam/toshiba-ss-v3/master/en/semiconductor/knowledge/e-learning/discrete/discrete-basic-chap1_en.pdf",
-          "figure": "PN junction fundamentals"
-        }
-      ],
-      "assumptions": "좌우 B/P 주입과 열처리로 만든 lateral PN 단면. 농도는 계산하며 공핍층·I–V는 계산하지 않습니다.",
-      "grading": "doping"
     }
   ]
 }

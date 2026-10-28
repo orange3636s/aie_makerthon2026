@@ -89,7 +89,7 @@ def targets():
       'cfet':'상하 채널과 분리된 게이트를 갖는 순차 적층 학습 단면. 상부 결정층 형성은 준비된 층의 형상 근사입니다. N/P 전기 동작·접촉·backside power는 제외합니다.',
       'charge-trap':'평면 SONOS 단일 셀의 tunnel oxide / trap nitride / blocking oxide. 3D NAND 전체 적층과 전하 포획·program/erase는 계산하지 않습니다.',
       'pn-junction':'좌우 B/P 주입과 열처리로 만든 lateral PN 단면. 농도는 계산하며 공핍층·I–V는 계산하지 않습니다.'}
-    titles={'rcat':'RCAT','bcat':'BCAT','fdsoi':'FD-SOI FET','pdsoi':'PD-SOI FET','gaafet':'GAAFET · Nanowire','cfet':'CFET','charge-trap':'Charge Trap Flash','pn-junction':'PN Junction'}
+    titles={'rcat':'RCAT','bcat':'BCAT','fdsoi':'FD-SOI FET','pdsoi':'PD-SOI FET','gaafet':'GAAFET','cfet':'CFET','charge-trap':'Charge Trap Flash','pn-junction':'PN Junction'}
     out=[]
     for kind in SOURCES:
         source=SOURCES[kind]
