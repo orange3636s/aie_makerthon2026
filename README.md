@@ -95,3 +95,20 @@ MOSFET·SOI·RCAT·BCAT·CTF·PN 목표에 주입, 활성화, 절연막, 콘택 
 콘택 예제는 W(평면·SOI·RCAT·BCAT·CTF·PN), Co(FINFET S/D), Mo(GAA·MBCFET·CFET S/D)를 사용합니다. 이는 공개된 재료 동향을 반영한 교육용 선택이며 특정 제조사의 양산 레시피를 재현했다는 의미가 아닙니다. 재료별 고유 반응식, 장벽층, 실리사이드 접촉저항, I–V는 계산하지 않습니다. [Applied Materials의 Mo 콘택 공개 설명](https://www.appliedmaterials.com/us/en/newsroom/blogs/powering-the-next-era-of-contact-scaling-with-ald-molybdenum.html).
 
 추가 검증: `python tests/device-details.py`(12개 단면의 금속·양쪽 활성 도핑·감점), `npm test`(채점·상태·표시·분석 계약). 상세 기록은 [Gemini·콘택 QA](docs/QA-gemini-contacts-2026-10-28.md)를 참고하세요.
+
+## UI 일관성 및 오류 복구 기준
+
+| 항목 | 공통 기준 |
+| --- | --- |
+| 테마 순서 | Photo → Etch → Deposition → Diffusion → C&C → 구조 → 소자. 예제 목록·목표 선택·tutorial에 동일 적용 |
+| 재료·선택값 | `materials.js`의 재료별 색상, `ui-contract.js`의 SiO₂·Si₃N₄·HfO₂ 및 마스크·PR 표기 사용. API enum은 변경하지 않음 |
+| 농도·단위 | 관찰/역설계 모두 활성 농도가 기본. 총 농도는 별도 선택. 열처리 전 활성 농도 미계산을 명시. 길이는 결과의 µm/nm, 농도는 cm⁻³, 주입량은 ions/cm² |
+| 입력·계산 | 반복 횟수는 정수. 활성 입력의 오류는 차단. 숨겨진 잘못된 조건만 기본값으로 복구하며 다른 단면의 유효 조건은 유지 |
+| 상태·결과 | 조건을 바꾸면 재계산 필요 표시 및 이전 평가 무효화. 계산 후 보고 있던 단계 유지. 계산/재생 중 문서 자동 스크롤 금지 |
+| 편집·저장 | 추가·삭제·순서 변경·전체 초기화·정답 적용의 직전 변경을 한 번 되돌릴 수 있음. 그 후 파라미터를 편집하면 이전 복구 지점을 지워 새 편집의 손실 방지. 브라우저 저장 실패 시 파일 저장 안내 |
+| 평가·내보내기 | ‘최종 유사도 평가’는 마지막 완료 구조를 평가. 관찰은 ‘결과 저장’, 역설계는 ‘레시피 저장’으로 구분 |
+| 작은 화면·접근성 | 보조 설명 12px, 키보드 포커스 테두리, 선택 버튼의 pressed 상태, 모달의 이름 제공. 모바일 분석 표는 세로 항목으로 전환 |
+
+`npm test`는 저장 상태·채점·표시·공정 분석·AI 응답 계약과 UI 규칙을 검사합니다. `node tests/api.cjs http://127.0.0.1:3012`는 실행 중인 QA 서버의 실제 계산 및 오류 복구를 검사합니다. `node tests/server-errors.cjs`는 3013 포트에 격리된 동기 서버를 실행해 잘못된 JSON 객체, 이미지 형식, AI 키 미설정, 동시 계산, 캐시를 검사하고 종료합니다.
+
+브라우저 검사는 `node tests/prepare-browser.cjs` 후 로컬 `/qa.html`의 **Run strict scenarios**로 실행합니다. 실제 앱의 클릭·입력·삭제·복구·모달·스크롤 경로를 검사하며, 결정적인 UI 검증을 위해 이 페이지 안의 계산 및 AI 응답은 대체합니다. 이 검사를 실제 물리 계산 또는 AI 정확도 검증으로 간주하지 않습니다. 실제 CPU 검증은 `python tests/scenarios.py`로 분리합니다. 화면 크기를 바꾼 뒤 **Check this viewport**를 눌러 다시 검사할 수 있습니다. QA 페이지는 Git·Docker 빌드에서 제외되며 외부 배포에서 제공하지 않습니다.

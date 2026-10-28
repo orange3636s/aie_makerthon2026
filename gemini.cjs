@@ -15,9 +15,13 @@ async function explain(report,options={}){
  for(const row of output.suggestions){if(!ids.has(row.id)||seen.has(row.id)||typeof row.analysis!=='string'||typeof row.action!=='string'||!row.analysis.trim()||!row.action.trim()||row.analysis.length>400||row.action.length>400)throw Error('Gemini 분석 근거가 일치하지 않습니다.');seen.add(row.id)}
  return {...output,model};
 }
-async function classify(image,targets,options={}){
+function validateImage(image){
  const match=typeof image==='string'&&image.match(/^data:image\/(png|jpeg|webp);base64,([A-Za-z0-9+/=]+)$/);
  if(!match||image.length>4*1024*1024)throw Error('4MB 이하 PNG, JPEG, WebP 이미지를 사용하세요.');
+ return match;
+}
+async function classify(image,targets,options={}){
+ const match=validateImage(image);
  const ids=targets.map(t=>t.id),referenceParts=options.referenceParts||require('./scripts/reference-images.cjs').references(targets),schema={type:'object',properties:{target:{type:'string',enum:[...ids,'unknown']},confidence:{type:'number',minimum:0,maximum:1},reason:{type:'string'},ambiguous:{type:'boolean'}},required:['target','confidence','reason','ambiguous'],additionalProperties:false};
  const features={mosfet:'평평한 Si 표면 위의 게이트. 길게 내려오는 S/D 금속 콘택을 recessed gate로 혼동하지 말 것.',rcat:'게이트가 Si의 원래 표면 아래로 파인 U형 recess 안에 있어야 함.',bcat:'Si 표면 아래 매립 게이트와 그 위 절연 cap이 뚜렷해야 함.',finfet:'세로로 솟은 Si fin의 위/양옆 3면을 게이트가 감쌈.',gaafet:'한 개 분리된 Si 채널을 게이트가 둘러쌈.',mbcfet:'여러 가로 Si nanosheet 채널이 상하 적층되고 게이트가 각 시트를 둘러쌈.',cfet:'분리된 상/하 트랜지스터와 각각의 게이트. 단순 nanosheet 적층만으로 CFET이라 하지 말 것.',sti:'Si를 파서 절연막으로 채운 격리 트렌치. 게이트가 없음.',locos:'질화막 마스크 가장자리 아래 새 부리 모양으로 파고드는 field oxide.',fin:'돌출 Si fin이며 게이트가 아직 없음.',fdsoi:'BOX 위 얇은 Si body의 평면 FET; 공핍 여부는 추론 불가.',pdsoi:'BOX 위 두꺼운 Si body의 평면 FET; 공핍 여부는 추론 불가.','charge-trap':'게이트와 Si 사이 3중 ONO 절연층이 확인되는 저장 소자. 보이지 않으면 MOSFET과 구별 불가.','pn-junction':'게이트 없이 서로 맞닿은 p/n 반도체 영역.'};
  Object.assign(features,{'photo-lithography':'평면 Si 위에 반복된 얇은 산화막 패턴. PR 극성이나 실제 노광 조건은 단면만으로 확정할 수 없음.',rie:'Si의 두 수직 식각 창. 가스 종류나 RIE 장비 조건을 이미지로 단정하지 말 것.',pvd:'트렌치의 방향성 박막. PVD/CVD/ALD 공정 방식은 형상만으로 확정할 수 없으며 겹치는 후보면 unknown.',cvd:'트렌치를 덮는 박막과 내부 빈틈. PVD/CVD/ALD는 외형이 유사하면 unknown.',ald:'트렌치를 따라가는 얇은 등각 박막. 다른 증착 방식과 구별할 근거가 없으면 unknown.',planarization:'반복 기둥 사이 절연막이 채워지고 상부가 평평함.',anneal:'하나의 마스크 창 아래 도핑 농도 확산. 농도 표시가 없으면 열처리를 식별할 수 없음.'});
@@ -26,4 +30,4 @@ async function classify(image,targets,options={}){
  if(![...ids,'unknown'].includes(output.target)||!Number.isFinite(output.confidence)||output.confidence<0||output.confidence>1||typeof output.ambiguous!=='boolean'||typeof output.reason!=='string'||!output.reason.trim()||output.reason.length>400)throw Error('이미지 추천 결과 형식이 올바르지 않습니다.');
  return {...output,target:output.ambiguous?'unknown':output.target,model};
 }
-module.exports={settings,explain,classify};
+module.exports={settings,explain,classify,validateImage};

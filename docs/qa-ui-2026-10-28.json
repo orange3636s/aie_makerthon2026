@@ -1,0 +1,304 @@
+{
+  "date": "2026-10-28",
+  "scope": "ProcessTrace strict UI and scenario regression",
+  "suites": {
+    "browser": {
+      "passed": 83,
+      "failed": 0,
+      "network": "Deterministic fixture responses for calculation/AI state; real application DOM and input events"
+    },
+    "uiContracts": {
+      "passed": 82,
+      "failed": 0
+    },
+    "httpAsync": {
+      "passed": 32,
+      "failed": 0,
+      "native": true
+    },
+    "httpSync": {
+      "passed": 23,
+      "failed": 0,
+      "native": true
+    },
+    "native": {
+      "passed": 49,
+      "failed": 0,
+      "observationExamples": 30,
+      "scenarios": [
+        {
+          "name": "observation:photo-lithography",
+          "status": "PASS",
+          "seconds": 1.45
+        },
+        {
+          "name": "observation:wet",
+          "status": "PASS",
+          "seconds": 0.38
+        },
+        {
+          "name": "observation:rie",
+          "status": "PASS",
+          "seconds": 0.34
+        },
+        {
+          "name": "observation:sf6",
+          "status": "PASS",
+          "seconds": 1.41
+        },
+        {
+          "name": "observation:bosch",
+          "status": "PASS",
+          "seconds": 0.64
+        },
+        {
+          "name": "observation:cryo",
+          "status": "PASS",
+          "seconds": 0.25
+        },
+        {
+          "name": "observation:stack",
+          "status": "PASS",
+          "seconds": 0.28
+        },
+        {
+          "name": "observation:regrowth",
+          "status": "PASS",
+          "seconds": 0.42
+        },
+        {
+          "name": "observation:lele",
+          "status": "PASS",
+          "seconds": 0.28
+        },
+        {
+          "name": "observation:sadp",
+          "status": "PASS",
+          "seconds": 0.27
+        },
+        {
+          "name": "observation:sti",
+          "status": "PASS",
+          "seconds": 8.89
+        },
+        {
+          "name": "observation:locos",
+          "status": "PASS",
+          "seconds": 1.02
+        },
+        {
+          "name": "observation:fin",
+          "status": "PASS",
+          "seconds": 2.14
+        },
+        {
+          "name": "observation:pn-junction",
+          "status": "PASS",
+          "seconds": 28.02
+        },
+        {
+          "name": "observation:mosfet",
+          "status": "PASS",
+          "seconds": 34.58
+        },
+        {
+          "name": "observation:fdsoi",
+          "status": "PASS",
+          "seconds": 26.7
+        },
+        {
+          "name": "observation:planarization",
+          "status": "PASS",
+          "seconds": 2.09
+        },
+        {
+          "name": "observation:pvd",
+          "status": "PASS",
+          "seconds": 0.84
+        },
+        {
+          "name": "observation:cvd",
+          "status": "PASS",
+          "seconds": 1.28
+        },
+        {
+          "name": "observation:ald",
+          "status": "PASS",
+          "seconds": 2.08
+        },
+        {
+          "name": "observation:implant",
+          "status": "PASS",
+          "seconds": 1.84
+        },
+        {
+          "name": "observation:anneal",
+          "status": "PASS",
+          "seconds": 5.84
+        },
+        {
+          "name": "observation:pdsoi",
+          "status": "PASS",
+          "seconds": 26.92
+        },
+        {
+          "name": "observation:rcat",
+          "status": "PASS",
+          "seconds": 47.02
+        },
+        {
+          "name": "observation:bcat",
+          "status": "PASS",
+          "seconds": 60.41
+        },
+        {
+          "name": "observation:finfet",
+          "status": "PASS",
+          "seconds": 8.84
+        },
+        {
+          "name": "observation:gaafet",
+          "status": "PASS",
+          "seconds": 3.12
+        },
+        {
+          "name": "observation:mbcfet",
+          "status": "PASS",
+          "seconds": 23.22
+        },
+        {
+          "name": "observation:charge-trap",
+          "status": "PASS",
+          "seconds": 32.38
+        },
+        {
+          "name": "observation:cfet",
+          "status": "PASS",
+          "seconds": 25.09
+        },
+        {
+          "name": "positive-negative PR",
+          "status": "PASS",
+          "seconds": 0.61
+        },
+        {
+          "name": "double-pattern PR",
+          "status": "PASS",
+          "seconds": 0.38
+        },
+        {
+          "name": "repeat-pattern PR",
+          "status": "PASS",
+          "seconds": 0.36
+        },
+        {
+          "name": "isotropic-directional change",
+          "status": "PASS",
+          "seconds": 0.64
+        },
+        {
+          "name": "deposition:PVD",
+          "status": "PASS",
+          "seconds": 0.53
+        },
+        {
+          "name": "deposition:CVD",
+          "status": "PASS",
+          "seconds": 0.53
+        },
+        {
+          "name": "deposition:ALD",
+          "status": "PASS",
+          "seconds": 1.84
+        },
+        {
+          "name": "implant-anneal-deposition conservation",
+          "status": "PASS",
+          "seconds": 4.28
+        },
+        {
+          "name": "masked implant",
+          "status": "PASS",
+          "seconds": 1.11
+        },
+        {
+          "name": "recovery:CMP before deposition",
+          "status": "PASS",
+          "seconds": 0.3
+        },
+        {
+          "name": "recovery:PR strip without PR",
+          "status": "PASS",
+          "seconds": 0.31
+        },
+        {
+          "name": "recovery:missing etch material",
+          "status": "PASS",
+          "seconds": 0.3
+        },
+        {
+          "name": "recovery:duplicate PR",
+          "status": "PASS",
+          "seconds": 0.33
+        },
+        {
+          "name": "recovery:oxidation without seed",
+          "status": "PASS",
+          "seconds": 0.33
+        },
+        {
+          "name": "recovery:anneal without implant",
+          "status": "PASS",
+          "seconds": 0.7
+        },
+        {
+          "name": "recovery:out-of-bounds etch",
+          "status": "PASS",
+          "seconds": 0.33
+        },
+        {
+          "name": "recovery:LOCOS implant boundary",
+          "status": "PASS",
+          "seconds": 0.26
+        },
+        {
+          "name": "recovery:oxidation after implant",
+          "status": "PASS",
+          "seconds": 3.03
+        },
+        {
+          "name": "recovery:anneal with PR",
+          "status": "PASS",
+          "seconds": 2.03
+        }
+      ]
+    },
+    "npmTest": "PASS: grading, draft recovery, numeric display, rendering, process review, AI schema, UI contracts"
+  },
+  "responsive": {
+    "range": "320 CSS pixels through desktop",
+    "manual": [
+      "No page overflow or clipped main actions",
+      "Mobile analysis cards with missing-step findings",
+      "Escape closes analysis and returns focus to grade button"
+    ]
+  },
+  "fixed": [
+    "Hidden invalid fields blocking section calculation",
+    "Edited process labels retaining old polarity/material",
+    "Shared reference overwritten by a different section",
+    "No undo for deleted, reordered or reset flows",
+    "Silent local draft-storage failure",
+    "Browser scroll anchoring during recalculation",
+    "Different material labels, category order and concentration defaults",
+    "Unclear final-step grading and recipe export labels",
+    "Mobile analysis table overflow and low-contrast captions",
+    "Malformed JSON root and AI errors using misleading HTTP status"
+  ],
+  "limitations": [
+    "UI fixture results are not physical validation or live AI accuracy evaluation",
+    "2.5D is an extruded 2D view, not a 3D device solution",
+    "Fin/GAA/MBC/CFET gate and S/D sections remain independent educational modules",
+    "Geometry and doping comparison does not verify electrical operation"
+  ]
+}
