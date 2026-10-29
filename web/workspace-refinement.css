@@ -1,0 +1,51 @@
+@font-face{font-family:ProcessSans;src:url('/fonts/PretendardVariable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+body,button,input,select,textarea,.wb-chart svg,.wb-chart-row dd{font-family:ProcessSans,'Segoe UI','Malgun Gothic',sans-serif;font-synthesis:none}body{letter-spacing:-.01em}button,input,select{font-size:14px}input,.wb-chart-row dd{font-variant-numeric:tabular-nums}h1,h2,h3{letter-spacing:-.025em}
+/* Keep fabrication geometry primary; measurements occupy the workspace only on demand. */
+.single-design{grid-template-columns:minmax(0,1fr)!important}
+.design-brief{margin:0 0 16px;border-bottom:1px solid #dbe5e7;padding-bottom:12px;flex:none}
+.design-brief summary{font-size:13px;font-weight:650;cursor:pointer;line-height:28px}
+.design-brief summary button{float:right;padding:2px 8px;min-height:28px}
+.brief-body{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;margin-top:8px;align-items:start}
+#r-target{width:110px;height:110px;border:1px solid #e0e8eb;background:white;border-radius:5px;pointer-events:none}
+#r-brief{font-size:11px;line-height:1.5}#r-brief>b{font-size:12px}#r-brief ul,.brief-specs{list-style:none;padding:0;margin:8px 0}
+#r-brief li,.brief-specs li{display:flex;gap:8px;justify-content:space-between;margin:5px 0}#r-brief li b{white-space:nowrap;font-weight:550}#r-brief small{color:#5b7078}
+.brief-specs li{padding:10px 0;border-bottom:1px solid #e3e9eb;font-size:14px}
+.reverse-controls{overflow:auto!important}.reverse-controls .brief-body{grid-template-columns:1fr}#r-target{justify-self:center;width:100%;max-width:220px;height:125px}
+.workbench-analysis{display:none!important}
+.measurement-selected .workbench-analysis{display:block!important;flex:1;min-height:290px;overflow:auto}
+.measurement-selected .canvas-wrap,.measurement-selected .dual-view{height:150px!important;min-height:150px!important;max-height:150px!important;flex:0 0 150px!important}
+.measurement-selected .canvas-wrap canvas,.measurement-selected #r-current{height:150px!important;min-height:150px!important}
+.measurement-selected .wb-chart svg{height:280px!important}
+.measurement-selected .wb-heading::after{display:none!important}
+.measurement-selected .workbench-analysis .wb-body:not([hidden]){display:block!important}
+.measurement-selected .workbench-analysis .wb-actions{display:flex!important}
+.measurement-selected .wb-chart-row{min-height:300px}
+.measurement-selected .wb-instruments [data-kind]{pointer-events:none;opacity:.85}
+.measurement-selected{overflow:auto!important}
+.metrology-add{display:flex;gap:5px;margin-left:auto;align-items:center}.metrology-add select{max-width:210px;font:inherit;font-size:12px}
+.metrology-card{display:flex;align-items:stretch;flex:0 0 150px;position:relative;background:#f0f7fa;border:1px solid #b9d3df;border-radius:6px;min-height:76px}
+.metrology-card>button:first-child{background:transparent;border:0;text-align:left;padding:12px;font-size:12px;flex:1;color:#22627c}
+.metrology-card:has([aria-pressed=true]){border:2px solid #168476}
+.field-help,.rs-note,.reverse-caption{display:none!important}
+
+#r-doping-label,#doping-tools{display:none!important}
+.measurement-selected .workbench-analysis{min-height:220px;overflow:visible}.measurement-selected .wb-chart-row{min-height:210px}.measurement-selected .wb-chart svg{height:205px!important}
+.measurement-selected .canvas-wrap,.measurement-selected .dual-view{height:115px!important;min-height:115px!important;max-height:115px!important;flex-basis:115px!important}.measurement-selected .canvas-wrap canvas,.measurement-selected #r-current{height:115px!important;min-height:115px!important}
+#r-grade{background:#087f76;color:#fff;border-color:#087f76}
+
+.measurement-selected .wb-body{overflow:visible!important;max-height:none!important;height:auto!important}
+.measurement-selected .wb-heading{display:flex;justify-content:flex-end;min-height:26px}
+.measurement-selected .wb-chart svg{font-family:ProcessSans,sans-serif}
+
+@media(min-width:981px) and (max-height:800px){
+ .measurement-selected{padding:12px!important}
+ .measurement-selected .canvas-wrap,.measurement-selected .dual-view{height:90px!important;min-height:90px!important;max-height:90px!important;flex-basis:90px!important}
+ .measurement-selected .canvas-wrap canvas,.measurement-selected #r-current{height:90px!important;min-height:90px!important}
+ .measurement-selected .wb-chart svg{height:180px!important}
+ .measurement-selected .wb-chart-row{min-height:190px}
+ .measurement-selected .workbench-analysis{margin-top:4px;padding-top:3px;flex:none}
+ .measurement-selected .wb-heading{min-height:20px}
+}
+.measurement-selected .viewport-tools{display:none!important}
+
+@media(max-width:760px){.brief-body{grid-template-columns:110px 1fr!important}#r-target{height:110px}.metrology-add{flex-wrap:wrap}.process-panel .panel-heading{flex-wrap:wrap;gap:8px}}

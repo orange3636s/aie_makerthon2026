@@ -33,6 +33,17 @@ for(const entry of data.targets){
  }
 }
 const reverse=fs.readFileSync('web/reverse.js','utf8');
+assert(!reverse.includes("el('r-grade').disabled=true"));assert(!reverse.includes('id="r-grade" disabled'));
+assert(reverse.includes('reviewSteps=structuredClone(steps.slice(0,index))'));
+assert(reverse.includes('complete:reviewComplete'));
+const prev={recipe:[{op:'etch',params:{time:1,rate:2}}],components:{geometry:80},plan:{metric:'geometry',prediction:'증가'}};
+assert(D.experiment(prev,prev.recipe,{components:{geometry:80}}).unchanged);
+const exp=D.experiment(prev,[{op:'etch',params:{time:2,rate:2}}],{components:{geometry:90}});assert(exp.controlled&&exp.matched);
+assert(D.experiment(prev,[],{components:{geometry:20}}).sequence);
+assert.equal(D.experiment({},[],{components:{geometry:20}}),null);
+const ald=R.restore([{op:'deposition',params:{method:'ALD'}}],catalog.operations);
+const options=D.planOptions(ald,catalog.operations);assert(options.some(o=>o.key==='cycles'));assert(!options.some(o=>o.key==='rate'));
+for(const e of data.targets)for(const c of e.candidates.slice(1)){assert(c.sources.length>0&&c.sources.every(s=>s.url.startsWith('https://')));assert(c.changes.length);assert(c.benefit&&c.tradeoff&&c.observe&&c.scope);}
 assert(reverse.includes('RecipeStudio.diagnose'));
 assert(reverse.includes('feedback=>{if(mine===reviewGeneration)showReview(feedback)}'));
 assert(!reverse.includes('refresh();showReview()'),'cannot bypass diagnosis on evaluation');

@@ -32,9 +32,20 @@
     document.querySelector(`[data-example="${ex.id}"]`).click();
     await until(()=>!$('run').disabled&&$('title').textContent===ex.title,ex.id);
     for(const card of [...document.querySelectorAll('.frame-card')]){card.click();await Promise.resolve();check(ex.id+' step '+card.dataset.frame+' graph finite',!document.querySelector('.viewer .workbench-analysis svg').innerHTML.match(/NaN|Infinity/))}
+    check(ex.id+' graphs hidden between measurements',getComputedStyle(document.querySelector('.viewer .workbench-analysis')).display==='none');
+    const addMeasure=document.querySelector('#observation .metrology-add button'),measureSelect=document.querySelector('#observation .metrology-add select');addMeasure.click();measureSelect.value='thickness';measureSelect.dispatchEvent(new Event('change',{bubbles:true}));await delay(30);
+    check(ex.id+' measurement focuses graph',document.querySelector('.viewer').classList.contains('measurement-selected')&&getComputedStyle(document.querySelector('.viewer .workbench-analysis')).display!=='none');
+    check(ex.id+' measurement inserted',!!document.querySelector('#timeline .metrology-card'));
+    document.querySelector('#timeline .frame-card').click();check(ex.id+' fabrication restores geometry',!document.querySelector('.viewer').classList.contains('measurement-selected'));
+    document.querySelector('#timeline .metrology-card button').click();check(ex.id+' measurement reopens',document.querySelector('.viewer').classList.contains('measurement-selected'));
+    check(ex.id+' no measurement delete control',document.querySelectorAll('#timeline .metrology-card button').length===1);
+    document.querySelector('#timeline .frame-card').click();
     click('view25d');check(ex.id+' 2.5D', $('view25d').getAttribute('aria-pressed')==='true');click('view2d');
     check(ex.id+' layout',document.documentElement.scrollWidth<=innerWidth+1);
     click('reverse-mode');await until(()=>window.reverseLab.active&&!$('reverse-lab').hidden&&!$('r-answer').disabled&&document.querySelector('[data-step]'),'reverse '+ex.id);
+    check(ex.id+' goal outside main viewer',!!document.querySelector('.design-brief #r-target')&&!document.querySelector('.reverse-view #r-target'));
+    check(ex.id+' compact task',!!document.querySelector('#r-brief li'));
+    click('r-grade');await delay(20);check(ex.id+' evaluation always accessible',$('review-dialog').open);click('review-close');
     click('r-answer');await until(()=>document.querySelector('.rs-dialog [data-load="0"]'),'candidate list');document.querySelector('.rs-dialog [data-load="0"]').click();await until(()=>!document.querySelector('.rs-dialog').open,'candidate loaded');
     for(const card of [...document.querySelectorAll('[data-step]')]){card.click();await Promise.resolve();check(ex.id+' reverse step '+card.dataset.step,!document.querySelector('.reverse-view .workbench-analysis svg').innerHTML.match(/NaN|Infinity/))}
     click('r25d');check(ex.id+' reverse 2.5D',$('r25d').getAttribute('aria-pressed')==='true');click('r2d');

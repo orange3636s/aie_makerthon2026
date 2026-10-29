@@ -64,6 +64,8 @@ function combinedBounds(result,reference){if(!reference)return result.bounds;ret
 function refFrame(){const ref=references.get(ProcessUI.referenceKey(selected.id,current?.params));if(!ref||!current)return null;const progress=current.frames[frame].progress;return ref.frames.reduce((best,f)=>Math.abs(f.progress-progress)<Math.abs(best.progress-progress)?f:best,ref.frames[0]);}
 function dopingFieldFor(data){const d=data?.concentration;return d?.info?.operation==='implant'||!d?.fields?.net_active?'net_total':'net_active'}
 function draw(canvas,data,bounds,options={}){
+ if((window.MetrologySteps&&!window.MetrologySteps.isDoping(canvas.id)))options={...options,doping:false};
+ if(window.MetrologySteps?.isDoping(canvas.id))options={...options,doping:true,dopingField:window.ProcessWorkbench?.field(canvas.id)||'P_total'};
  if(options.mini&&!canvas.getClientRects().length)return;
  const rect=canvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2),w=Math.max(rect.width,80),h=Math.max(rect.height,50);
  if(options.mini&&data&&bounds){
@@ -72,19 +74,19 @@ function draw(canvas,data,bounds,options={}){
   cache.set(canvas,{data,key});
  }
  canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);const c=canvas.getContext('2d');c.scale(dpr,dpr);c.fillStyle='#ffffff';c.fillRect(0,0,w,h);
- if(!data||!bounds){c.fillStyle='#536981';c.font='12px Segoe UI';c.textAlign='center';c.fillText('조건을 선택하고 실행해 주세요',w/2,h/2);return}
+ if(!data||!bounds){c.fillStyle='#536981';c.font='12px ProcessSans, Segoe UI';c.textAlign='center';c.fillText('조건을 선택하고 실행해 주세요',w/2,h/2);return}
  if(!options.mini&&!options.fitted&&window.SectionViewport)bounds=SectionViewport.fit(data,bounds,options.reference);
  const overlay=PhotoPreview.build(options.maskPreview||data.photoMask||data.exposure,bounds,data);
  if(overlay)bounds=[bounds[0],bounds[1],bounds[2],Math.max(bounds[3],overlay.top)];
  const axisUnit=options.unit||selected?.unit||current?.unit||'µm',axisField={unit:axisUnit};
- const mini=!!options.mini,margin=mini?6:36,top=mini?7:25,bottom=mini?6:42;
+ const mini=!!options.mini,compact=!!window.MetrologySteps?.isActive(canvas.id),margin=mini||compact?6:36,top=mini||compact?7:25,bottom=mini||compact?6:42;
  const extra=options.extrude&&!mini?Math.min(70,w*.12,Math.max(0,(h-top-bottom)*.2)):0;
  const camera=!mini&&window.SectionViewport?SectionViewport.attach(canvas,()=>draw(canvas,data,arguments[2],options),selected?.id||''):{zoom:1,x:0,y:0};
  const scale=camera.zoom*Math.min((w-margin*2-extra)/(bounds[1]-bounds[0]),(h-top-bottom-extra)/(bounds[3]-bounds[2]));
  const centerX=(bounds[0]+bounds[1])/2,centerY=(bounds[2]+bounds[3])/2;
  const px=x=>w/2-extra/2+(x-centerX)*scale+camera.x,py=y=>(h+top-bottom)/2+extra/2-(y-centerY)*scale+camera.y;
- if(!mini){
-  c.strokeStyle='#edf0f5';c.lineWidth=.7;c.fillStyle='#526b84';c.font='9px Segoe UI';
+ if(!mini&&!compact){
+  c.strokeStyle='#edf0f5';c.lineWidth=.7;c.fillStyle='#526b84';c.font='10px ProcessSans, Segoe UI';
   const step=Math.pow(10,Math.floor(Math.log10((bounds[1]-bounds[0])/4)))*((bounds[1]-bounds[0])/Math.pow(10,Math.floor(Math.log10((bounds[1]-bounds[0])/4)))/4>5?5:1);
   const raw=(bounds[1]-bounds[0])/5,pow=Math.pow(10,Math.floor(Math.log10(raw))),gridStep=Math.ceil(raw/pow)*pow;
   for(let x=Math.ceil(bounds[0]/gridStep)*gridStep;x<=bounds[1];x+=gridStep){const xp=px(x);c.beginPath();c.moveTo(xp,top);c.lineTo(xp,h-bottom);c.stroke();c.textAlign='center';c.fillText(ProcessUI.displayValue(axisField,Number(x.toFixed(6))),xp,h-bottom+17)}
@@ -121,7 +123,7 @@ function draw(canvas,data,bounds,options={}){
   const d=data.concentration,values=d.fields[options.dopingField||dopingFieldFor(data)];
   const silicon=[...(grouped.get(10)||[]),...(grouped.get(13)||[])];
   c.save();c.beginPath();for(const poly of silicon){poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.closePath()}c.clip('evenodd');
-  if(values)for(let i=0;i<values.length;i++){const v=values[i],a=Math.abs(v);if(!d.mask[i]||a<1e14)continue;const level=Math.max(0,Math.min(1,(Math.log10(a)-14)/6));const alpha=.98*Math.pow(level,1.25),rgb=v>=0?[18,85,205]:[194,24,91];c.fillStyle=`rgb(${rgb.map((v,i)=>Math.round(v*alpha+[228,232,238][i]*(1-alpha))).join(',')})`;const x=d.origin[0]+i%d.nx*d.dx,y=d.origin[1]+Math.floor(i/d.nx)*d.dx;c.fillRect(px(x),py(y+d.dx),Math.ceil(d.dx*scale),Math.ceil(d.dx*scale))}
+  if(values)for(let i=0;i<values.length;i++){const v=options.dopingField==='B_total'?-values[i]:values[i],a=Math.abs(v);if(!d.mask[i]||a<1e14)continue;const level=Math.max(0,Math.min(1,(Math.log10(a)-14)/6));const alpha=.98*Math.pow(level,1.25),rgb=v>=0?[18,85,205]:[194,24,91];c.fillStyle=`rgb(${rgb.map((v,i)=>Math.round(v*alpha+[228,232,238][i]*(1-alpha))).join(',')})`;const x=d.origin[0]+i%d.nx*d.dx,y=d.origin[1]+Math.floor(i/d.nx)*d.dx;c.fillRect(px(x),py(y+d.dx),Math.ceil(d.dx*scale),Math.ceil(d.dx*scale))}
   c.restore();
   for(const poly of silicon){c.beginPath();poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.closePath();c.strokeStyle='#718096';c.lineWidth=mini?.4:.8;c.stroke()}
  }
