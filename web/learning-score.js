@@ -67,7 +67,7 @@
    for(const species of options.assessment?.species||[]){
     const peak=(f)=>(f.concentration?.fields?.[species+'_active']||[]).reduce((m,v)=>Math.max(m,v),0);
     const expected=peak(target),value=peak(actual);
-    checks.push({name:species+' 활성 농도 최고값',pass:expected>0&&value>=expected*.5&&value<=expected*2,detail:`목표 ${expected.toExponential(1)} · 실측 ${value.toExponential(1)} cm⁻³`});
+    checks.push({name:species+' 활성 농도 최고값',pass:expected>0&&value>=expected*.5&&value<=expected*2,detail:`목표 ${expected.toExponential(1)} · 계산값 ${value.toExponential(1)} cm⁻³`});
    }
   }
   const eligible=core.components.geometry>=.9&&measures.every(m=>m.pass)&&checks.every(c=>c.pass);
