@@ -78,7 +78,7 @@ function draw(canvas,data,bounds,options={}){
  if(overlay)bounds=[bounds[0],bounds[1],bounds[2],Math.max(bounds[3],overlay.top)];
  const axisUnit=options.unit||selected?.unit||current?.unit||'µm',axisField={unit:axisUnit};
  const mini=!!options.mini,margin=mini?6:36,top=mini?7:25,bottom=mini?6:42;
- const extra=options.extrude&&!mini?Math.min(70,w*.12):0;
+ const extra=options.extrude&&!mini?Math.min(70,w*.12,Math.max(0,(h-top-bottom)*.2)):0;
  const camera=!mini&&window.SectionViewport?SectionViewport.attach(canvas,()=>draw(canvas,data,arguments[2],options),selected?.id||''):{zoom:1,x:0,y:0};
  const scale=camera.zoom*Math.min((w-margin*2-extra)/(bounds[1]-bounds[0]),(h-top-bottom-extra)/(bounds[3]-bounds[2]));
  const centerX=(bounds[0]+bounds[1])/2,centerY=(bounds[2]+bounds[3])/2;
@@ -119,10 +119,11 @@ function draw(canvas,data,bounds,options={}){
 
  if(options.doping&&data.concentration){
   const d=data.concentration,values=d.fields[options.dopingField||dopingFieldFor(data)];
-  c.save();c.beginPath();for(const poly of data.polygons.filter(p=>[10,13].includes(p.material))){poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.closePath()}c.clip('evenodd');
+  const silicon=[...(grouped.get(10)||[]),...(grouped.get(13)||[])];
+  c.save();c.beginPath();for(const poly of silicon){poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.closePath()}c.clip('evenodd');
   if(values)for(let i=0;i<values.length;i++){const v=values[i],a=Math.abs(v);if(!d.mask[i]||a<1e14)continue;const level=Math.max(0,Math.min(1,(Math.log10(a)-14)/6));const alpha=.98*Math.pow(level,1.25),rgb=v>=0?[18,85,205]:[194,24,91];c.fillStyle=`rgb(${rgb.map((v,i)=>Math.round(v*alpha+[228,232,238][i]*(1-alpha))).join(',')})`;const x=d.origin[0]+i%d.nx*d.dx,y=d.origin[1]+Math.floor(i/d.nx)*d.dx;c.fillRect(px(x),py(y+d.dx),Math.ceil(d.dx*scale),Math.ceil(d.dx*scale))}
   c.restore();
-  for(const poly of data.polygons.filter(p=>[10,13].includes(p.material))){c.beginPath();poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.closePath();c.strokeStyle='#718096';c.lineWidth=mini?.4:.8;c.stroke()}
+  for(const poly of silicon){c.beginPath();poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.closePath();c.strokeStyle='#718096';c.lineWidth=mini?.4:.8;c.stroke()}
  }
  if(data.metrics?.development){
   const dev=data.metrics.development,pr=grouped.get(0)||[];c.save();c.beginPath();for(const poly of pr){poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.closePath()}c.clip('evenodd');c.fillStyle=`rgba(190,137,221,${.18+.32*dev.fraction})`;for(const [a,b] of dev.intervals)c.fillRect(px(a),py(bounds[3]),(b-a)*scale,(bounds[3]-bounds[2])*scale);c.restore();

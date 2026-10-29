@@ -19,7 +19,21 @@ def run(data):
     periodic=target['id']=='locos'
     width=target['width']/4 if periodic else target['width']
     d=ps.Domain(gridDelta=.01,xExtent=width,yExtent=2.,boundary=ps.BoundaryType.REFLECTIVE_BOUNDARY)
-    if periodic:
+    substrate_depth=target.get('substrateThickness')
+    if substrate_depth is not None:
+        def initial_layer(y0,y1,mat):
+            level=ls.Domain(d.getGrid())
+            geom=ls.MakeGeometry(level,ls.Box([-width/2,y0],[width/2,y1]))
+            geom.setIgnoreBoundaryConditions([True,True,False]);geom.apply()
+            d.insertNextLevelSetAsMaterial(level,mat,True)
+        if target.get('wafer'):
+            body=target['wafer']['body'];box_thickness=target['wafer']['box']
+            initial_layer(-substrate_depth,-body-box_thickness,ps.Material.BulkSi)
+            initial_layer(-body-box_thickness,-body,ps.Material.SiO2)
+            initial_layer(-body,0.,ps.Material.Si)
+        else:
+            initial_layer(-substrate_depth,0.,ps.Material.Si)
+    elif periodic:
         ps.MakePlane(d,0.,ps.Material.Si).apply()
     else:
         # The lower level set bounds the native dopant cell grid below the wafer.
@@ -69,7 +83,7 @@ def run(data):
             polygons=[dict(material=q['material'],closed=q['closed'],points=[[round(sign*x+shift,6),y] for x,y in q['points']]) for q in polygons for sign,shift in [(-1,-.6),(1,-.2),(-1,.2),(1,.6)]]
         surface=d.getSurfaceMesh(False).getNodes()
         frame=dict(label=label,stepIndex=current_step,polygons=polygons,lowest=min(p[1] for p in surface),highest=max(p[1] for p in surface),metrics=extra or {})
-        if frame['highest']>1.5 or frame['lowest']<-.9:raise ValueError('학습 영역을 벗어났습니다. 공정 시간이나 식각률을 줄이세요.')
+        if frame['highest']>1.5 or frame['lowest']<-max(.9,(substrate_depth or 0)+.02):raise ValueError('학습 영역을 벗어났습니다. 공정 시간이나 식각률을 줄이세요.')
         if concentration:frame['concentration']=concentration
         if photo_mask and current_step and steps[current_step-1]['op']=='photo':frame['photoMask']={**photo_mask,'tone':pr_tone,'arrows':steps[current_step-1]['params']['action']=='Develop'}
         # Evidence records completed operations only, independently of user labels.
@@ -293,7 +307,8 @@ def run(data):
     bounds=list(target['bounds'])
     bounds[2]=min(bounds[2],min(f['lowest'] for f in frames)-.08)
     bounds[3]=max(bounds[3],max(f['highest'] for f in frames)+.08)
-    return dict(target=target['id'],view=data.get('view','gate'),section=target['section'],example=target['id'],frames=frames,steps=steps,bounds=bounds,roi=target['roi'],unit='µm',elapsed=round(time.perf_counter()-started,3),failure=failure,model='Native process flow',engine='ViennaPS '+ps.__version__)
+    if substrate_depth is not None:bounds[2]=-substrate_depth-.04
+    return dict(**({'substrateThickness':substrate_depth} if substrate_depth is not None else {}),target=target['id'],view=data.get('view','gate'),section=target['section'],example=target['id'],frames=frames,steps=steps,bounds=bounds,roi=target['roi'],unit='µm',elapsed=round(time.perf_counter()-started,3),failure=failure,model='Native process flow',engine='ViennaPS '+ps.__version__)
 
 if __name__=='__main__':
     result=run(json.loads(Path(sys.argv[1]).read_text(encoding='utf-8')))

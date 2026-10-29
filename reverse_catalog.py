@@ -155,4 +155,10 @@ def validate(data):
         lo,hi=limits[target['id']]
         if isinstance(w['body'],bool) or not isinstance(w['body'],(int,float)) or not lo<=w['body']<=hi or w['box']!=.15:raise ValueError('SOI 두께 범위를 확인하세요.')
         target=dict(target,wafer=w)
+    if 'substrateThickness' in data:
+        depth=data['substrateThickness']
+        minimum=max(.1,sum(target.get('wafer',{}).get(k,0) for k in ('body','box'))+.05)
+        if isinstance(depth,bool) or not isinstance(depth,(int,float)) or not math.isfinite(depth) or not minimum<=depth<=1.2:
+            raise ValueError(f'기판 두께: {minimum*1000:g}–1200 nm 범위를 확인하세요.')
+        target=dict(target,substrateThickness=depth)
     return target,clean
