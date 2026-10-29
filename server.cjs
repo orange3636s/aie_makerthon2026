@@ -14,7 +14,7 @@ const python=process.env.SIMULATION_PYTHON||(fs.existsSync(localPython)?localPyt
 const catalog=JSON.parse(fs.readFileSync(path.join(root,'catalog.json'))),reverse=JSON.parse(fs.readFileSync(path.join(root,'reverse-catalog.json')));
 const jobs=new Map(),cache=new Map(),queue=[],limits=new Map(),waiters=new Map();let activeTask=null,running=false,aiToday=0,aiDay='';
 const assets={'/':'index.html','/tutorial':'parameters.html','/challenge':'index.html'};
-for(const f of ['workbench.js','workbench-metrics.js','workbench.css','viewport.js','parameter-preview.js','studio.css','index.html','app.js','style.css','materials.js','ui-contract.js','process-estimate.js','photo-preview.js','design-guide.js','simulation-editor.js','extrusion.js','parameters.html','tutorial.js','process-guide.js','tutorial-guide.js','reverse.js','reverse.css','grading.js','learning-score.js','recipe-state.js','process-review.js'])assets['/'+f]=f;
+for(const f of ['recipe-studio.js','recipe-studio.css','workbench.js','workbench-metrics.js','workbench.css','viewport.js','parameter-preview.js','studio.css','index.html','app.js','style.css','materials.js','ui-contract.js','process-estimate.js','photo-preview.js','design-guide.js','simulation-editor.js','extrusion.js','parameters.html','tutorial.js','process-guide.js','tutorial-guide.js','reverse.js','reverse.css','grading.js','learning-score.js','recipe-state.js','process-review.js'])assets['/'+f]=f;
 if(host==='127.0.0.1'){assets['/qa.html']='qa.html';assets['/qa.js']='qa.js';assets['/qa-frame.html']='qa-frame.html';}
 function send(res,status,data,type='application/json; charset=utf-8'){
  let body=Buffer.isBuffer(data)?data:Buffer.from(JSON.stringify(data));if(res.canGzip&&body.length>32000){body=zlib.gzipSync(body);res.setHeader('Content-Encoding','gzip');res.setHeader('Vary','Accept-Encoding')}
@@ -60,6 +60,16 @@ const server=http.createServer(async(req,res)=>{
   if(route==='/api/config')return send(res,200,{imageAnalysis:!!process.env.GEMINI_API_KEY,processAnalysis:!!process.env.GEMINI_API_KEY,analysisModel:process.env.GEMINI_MODEL||'gemini-3.5-flash-lite'});
   if(route==='/api/catalog')return send(res,200,catalog);
   if(route==='/api/reverse-catalog')return send(res,200,reverse);
+  if(route.startsWith('/api/flow-candidates/')){
+   const id=route.slice('/api/flow-candidates/'.length);
+   if(!reverse.targets.some(t=>t.id===id))return send(res,404,{error:'지원하지 않는 예제입니다.'});
+   try{
+    const entry=JSON.parse(fs.readFileSync(path.join(root,'flow-candidates.json'))).targets.find(t=>t.target===id);
+    const hash=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'references',id+'.json'))).digest('hex');
+    if(!entry||entry.referenceHash!==hash)return send(res,503,{error:'후보 플로우 재검증이 필요합니다.'});
+    return send(res,200,entry);
+   }catch{return send(res,503,{error:'후보 플로우를 준비하고 있습니다.'});}
+  }
   if(/^\/api\/reference\/[a-z][a-z0-9-]*$/.test(route)){const id=route.split('/').at(-1);if(!reverse.targets.some(t=>t.id===id))return send(res,404,{error:'목표 없음'});const view=new URL(req.url,'http://localhost').searchParams.get('view')||'gate';if(view!=='gate'&&!reverse.targets.find(t=>t.id===id).sections?.[view])return send(res,400,{error:'지원하지 않는 단면'});const f=path.join(root,'references',id+(view==='gate'?'':'-'+view)+'.json');if(fs.existsSync(f))return send(res,200,fs.readFileSync(f));return send(res,503,{error:'목표 계산 결과를 준비하고 있습니다.'})}
   if(route.startsWith('/api/jobs/')){const job=jobs.get(route.split('/').at(-1));return send(res,job?200:404,job||{error:'결과가 만료됐습니다. 다시 실행하세요.'})}
   const file=assets[route];if(file&&fs.existsSync(path.join(root,'web',file))){const ext=path.extname(file),type={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8'}[ext];return send(res,200,fs.readFileSync(path.join(root,'web',file)),type)}return send(res,404,{error:'Not found'});

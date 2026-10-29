@@ -31,12 +31,12 @@
     await until(()=>!$('run').disabled,'ready');
     document.querySelector(`[data-example="${ex.id}"]`).click();
     await until(()=>!$('run').disabled&&$('title').textContent===ex.title,ex.id);
-    for(const card of [...document.querySelectorAll('.frame-card')]){card.click();await delay(8);check(ex.id+' step '+card.dataset.frame+' graph finite',!document.querySelector('.viewer .workbench-analysis svg').innerHTML.match(/NaN|Infinity/))}
+    for(const card of [...document.querySelectorAll('.frame-card')]){card.click();await Promise.resolve();check(ex.id+' step '+card.dataset.frame+' graph finite',!document.querySelector('.viewer .workbench-analysis svg').innerHTML.match(/NaN|Infinity/))}
     click('view25d');check(ex.id+' 2.5D', $('view25d').getAttribute('aria-pressed')==='true');click('view2d');
     check(ex.id+' layout',document.documentElement.scrollWidth<=innerWidth+1);
     click('reverse-mode');await until(()=>window.reverseLab.active&&!$('reverse-lab').hidden&&!$('r-answer').disabled&&document.querySelector('[data-step]'),'reverse '+ex.id);
-    click('r-answer');click('r-load-answer');
-    for(const card of [...document.querySelectorAll('[data-step]')]){card.click();await delay(8);check(ex.id+' reverse step '+card.dataset.step,!document.querySelector('.reverse-view .workbench-analysis svg').innerHTML.match(/NaN|Infinity/))}
+    click('r-answer');await until(()=>document.querySelector('.rs-dialog [data-load="0"]'),'candidate list');document.querySelector('.rs-dialog [data-load="0"]').click();await until(()=>!document.querySelector('.rs-dialog').open,'candidate loaded');
+    for(const card of [...document.querySelectorAll('[data-step]')]){card.click();await Promise.resolve();check(ex.id+' reverse step '+card.dataset.step,!document.querySelector('.reverse-view .workbench-analysis svg').innerHTML.match(/NaN|Infinity/))}
     click('r25d');check(ex.id+' reverse 2.5D',$('r25d').getAttribute('aria-pressed')==='true');click('r2d');
    }
    const n=document.querySelectorAll('[data-step]').length;click('r-delete');check('Delete one step',document.querySelectorAll('[data-step]').length===n-1);click('r-undo');check('Undo deletion',document.querySelectorAll('[data-step]').length===n);

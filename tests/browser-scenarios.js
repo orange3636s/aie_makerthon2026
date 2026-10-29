@@ -13,7 +13,7 @@ async function click(id){$(id).click();await delay(50)}
 function input(id,value,event='input'){const e=$(id);e.value=String(value);e.dispatchEvent(new w.Event(event,{bubbles:true}));}
 const shown=e=>!!e&&e.getClientRects().length>0;
 async function enter(id){await w.reverseLab.select(id,true);await until(()=>!$('r-answer').disabled,'reference '+id)}
-async function answer(){await click('r-answer');await click('r-load-answer')}
+async function answer(){await click('r-answer');await until(()=>d.querySelector('.rs-dialog [data-load="0"]'),'candidate list');d.querySelector('.rs-dialog [data-load="0"]').click();await until(()=>!d.querySelector('.rs-dialog').open,'candidate loaded')}
 async function observe(id){if(w.reverseLab.active){await click('observe-mode');await until(()=>!$('run').disabled,'exit reverse')}w.location.hash=id;await delay(100);await until(()=>$('run').disabled===false&&w.location.hash==='#'+id,'observation '+id)}
 function card(n){d.querySelector(`[data-step="${n}"]`).click()}
 document.getElementById('run-tests').onclick=async()=>{
