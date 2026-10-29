@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node server.cjs",
     "build": "node scripts/build-web.cjs",
-    "test": "node tests/grading.cjs && node tests/recipe-state.cjs && node tests/display.cjs && node tests/rendering.cjs && node tests/process-review.cjs && node tests/classifier.cjs && node tests/ai-resilience.cjs && node tests/ui-contract.cjs && node tests/design-guide.cjs && node tests/unified-regressions.cjs && node tests/process-estimate.cjs && node tests/recipe-ui.cjs && node tests/viewport-palette.cjs && node tests/learning-score.cjs && node tests/studio.cjs"
+    "test": "node tests/grading.cjs && node tests/recipe-state.cjs && node tests/display.cjs && node tests/rendering.cjs && node tests/process-review.cjs && node tests/classifier.cjs && node tests/ai-resilience.cjs && node tests/ui-contract.cjs && node tests/design-guide.cjs && node tests/unified-regressions.cjs && node tests/process-estimate.cjs && node tests/recipe-ui.cjs && node tests/viewport-palette.cjs && node tests/learning-score.cjs && node tests/studio.cjs && node tests/workbench.cjs && node tests/workbench-cache.cjs"
   },
   "engines": {
     "node": ">=22"

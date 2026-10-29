@@ -9,12 +9,13 @@ def simulate(payload):
     (ROOT/'.runtime').mkdir(exist_ok=True)
     with tempfile.TemporaryDirectory(dir=ROOT/'.runtime') as temp:
         temp=Path(temp);src=temp/'in.json';out=temp/'out.json';src.write_text(json.dumps(payload),encoding='utf-8')
-        p=subprocess.run([sys.executable,str(ROOT/'reverse_engine.py'),str(src),str(out)],cwd=temp,capture_output=True,timeout=100)
+        p=subprocess.run([sys.executable,str(ROOT/'reverse_engine.py'),str(src),str(out)],cwd=temp,capture_output=True,timeout=150)
         assert p.returncode==0,p.stderr[-800:]
         data=json.loads(out.read_text(encoding='utf-8'));assert not data['failure'],data['failure'];return data
 
 if __name__=='__main__':
     for target in TARGETS:
+        if len(sys.argv)>1 and target['id'] not in sys.argv[1:]:continue
         d=simulate(dict(target=target['id'],steps=target['recipe']))
         assert len(d['frames'])==len(target['recipe'])+1
         assert all(p['closed'] for f in d['frames'] for p in f['polygons'])

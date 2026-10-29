@@ -8,6 +8,7 @@ function representation(){const m=selected?.mode;return m==='geometry'?'공정 �
 function viewNote(){return mode==='2.5d'?'2D 단면의 표시용 깊이 · 3D 계산 아님':selected?.mode==='geometry'?'기하 공정 결과 · 도핑·전기 특성 미포함':selected?.mode==='mask'?'GDS 평면도 · 노광 블러 근사':'실제 계산된 재료 경계'}
 let catalog=[],selected=null,current=null,frame=0,busy=false,mode='2d',timer=null,toastTimer=null;
 const references=new Map(),lastResults=new Map();
+function trimResults(map,limit=3){while(map.size>limit){const key=[...map.keys()].find(k=>!map.get(k)?.customFlow);if(key===undefined)break;map.delete(key)}}
 let calculationGeneration=0,calculationJob=null,calculationTick=null,calculationController=null;
 function cancelJob(id){return id?request('/api/cancel',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({job:id})}).catch(()=>{}):Promise.resolve();}
 function cancelCalculation(){const previewCancellation=window.ParameterPreview?.cancelAll();calculationGeneration++;calculationController?.abort();calculationController=null;clearInterval(calculationTick);calculationTick=null;const old=calculationJob;calculationJob=null;if(busy)setBusy(false);return Promise.all([previewCancellation,cancelJob(old)]);}
@@ -55,7 +56,7 @@ function renderSectionViews(){
 async function request(path,options={}){try{const response=await fetch(path,{...options,signal:options.signal||AbortSignal.timeout(190000)});let data;try{data=await response.json()}catch{throw Error('서버 응답을 읽지 못했습니다. 잠시 후 다시 실행하세요.')}if(!response.ok)throw Error(data.error||'요청을 처리하지 못했습니다.');return data}catch(e){if(e.name==='TimeoutError')throw Error('응답 시간이 초과됐습니다. 잠시 후 다시 실행하세요.');if(e instanceof TypeError)throw Error('서버 연결이 끊겼습니다. 연결을 확인한 뒤 다시 실행하세요.');throw e}}
 async function run(){if(busy||!selected)return;if(!$('condition-form').reportValidity())return;const params=values(),id=selected.id,hadResult=!!current&&current.params.section===params.section,mine=++calculationGeneration;setBusy(true);let elapsed=0;status('단계별 단면 계산 중…');calculationTick=setInterval(()=>{if(mine===calculationGeneration)status(`계산 중 · ${++elapsed}초 경과`)},1000);
  try{const result=await calculateJob('/api/run',{example:id,params},mine);if(!result||mine!==calculationGeneration)return;
-  current=result;lastResults.set(id,result);if(!result.failure&&!references.has(ProcessUI.referenceKey(id,result.params)))references.set(ProcessUI.referenceKey(id,result.params),result);frame=hadResult?Math.min(frame,result.frames.length-1):(result.previewFrame??result.frames.length-1);updateAll();status(result.failure?`STEP ${result.failure.step} · ${result.failure.message}`:result.cached?'저장된 계산 결과':`계산 완료 · ${result.elapsed.toFixed(2)}초`,!!result.failure);$('pending').hidden=true;
+  current=result;lastResults.set(id,result);trimResults(lastResults);if(!result.failure&&!references.has(ProcessUI.referenceKey(id,result.params)))references.set(ProcessUI.referenceKey(id,result.params),result);trimResults(references);frame=hadResult?Math.min(frame,result.frames.length-1):(result.previewFrame??result.frames.length-1);updateAll();status(result.failure?`STEP ${result.failure.step} · ${result.failure.message}`:result.cached?'저장된 계산 결과':`계산 완료 · ${result.elapsed.toFixed(2)}초`,!!result.failure);$('pending').hidden=true;
  }catch(e){if(mine!==calculationGeneration)return;status(e.message,true);toast(e.message);if(current)updateAll();else {$('timeline').innerHTML='<div class="empty-timeline">계산을 완료하지 못했습니다. <button type="button" id="retry-calculation">다시 계산</button></div>';$('retry-calculation').onclick=()=>run();}}
  finally{if(mine===calculationGeneration){clearInterval(calculationTick);calculationTick=null;setBusy(false);window.simulationEditor?.result();}}
 }
@@ -63,6 +64,7 @@ function combinedBounds(result,reference){if(!reference)return result.bounds;ret
 function refFrame(){const ref=references.get(ProcessUI.referenceKey(selected.id,current?.params));if(!ref||!current)return null;const progress=current.frames[frame].progress;return ref.frames.reduce((best,f)=>Math.abs(f.progress-progress)<Math.abs(best.progress-progress)?f:best,ref.frames[0]);}
 function dopingFieldFor(data){const d=data?.concentration;return d?.info?.operation==='implant'||!d?.fields?.net_active?'net_total':'net_active'}
 function draw(canvas,data,bounds,options={}){
+ if(options.mini&&!canvas.getClientRects().length)return;
  const rect=canvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2),w=Math.max(rect.width,80),h=Math.max(rect.height,50);
  if(options.mini&&data&&bounds){
   const cache=draw.thumbnailCache||(draw.thumbnailCache=new WeakMap()),key=[w,h,dpr,...bounds,options.doping,options.dopingField].join('|'),old=cache.get(canvas);
@@ -128,6 +130,7 @@ function draw(canvas,data,bounds,options={}){
  PhotoPreview.paint(c,overlay,px,py,extra,mini);
  // Reference contours are drawn once on the front 2D plane, never extruded.
  if(options.reference){c.strokeStyle='#a85b00';c.lineWidth=1.4;c.setLineDash([5,4]);for(const poly of options.reference.polygons){c.beginPath();poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.stroke()}c.setLineDash([]);}
+ if(!mini)window.ProcessWorkbench?.overlay(canvas,c,px,py,bounds);
  c.restore();
  if(window.ParameterPreview?.active(canvas.id)){c.fillStyle='#087f76';c.font='bold 11px Segoe UI';c.fillText('미리보기',50,17)}
 }
@@ -136,6 +139,7 @@ function drawMain(){
  const data=window.ParameterPreview?.frame('section',current?.frames[frame])||current?.frames[frame],hasDoping=!!data?.concentration,field=dopingFieldFor(data);
  $('doping-tools').hidden=!hasDoping;
  const saved=references.get(ProcessUI.referenceKey(selected?.id,current?.params)),reference=$('compare').checked&&saved?.params?.section===current?.params?.section?saved:null;
+ window.ProcessWorkbench?.update('section',{key:selected?.id+':lab',frame:data,bounds:current?.bounds,previous:current?.frames[Math.max(0,frame-1)],reference:saved?refFrame():null,index:frame,recipe:window.simulationEditor?.recipe(),flow:window.simulationEditor?.flow(),preview:!!window.ParameterPreview?.active('section'),pending:!!window.simulationEditor?.pending});
  draw($('section'),data,current?combinedBounds(current,reference):null,{maskPreview:window.simulationEditor?.maskPreview(),extrude:mode==='2.5d',reference:reference?refFrame():null,doping:$('show-doping').checked,dopingField:field});
 }
 // Reveal only within the horizontal timeline; never move the document viewport.

@@ -14,7 +14,7 @@ const python=process.env.SIMULATION_PYTHON||(fs.existsSync(localPython)?localPyt
 const catalog=JSON.parse(fs.readFileSync(path.join(root,'catalog.json'))),reverse=JSON.parse(fs.readFileSync(path.join(root,'reverse-catalog.json')));
 const jobs=new Map(),cache=new Map(),queue=[],limits=new Map(),waiters=new Map();let activeTask=null,running=false,aiToday=0,aiDay='';
 const assets={'/':'index.html','/tutorial':'parameters.html','/challenge':'index.html'};
-for(const f of ['viewport.js','parameter-preview.js','studio.css','index.html','app.js','style.css','materials.js','ui-contract.js','process-estimate.js','photo-preview.js','design-guide.js','simulation-editor.js','extrusion.js','parameters.html','tutorial.js','process-guide.js','tutorial-guide.js','reverse.js','reverse.css','grading.js','learning-score.js','recipe-state.js','process-review.js'])assets['/'+f]=f;
+for(const f of ['workbench.js','workbench-metrics.js','workbench.css','viewport.js','parameter-preview.js','studio.css','index.html','app.js','style.css','materials.js','ui-contract.js','process-estimate.js','photo-preview.js','design-guide.js','simulation-editor.js','extrusion.js','parameters.html','tutorial.js','process-guide.js','tutorial-guide.js','reverse.js','reverse.css','grading.js','learning-score.js','recipe-state.js','process-review.js'])assets['/'+f]=f;
 if(host==='127.0.0.1'){assets['/qa.html']='qa.html';assets['/qa.js']='qa.js';assets['/qa-frame.html']='qa-frame.html';}
 function send(res,status,data,type='application/json; charset=utf-8'){
  let body=Buffer.isBuffer(data)?data:Buffer.from(JSON.stringify(data));if(res.canGzip&&body.length>32000){body=zlib.gzipSync(body);res.setHeader('Content-Encoding','gzip');res.setHeader('Vary','Accept-Encoding')}

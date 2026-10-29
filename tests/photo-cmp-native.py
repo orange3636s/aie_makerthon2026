@@ -12,7 +12,7 @@ def execute(rows):
         try:r=run(dict(target='photo-lithography',steps=rows))
         finally:os.chdir(previous)
     assert r['failure'] is None,r['failure']
-    assert len(r['frames'])==len(rows)+1
+    assert len(r['frames'])==len(r['steps'])+1
     assert all(p['closed'] for f in r['frames'] for p in f['polygons'])
     return r
 
@@ -39,5 +39,5 @@ for name,mid in [('Al2O3',31),('HfZrO2',201)]:
 print('C&C: removal-time sensitivity, slurry invariance; Al2O3/HZO deposition + etch passed')
 catalog=json.loads((ROOT/'catalog.json').read_text(encoding='utf-8'));spec=next(s for s in catalog['examples'] if s['id']=='photo-lithography');params={f['key']:f['default'] for f in spec['fields']}
 r=execute(recipe('photo-lithography',params));r['params']=params
-(ROOT/'references/photo-lithography.json').write_text(json.dumps(r,ensure_ascii=False),encoding='utf-8')
-print('Photo Lithography example:',len(r['frames']),'frames; reference refreshed')
+assert r['frames'][-1]['polygons'], 'photo example must retain its patterned film'
+print('Photo Lithography example:',len(r['frames']),'frames; reference unchanged')

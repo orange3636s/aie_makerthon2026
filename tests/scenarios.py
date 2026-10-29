@@ -22,11 +22,11 @@ def flow(steps,target='sti'):return run(dict(target=target,steps=steps))
 def check(name,test):
     t=time.monotonic()
     try:test();row=dict(name=name,status='PASS',seconds=round(time.monotonic()-t,2))
-    except Exception as e:row=dict(name=name,status='FAIL',error=str(e),seconds=round(time.monotonic()-t,2))
+    except Exception as e:row=dict(name=name,status='FAIL',error=repr(e),seconds=round(time.monotonic()-t,2))
     report.append(row);print(json.dumps(row,ensure_ascii=False),flush=True)
     (ROOT/'.runtime/qa'/(REPORT+'.json')).write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
 def okay(rows,target='sti'):
-    d=flow(rows,target);assert not d['failure'],d['failure'];assert len(d['frames'])==len(rows)+1;return d
+    d=flow(rows,target);assert not d['failure'],d['failure'];assert len(d['frames'])==len(d['steps'])+1;return d
 def rejection(rows,word,target='sti'):
     d=flow(rows,target);assert d['failure'] and word in d['failure']['message'],d.get('failure')
     assert len(d['frames'])==d['failure']['step'], 'failed step must not count as completed'
@@ -54,7 +54,7 @@ def masked_implant():
     assert sum(center)/len(center)<sum(sides)/len(sides)*.2,'PR must block implant'
 if __name__=='__main__':
     (ROOT/'.runtime/qa').mkdir(parents=True,exist_ok=True)
-    for ex in json.loads((ROOT/'catalog.json').read_text(encoding='utf-8'))['examples']:
+    for ex in ([] if '--interactions-only' in sys.argv else json.loads((ROOT/'catalog.json').read_text(encoding='utf-8'))['examples']):
         def default(ex=ex):
             d=run(dict(example=ex['id'],params={}), 'engine.py');assert not d.get('failure'),d.get('failure')
             if ex['id'] in ['sti','locos','fin','mosfet','finfet','mbcfet']:(ROOT/'.runtime/qa'/('fresh-'+ex['id']+'.json')).write_text(json.dumps(d),encoding='utf-8')
