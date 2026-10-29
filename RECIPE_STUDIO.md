@@ -83,6 +83,11 @@ all steps' UI state and graphs, 2D/2.5D toggles, candidate application, deletion
 undo, reset, selected-stage retention and network retry. This fixture test is
 separate from the 48 actual native calculations.
 
+Production verification passed 28 asset/catalog checks after deployment. A final
+browser check found a silent candidate button during initial calculation. It now
+allows browsing while busy and shows an explicit wait message on apply; verified
+with MBCFET's actual initial calculation. Candidate integrity tests passed again.
+
 ## Limits
 
 Scores are educational matching metrics, not device-function certification.

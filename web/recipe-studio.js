@@ -45,5 +45,5 @@
  api.notebook=()=>{generation++;const body=shell('학습 기록'),rows=records().reverse();body.innerHTML=rows.length?`<p class="rs-note">이 브라우저의 최근 30회 제출 · 계정 간 동기화 없음</p><div class="rs-records">${rows.map(r=>`<article><header><b>${esc(r.title)}</b><span>${r.score}점 · ${r.correct?'진단 일치':'진단 복습'}</span></header><small>${esc(new Date(r.date).toLocaleString('ko-KR'))} · ${esc(r.stepCount)}단계</small><p>${esc(r.reason)}</p></article>`).join('')}</div>`:'<p>역설계에서 결과를 평가하고 진단을 제출하면 기록됩니다.</p>';};
  const notes=document.createElement('button');notes.textContent='학습 기록';notes.onclick=api.notebook;document.querySelector('.heading-actions').append(notes);
  const candidates=document.createElement('button');candidates.id='lab-candidates';candidates.textContent='플로우 후보';document.querySelector('#observation .process-panel .toolbar').prepend(candidates);
- candidates.onclick=()=>{if(busy||!selected)return;const id=selected.id;api.open(id,async c=>{if(busy||selected.id!==id)throw Error('예제가 변경되었습니다. 후보를 다시 선택하세요.');await reverseLab.select(id);reverseLab.loadCandidate(c);});};
+ candidates.onclick=()=>{if(!selected)return;const id=selected.id;api.open(id,async c=>{if(selected.id!==id)throw Error('예제가 변경되었습니다. 후보를 다시 선택하세요.');if(busy)throw Error('현재 계산이 끝난 후 후보를 적용하세요.');await reverseLab.select(id);reverseLab.loadCandidate(c);});};
 })(typeof window==='object'?window:globalThis);
