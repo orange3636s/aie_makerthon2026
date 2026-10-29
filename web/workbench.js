@@ -38,7 +38,7 @@
   const a=M.sample(d.frame,d.bounds,p.kind,p.material,p.x,field),b=ref?M.sample(ref,d.bounds,p.kind,p.material,p.x,field):[];p.points=a;
   const sa=M.stats(a),sb=M.stats(b),at=M.thickness(d.frame,p.x,p.material,d.bounds);
   const rows=p.kind==='doping'?[['최고 농도',sa?`10^${fmt(sa.max)}`:'—','cm⁻³'],['기준 최고 농도',sb?`10^${fmt(sb.max)}`:'—','cm⁻³'],['측정 x',fmt(p.x*1000),'nm']]:p.kind==='thickness'?[['측정선 막 두께',fmt(at),'nm'],['최대 두께',fmt(sa?.max),'nm'],['기준과 RMSE',fmt(M.compare(a,b)),'nm']]:[['표면 높이차',fmt(sa?.range),'nm'],['최고점',fmt(sa?.max),'nm'],['기준과 RMSE',fmt(M.compare(a,b)),'nm']];
-  
+
   q('[data-metrics]').innerHTML=rows.map(([name,value,unit])=>`<div><dt>${name}</dt><dd>${value}<small>${unit}</small></dd></div>`).join('');p.measurement={max:sa?.max??null,min:sa?.min??null,range:sa?.range??null,probeNm:at,rmse:M.compare(a,b)};
   q('[data-message]').textContent=d.preview?'미리보기':d.pending?'계산 전':'';
   const refLabel=p.baseline==='previous'?'이전 단계':p.baseline==='reference'?(p.id==='section'?'기준 실행':'목표 구조'):'고정 단면';q('.wb-ref').textContent=ref?'┄ '+refLabel:p.baseline==='none'?'':'기준 없음';
