@@ -103,3 +103,16 @@
 @media(max-width:580px){.wb-chart svg{height:184px}.wb-legend{padding-left:58px}.wb-chart-row dl{gap:12px;flex-wrap:wrap}}
 @media(min-width:981px) and (min-height:650px){.process-workbench .timeline .frame-name,.process-workbench .flow-step strong{font-size:11px;line-height:14px}}
 @media(max-width:980px){.process-workbench .heading-actions button{min-height:36px}.process-workbench .mode-switch button{min-height:34px}}
+
+/* Reserve the horizontal scrollbar's height instead of clipping the flow cards.
+   On short displays the document may grow; every stage remains reachable. */
+@media(min-width:981px) and (min-height:650px){
+ .process-workbench .workspace-layout:has(#observation) main{height:calc(100dvh - 46px);overflow:visible}
+ .process-workbench #observation:not([hidden]),.process-workbench #reverse-lab:not([hidden]){min-height:0;grid-template-rows:minmax(460px,1fr) max-content}
+ .process-workbench .process-panel{min-height:152px}
+ .process-workbench #reverse-lab .process-panel{min-height:180px}
+ .process-workbench .timeline{min-height:98px;overflow-y:auto;align-items:stretch}
+ .process-workbench .flow-builder{min-height:124px;overflow-y:auto}
+ .process-workbench .timeline .frame-card{min-height:76px}
+ .process-workbench .timeline .frame-name,.process-workbench .flow-step strong{display:block;overflow:visible;-webkit-line-clamp:unset}
+}
