@@ -63,7 +63,7 @@
   const path=rows=>{let pen=false;return rows.map(([x,y])=>{if(!Number.isFinite(x)||!Number.isFinite(y)){pen=false;return'';}const str=(pen?'L':'M')+X(x).toFixed(2)+','+Y(y).toFixed(2);pen=true;return str}).join(' ')};
   let g=`<defs><clipPath id="wb-clip-${p.id}"><rect x="${left}" y="${top}" width="${plotWidth}" height="${bottom-top}"/></clipPath></defs>`;
   for(let i=0;i<=Math.round((ymax-ymin)/dy);i++){const y=ymin+i*dy;g+=`<path d="M${left} ${Y(y)}H${width-right}" stroke="#e7eef0"/><text x="${left-10}" y="${Y(y)+4}" text-anchor="end">${tick(y)}</text>`;}
-  const dx=niceStep((xmax-xmin)*(width<440?2:1));
+  const dx=niceStep(xmax-xmin);
   for(let x=Math.ceil(xmin/dx)*dx;x<=xmax+dx*1e-8;x+=dx)g+=`<text x="${X(x)}" y="${bottom+19}" text-anchor="middle">${tick(x)}</text>`;
   g+=`<g clip-path="url(#wb-clip-${p.id})"><path d="${path(b)}" fill="none" stroke="#b37b22" stroke-width="2" stroke-dasharray="6 4"/><path d="${path(a)}" fill="none" stroke="#087f76" stroke-width="2.2"/>`;
   if(p.kind!=='doping'&&p.showLine)g+=`<path d="M${X(p.x*1000)} ${top}V${bottom}" stroke="#82949e" stroke-dasharray="3 4"/>`;
