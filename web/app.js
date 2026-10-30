@@ -64,6 +64,8 @@ function combinedBounds(result,reference){if(!reference)return result.bounds;ret
 function refFrame(){const ref=references.get(ProcessUI.referenceKey(selected.id,current?.params));if(!ref||!current)return null;const progress=current.frames[frame].progress;return ref.frames.reduce((best,f)=>Math.abs(f.progress-progress)<Math.abs(best.progress-progress)?f:best,ref.frames[0]);}
 function dopingFieldFor(data){return window.DopantView?.field(data)||'net_total'}
 function draw(canvas,data,bounds,options={}){
+ // A loading placeholder clears the bitmap even if the next frame is cached.
+ if(!options.mini||!data||!bounds)draw.thumbnailCache?.delete(canvas);
  const source={data,bounds,options};
  const redraw=()=>draw(canvas,source.data,source.bounds,source.options);
  const solid=window.SolidView?.prepare(canvas,data,bounds,options,redraw);

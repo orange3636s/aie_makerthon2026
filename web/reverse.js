@@ -183,4 +183,5 @@
  };
  window.reverseLab={context(){return {id:target?.id,title:target?.title,frame:currentFrame(),previous:result?.frames[Math.max(0,Math.min(chosen,valid)-1)],index:Math.min(chosen,valid),result,reference,steps:structuredClone(steps),pending:working||chosen>valid||valid<steps.length,view:sectionView,substrateThickness,substrateRoughness,bounds:result?.bounds||reference?.bounds}},recipe(){return steps[chosen-1]||null},loadCandidate,redraw:refresh,get active(){return active},get busy(){return working},select:enter,save(){download(new Blob([JSON.stringify({version:3,target:target.id,view:sectionView,steps,substrateThickness,substrateRoughness,score},null,2)],{type:'application/json'}),'ProcessTrace-recipe-'+target.id+'.json')}};
  new ResizeObserver(refresh).observe(el('reverse-lab'));
+ document.querySelector('.design-brief').addEventListener('toggle',e=>{if(e.currentTarget.open)refresh()});
 })();
