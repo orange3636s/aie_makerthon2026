@@ -9,7 +9,7 @@ def choice(key,label,options,default,when=None):
     d=dict(key=key,label=label,options=options,default=default)
     if when:d['when']=when
     return d
-MATERIALS=['Si','PolySi','SiO2','Si3N4','SiGe','Al2O3','HfO2','HfZrO2','TiN','W','Co','Mo','Metal','Dielectric']
+MATERIALS=['Si','PolySi','SiO2','Si3N4','SiGe','Al2O3','HfO2','HfZrO2','TiN','W','Co','Mo','Al','Cu','Ti','Metal','Dielectric']
 OPS=[
  dict(id='photo',title='Photo',model='PR coating / mask geometry / timed vertical development',fields=[
   choice('action','작업',['Coat','Patterning','Develop','Strip','Pattern'],'Coat'),
@@ -63,6 +63,8 @@ OPS=[
   n('time','제거 시간',120,1,300,'s',1),
   choice('slurry','Slurry',['Unspecified','Ceria oxide','Silica oxide','Silica silicon','Silica polysilicon','Silica nitride','Silica SiGe','Silica tungsten','Cobalt formulated','Silica molybdenum','Silica TiN','Silica hafnia','Unverified alumina','Unverified HZO'],'Unspecified')],note='제거 평면=max(마지막 증착 전 최고점, 현재 최고점−제거율×시간). Slurry는 기록용이며 계산에 반영하지 않습니다. 선택비·dishing·압력·패드 모델은 없습니다.')
 ]
+from recipe_schema import extend
+extend(OPS,n,choice)
 BY_OP={o['id']:o for o in OPS}
 def step(op,**params):return dict(op=op,params=params)
 def dep(material,thickness,method='CVD'):
@@ -118,8 +120,11 @@ import copy,json
 from pathlib import Path
 TARGETS.extend(extra_targets(json.loads((Path(__file__).parent/'catalog.json').read_text(encoding='utf-8'))['examples']))
 SOURCE_RECIPES={t['id']:copy.deepcopy(t['recipe']) for t in TARGETS}
+from process_timing import retime
 for t in TARGETS:
-    t['recipe']=modernize(t['recipe'])
+    t['recipe']=retime(modernize(t['recipe']))
+    for section in t.get('sections',{}).values():
+        if 'recipe' in section:section['recipe']=retime(modernize(section['recipe']))
 BY_TARGET={t['id']:t for t in TARGETS}
 
 def validate(data):
@@ -161,4 +166,10 @@ def validate(data):
         if isinstance(depth,bool) or not isinstance(depth,(int,float)) or not math.isfinite(depth) or not minimum<=depth<=1.2:
             raise ValueError(f'기판 두께: {minimum*1000:g}–1200 nm 범위를 확인하세요.')
         target=dict(target,substrateThickness=depth)
+    if 'substrateRoughness' in data:
+        rq=data['substrateRoughness']
+        maximum=min(.02,target.get('wafer',{}).get('body',.08)/4)
+        if isinstance(rq,bool) or not isinstance(rq,(int,float)) or not math.isfinite(rq) or not 0<=rq<=maximum:
+            raise ValueError(f'표면 거칠기 Rq: 0–{maximum*1000:g} nm 범위를 확인하세요.')
+        target=dict(target,substrateRoughness=rq)
     return target,clean

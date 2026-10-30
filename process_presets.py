@@ -4,6 +4,11 @@ from pathlib import Path
 IDS={'photo-lithography','lele','sadp','rie','pvd','cvd','ald','planarization','anneal','pre-deposition','drive-in'}
 
 def recipe(kind,p):
+    from process_timing import retime
+    from structure_recipes import modernize
+    return retime(modernize(_recipe(kind,p)))
+
+def _recipe(kind,p):
     from reverse_catalog import step,photo,etch,strip,dep,ald,remove
     L=lambda name,s:dict(s,label=name)
     if kind=='photo-lithography':

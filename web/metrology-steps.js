@@ -6,7 +6,7 @@
  function read(key){if(!records.has(key))records.set(key,[]);return records.get(key);}
  const holder=id=>document.getElementById(id==='section'?'timeline':'r-flow');
  const host=id=>document.querySelector(id==='section'?'.viewer':'.reverse-view');
- function close(id){selected.delete(id);host(id)?.classList.remove('measurement-selected');window.ProcessWorkbench?.measurement(id,null);}
+ function close(id){const wasSelected=selected.delete(id);host(id)?.classList.remove('measurement-selected');if(wasSelected)window.ProcessWorkbench?.measurement(id,null);}
  function render(id){const d=contexts.get(id),list=holder(id);if(!d||!list)return;const rows=read(d.key);for(const n of list.querySelectorAll('.metrology-card'))n.remove();
   for(const row of rows){const anchor=list.querySelector(id==='section'?`[data-frame="${row.after}"]`:`[data-step="${row.after}"]`);if(!anchor)continue;const b=document.createElement('div');b.className='metrology-card';const open=document.createElement('button');open.type='button';open.textContent=types[row.kind];open.setAttribute('aria-label',`STEP ${row.after} 다음 ${types[row.kind]}`);open.setAttribute('aria-pressed',String(selected.get(id)===row));
    open.onclick=()=>{anchor.click();const current=contexts.get(id);if(!current?.frame||current.pending||current.preview){toast('앞 공정을 먼저 계산하세요.');return;}selected.set(id,row);host(id).classList.add('measurement-selected');window.ProcessWorkbench.measurement(id,row.kind);render(id);};

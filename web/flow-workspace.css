@@ -1,0 +1,65 @@
+/* One geometry workspace and one editable vertical process tree. */
+.integrated-workspace #observation[hidden],.integrated-workspace #reverse-lab[hidden],.integrated-workspace .recipe-parking[hidden]{display:none!important}
+.integrated-workspace #observation:not([hidden]),.integrated-workspace #reverse-lab:not([hidden]){display:block;height:auto;min-height:0}
+.integrated-workspace .lab-grid,.integrated-workspace .reverse-grid{grid-template-columns:minmax(0,1fr) 370px;align-items:start;gap:14px}
+.integrated-workspace .controls,.integrated-workspace .reverse-controls{height:calc(100dvh - 120px);max-height:none;min-height:420px;overflow:auto;padding:16px;position:sticky;top:58px;display:block}
+.integrated-workspace .viewer,.integrated-workspace .reverse-view{height:auto;min-height:calc(100dvh - 120px);max-height:none;overflow:visible}
+.integrated-workspace .canvas-wrap,.integrated-workspace .dual-view .view-cell{flex:0 0 auto;height:calc(100dvh - 290px);min-height:380px;max-height:none}
+.integrated-workspace #section,.integrated-workspace #r-current{height:100%!important;min-height:350px;max-height:none}
+.integrated-workspace .integrated-flow{padding:0;border:0;border-radius:0;box-shadow:none;background:transparent;min-height:0;max-height:none;height:auto;overflow:visible;display:block}
+.integrated-workspace .integrated-flow>.panel-heading{padding:8px 0;flex-wrap:wrap;gap:8px;min-height:32px}
+.integrated-workspace .integrated-flow h2{display:none}
+.integrated-workspace #timeline,.integrated-workspace #r-flow{display:flex;flex-direction:column;overflow:visible;gap:0;padding:0 0 16px;max-height:none;height:auto;min-height:0}
+.integrated-workspace #timeline .frame-card,.integrated-workspace .flow-step{width:100%;min-width:0;min-height:48px;height:auto;padding:12px 30px 12px 12px;display:flex;align-items:center;gap:10px;text-align:left;flex-shrink:0;border:0;border-top:1px solid #e4e9ed;border-radius:0;background:white;position:relative;color:#273a4b}
+.integrated-workspace #timeline .frame-card::after,.integrated-workspace .flow-step::after{content:'⌄';position:absolute;right:12px;top:14px;color:#637b87}
+.integrated-workspace #timeline .frame-card.selected::after,.integrated-workspace .flow-step.selected::after{content:'⌃'}
+.integrated-workspace #timeline .frame-card.selected,.integrated-workspace .flow-step.selected{background:#eaf5f3;color:#056f67;box-shadow:none}
+.integrated-workspace .frame-card canvas,.integrated-workspace .flow-step canvas,.integrated-workspace .pending-shape{display:none}
+.integrated-workspace #timeline .frame-card{flex:0 0 auto;flex-direction:row;justify-content:flex-start}
+.integrated-workspace .flow-card .flow-step{flex:0 0 auto;flex-direction:row;justify-content:flex-start;height:auto;min-height:48px}
+.integrated-workspace .flow-card .flow-step strong{width:auto;min-height:0;padding-right:12px}
+.integrated-workspace .inline-recipe #r-form{display:block;flex:none;height:auto;min-height:0}
+.integrated-workspace .inline-recipe .empty-editor{padding:12px 4px;text-align:left}
+.integrated-workspace .frame-index{position:static;font-size:11px;min-width:21px;background:none}
+.integrated-workspace .frame-name,.integrated-workspace .flow-step strong{font-weight:550;white-space:normal;font-size:13px;line-height:1.5}
+.integrated-workspace .flow-step small{font-size:10px;flex:0 0 45px;color:#6c7e8c}
+.integrated-workspace .flow-card{width:100%;min-width:0;flex:none;position:relative;display:block;height:auto}
+.integrated-workspace .flow-remove{top:14px;right:29px;left:auto}
+.integrated-workspace .inline-recipe{padding:14px 12px 18px;border-left:2px solid #21998b;background:#f8fbfa;margin-bottom:4px;width:100%;box-sizing:border-box}
+.integrated-workspace .inline-recipe form{display:block;min-height:0;max-height:none;height:auto;overflow:visible}
+.integrated-workspace #obs-step-scroll,.integrated-workspace .reverse-inputs{max-height:none;overflow:visible;min-height:0;padding:0}
+.integrated-workspace .inline-recipe .step-kicker,.integrated-workspace .inline-recipe h2{display:none}
+.integrated-workspace .inline-recipe .panel-heading{padding:0;margin:0;min-height:0}
+.integrated-workspace .field{margin:0 0 16px;gap:5px}
+.integrated-workspace .field>label{font-size:12px;color:#4f6474;font-weight:500}
+.integrated-workspace .field input:not([type=range]),.integrated-workspace .field select{min-height:37px;height:37px;padding:6px 10px;font-size:13px;background:#fff;border-color:#d5e1df}
+.integrated-workspace .field .number-wrap>span{font-size:11px}
+.integrated-workspace .wb-recipe-slider{margin:6px 0 0;height:16px;min-height:16px}
+.integrated-workspace .flow-add{margin-top:8px;width:100%;height:38px;min-height:38px;min-width:0;border:1px dashed #96b9b3}
+.integrated-workspace #r-picker{display:grid;grid-template-columns:1fr 1fr;position:static;min-width:0;padding:8px 0}
+.integrated-workspace #r-picker[hidden]{display:none}
+.integrated-workspace .solid-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 10px;padding:0 0 9px;border-bottom:1px solid #edf1f3;font-size:11px}
+.solid-controls button{padding:5px 8px;min-height:30px;font-size:11px;background:white;border:1px solid #dfe7eb;border-radius:5px}
+.slice-axis{display:flex;gap:3px}.slice-axis button[aria-pressed=true],.live-toggle[aria-pressed=true]{background:#e0f3ef;color:#00695f;border-color:#8bc8ba}
+.solid-controls [hidden]{display:none!important}
+.slice-position{width:100px;accent-color:#098577}.slice-value{min-width:48px;font-variant-numeric:tabular-nums}
+.solid-depth{display:flex;gap:4px;align-items:center}.solid-depth input{width:60px;min-height:28px;font-size:11px;border:1px solid #dfe7eb;border-radius:4px;padding:4px}
+.solid-model{color:#607d85;font-size:10px}.solid-depth[hidden],.solid-model[hidden]{display:none}
+.explode-controls,.explode-options,.explode-options label{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.explode-controls{border-left:1px solid #dfe7eb;padding-left:8px}
+.explode-toggle[aria-pressed="true"]{background:#e5f3f0;color:#086e67;border-color:#85bdb6}
+.explode-options select{width:auto;min-height:30px;padding:4px 22px 4px 6px;font:inherit;border:1px solid #dfe7eb;border-radius:5px;background-color:white}
+.explode-options input[type="range"]{width:80px;min-height:24px;margin:0;accent-color:#087f77}
+.explode-options output{min-width:44px;font-variant-numeric:tabular-nums;color:#476771}
+.integrated-workspace .design-brief{margin-bottom:15px}.integrated-workspace .brief-body{grid-template-columns:100px 1fr}.integrated-workspace #r-target{height:105px}
+.integrated-workspace .metrology-active .canvas-wrap,.integrated-workspace .metrology-active .dual-view .view-cell{height:200px;min-height:170px}
+.integrated-workspace .metrology-active #section,.integrated-workspace .metrology-active #r-current{min-height:160px}
+@media(max-width:1050px){.integrated-workspace .lab-grid,.integrated-workspace .reverse-grid{grid-template-columns:minmax(0,1fr) 320px}.solid-model{display:none}}
+@media(max-width:760px){.integrated-workspace .lab-grid,.integrated-workspace .reverse-grid{grid-template-columns:1fr}.integrated-workspace .controls,.integrated-workspace .reverse-controls{height:auto;position:static;max-height:none}.integrated-workspace .viewer,.integrated-workspace .reverse-view{min-height:0}.integrated-workspace .canvas-wrap,.integrated-workspace .dual-view .view-cell{height:48dvh;min-height:300px}.integrated-workspace #section,.integrated-workspace #r-current{min-height:280px}.solid-depth{display:none}}
+/* Preserve a usable drawing area on tablets, including an open library. */
+@media(min-width:761px) and (max-width:1100px){
+ .integrated-workspace .lab-grid,.integrated-workspace .reverse-grid{grid-template-columns:minmax(0,1fr)}
+ .integrated-workspace .controls,.integrated-workspace .reverse-controls{position:static;height:auto;max-height:75dvh;min-height:320px}
+ .integrated-workspace .viewer,.integrated-workspace .reverse-view{min-height:0}
+ .integrated-workspace .canvas-wrap,.integrated-workspace .dual-view .view-cell{height:52dvh;min-height:350px}
+}

@@ -43,15 +43,15 @@
   const error=Math.abs(measured-p.target)/p.target,score=error<=.05?100:clamp(100*(.5-error)/.45);
   return {...p,actual:measured,error,score,pass:error<=.05};
  })}
- // Teaching effort units, not fab prices. ALD includes cycle/pulse burden;
- // no complete ALD cycle time is claimed because purge/co-reactant times are absent.
+ // Teaching effort units, not fab prices. Explicit ALD timing uses symmetric
+ // A/purge/B/purge pulses. Transfer, pumping and thermal ramps remain excluded.
  function resources(steps){const rows=steps.map((s,index)=>{const p=s.params||{};let effort=1,seconds=0,partial=false;
   if(s.op==='deposition'){
-   if(p.method==='ALD'){seconds=(p.cycles||0)*(p.pulse||0);partial=true;effort=3+(p.cycles||0)*.05+seconds*.1}
+   if(p.method==='ALD'){const pulse=(p.cycles||0)*(p.pulse||0);seconds=Number.isFinite(p.purge_time)?2*(p.cycles||0)*((p.pulse||0)+p.purge_time):pulse;partial=!Number.isFinite(p.purge_time);effort=3+(p.cycles||0)*.05+seconds*.1}
    else {seconds=p.time||0;effort=(p.method==='PVD'?2:3)+seconds*.25}
   }else if(s.op==='etch'){if(p.method==='ALE'){effort=2+(p.cycles||0)*.025;partial=true}else{seconds=p.time||0;effort=2+seconds*.25}}
-  else if(s.op==='photo'){effort={Coat:1,Patterning:2,Develop:1,Strip:.5}[p.action]||2;seconds=p.action==='Develop'?(p.develop_time||0):0;partial=p.action!=='Develop'}
-  else if(s.op==='cmp'){seconds=p.time||0;effort=2+seconds/120}
+  else if(s.op==='photo'){effort={Coat:1,Patterning:2,Develop:1,Strip:.5}[p.action]||2;const key={Coat:'spin_time',HMDS:'treatment_time','Soft bake':'bake_time',PEB:'bake_time','Hard bake':'bake_time',Develop:'develop_time',Ashing:'ash_time'}[p.action];seconds=key?(p[key]||0):0;partial=!key||!Number.isFinite(p[key])}
+  else if(s.op==='cmp'){seconds=p.action==='Cleaning'?(p.clean_time||0):(p.time||0);effort=2+seconds/120}
   else if(s.op==='diffusion'){seconds=/oxidation/.test(p.method)?(p.oxidation_time||0)*3600:p.method==='Anneal'?(p.time||0):['Drive-in','Pre-deposition'].includes(p.method)?(p.diffusion_time||0):0;partial=p.method==='Ion implantation';effort=3+seconds/600}
   return {index:index+1,op:s.op,method:p.method||p.action,effort,seconds,partial,cycles:p.method==='ALD'?(p.cycles||0):0};
  });return {rows,cost:rows.reduce((a,r)=>a+r.effort,0),knownSeconds:rows.reduce((a,r)=>a+r.seconds,0),partial:rows.some(r=>r.partial),aldCycles:rows.reduce((a,r)=>a+r.cycles,0)}}

@@ -20,6 +20,10 @@ def modernize(rows):
  return out
 
 def recipe(kind,p):
+ from process_timing import retime
+ return retime(_recipe(kind,p))
+
+def _recipe(kind,p):
  from reverse_catalog import step,dep,photo,etch,strip,ald
  L=lambda name,s:dict(s,label=name)
  width=min(1.,max(.1,p.get('width',.5)))

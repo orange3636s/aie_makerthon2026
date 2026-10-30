@@ -16,10 +16,10 @@
   s.job=null;if(j.result.failure)throw Error(j.result.failure.message);return j.result.frames.at(-1);
  }
  function mount(host,options){
-  const {id,target,steps,index,operation,draw,apply,disabled=false,view='gate',substrateThickness}=options,step=steps[index-1],field=descriptor(step,operation),prefix=steps.slice(0,index);
+  const {id,target,steps,index,operation,draw,apply,disabled=false,view='gate',substrateThickness,substrateRoughness=0}=options,step=steps[index-1],field=descriptor(step,operation),prefix=steps.slice(0,index);
   let s=slots.get(id);if(!s){s={generation:0,key:null};slots.set(id,s)}s.draw=draw;
   const value=step?.params?.[field?.key],valid=typeof value==='number'&&Number.isFinite(value)&&value>=field?.min&&value<=field?.max;
-  const key=field&&valid&&!disabled?JSON.stringify([target,view,substrateThickness,prefix,field.key]):null;
+  const key=field&&valid&&!disabled?JSON.stringify([target,view,substrateThickness,substrateRoughness,prefix,field.key]):null;
   if(s.key!==key){stop(s);s.key=key;host.replaceChildren()}
   if(!key){host.hidden=true;return}host.hidden=false;
   if(host.firstChild)return;
@@ -29,7 +29,7 @@
   b.textContent=`조건 ${samples.length}개 계산`;let snapshots=cache.get(key);
   const display=()=>{s.preview=snapshots[+slider.value];out.textContent=field.label+' '+Number(samples[+slider.value]).toPrecision(3)+' '+field.unit;note.textContent='저장된 계산 단면 · 채점에 미반영';draw()};
   const ready=()=>{controls.hidden=false;b.hidden=true;slider.value=Math.max(0,samples.indexOf(step.params[field.key]));display()};
-  b.onclick=async()=>{if(s.controller){stop(s);s.controller=null;b.textContent='다시 계산';draw();return}const mine=++s.generation;s.controller=new AbortController();b.textContent='중지';snapshots=[];try{for(let i=0;i<samples.length;i++){note.textContent=`미리 계산 중 ${i+1}/${samples.length}`;const batch=structuredClone(prefix);batch[index-1].params[field.key]=samples[i];delete batch[index-1].label;const result=await compute({target,view,steps:batch,...(substrateThickness!==undefined?{substrateThickness}:{})},s,mine);if(mine!==s.generation)return;snapshots.push(result)}cache.set(key,snapshots);if(cache.size>6)cache.delete(cache.keys().next().value);ready()}catch(e){if(mine===s.generation){note.textContent=e.name==='AbortError'?'계산 중지':e.message;b.textContent='다시 계산'}}finally{if(mine===s.generation)s.controller=null}};
+  b.onclick=async()=>{if(s.controller){stop(s);s.controller=null;b.textContent='다시 계산';draw();return}const mine=++s.generation;s.controller=new AbortController();b.textContent='중지';snapshots=[];try{for(let i=0;i<samples.length;i++){note.textContent=`미리 계산 중 ${i+1}/${samples.length}`;const batch=structuredClone(prefix);batch[index-1].params[field.key]=samples[i];delete batch[index-1].label;const result=await compute({target,view,steps:batch,substrateRoughness,...(substrateThickness!==undefined?{substrateThickness}:{})},s,mine);if(mine!==s.generation)return;snapshots.push(result)}cache.set(key,snapshots);if(cache.size>6)cache.delete(cache.keys().next().value);ready()}catch(e){if(mine===s.generation){note.textContent=e.name==='AbortError'?'계산 중지':e.message;b.textContent='다시 계산'}}finally{if(mine===s.generation)s.controller=null}};
   slider.oninput=display;host.querySelector('[data-close]').onclick=()=>{s.preview=null;draw();controls.hidden=true;b.hidden=false;b.textContent='저장된 변화 보기'};
   host.querySelector('[data-apply]').onclick=()=>{const value=samples[+slider.value];s.preview=null;apply(field,value);draw()};
   if(snapshots){b.onclick=ready;b.textContent='저장된 변화 보기'}

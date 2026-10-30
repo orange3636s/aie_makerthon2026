@@ -22,8 +22,8 @@
    const b=document.createElement('button');b.type='button';b.textContent=label;b.title=title;b.setAttribute('aria-label',title);b.onclick=action;bar.append(b)
   }
   canvas.parentElement.append(bar);
-  function reset(){s.zoom=1;s.x=s.y=0;s.redraw()}
-  function zoom(f,x=canvas.clientWidth/2,y=canvas.clientHeight/2){const next=Math.min(8,Math.max(.65,s.zoom*f)),ratio=next/s.zoom;s.x=x-canvas.clientWidth/2-(x-canvas.clientWidth/2-s.x)*ratio;s.y=y-canvas.clientHeight/2-(y-canvas.clientHeight/2-s.y)*ratio;s.zoom=next;s.redraw()}
+  function reset(){const v=window.SolidView?.get(canvas.id);if(v?.view==='3d'){v.zoom=1;v.panX=v.panY=0;v.redraw();return;}s.zoom=1;s.x=s.y=0;s.redraw()}
+  function zoom(f,x=canvas.clientWidth/2,y=canvas.clientHeight/2){const v=window.SolidView?.get(canvas.id);if(v?.view==='3d'){v.zoom=Math.min(8,Math.max(.4,v.zoom*f));v.redraw();return;}const next=Math.min(8,Math.max(.65,s.zoom*f)),ratio=next/s.zoom;s.x=x-canvas.clientWidth/2-(x-canvas.clientWidth/2-s.x)*ratio;s.y=y-canvas.clientHeight/2-(y-canvas.clientHeight/2-s.y)*ratio;s.zoom=next;s.redraw()}
   canvas.addEventListener('wheel',e=>{e.preventDefault();const r=canvas.getBoundingClientRect();zoom(Math.exp(-e.deltaY*.0015),e.clientX-r.left,e.clientY-r.top)},{passive:false});
   canvas.addEventListener('dblclick',reset);
   let drag=null;

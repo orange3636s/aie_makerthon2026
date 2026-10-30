@@ -24,12 +24,15 @@ for(const entry of data.targets){
  assert.equal(entry.candidates.length,3);
  assert.equal(new Set(entry.candidates.map(c=>JSON.stringify(c.steps))).size,3,'distinct recipes '+entry.target);
  for(const c of entry.candidates){
-  assert.equal(R.invalid(c.steps,catalog.operations),null,entry.target+'/'+c.id);
+  // Persisted candidates are migrated with the same default restoration as the UI.
+  const migrated=R.restore(c.steps,catalog.operations);
+  assert.equal(R.invalid(migrated,catalog.operations),null,entry.target+'/'+c.id);
+  c.steps.forEach((s,i)=>Object.entries(s.params).forEach(([k,v])=>assert.equal(migrated[i].params[k],v,'retain saved condition')));
   assert.equal(c.verification.failure,null);assert.equal(c.verification.frames,c.steps.length+1);
   for(const k of ['geometry','cd','score','cost','knownSeconds'])assert(Number.isFinite(c.metrics[k]));
   assert(c.metrics.geometry>=0&&c.metrics.geometry<=100);
   assert(c.steps.length<=96);
-  assert(Buffer.byteLength(JSON.stringify({target:entry.target,steps:c.steps}))<48000,'API body limit');
+  assert(Buffer.byteLength(JSON.stringify({target:entry.target,steps:migrated}))<48000,'API body limit');
  }
 }
 const reverse=fs.readFileSync('web/reverse.js','utf8');
@@ -48,3 +51,24 @@ assert(reverse.includes('RecipeStudio.diagnose'));
 assert(reverse.includes('feedback=>{if(mine===reviewGeneration)showReview(feedback)}'));
 assert(!reverse.includes('refresh();showReview()'),'cannot bypass diagnosis on evaluation');
 console.log('24 target diagnosis scenarios, incorrect/empty/long input, all 72 candidate integrity checks and feedback gating passed');
+
+const report={findings:[{id:'step-3',kind:'missing',title:'Ion implantation',referenceStep:3}],ai:{suggestions:[{id:'step-3',analysis:'기준 대비 주입 단계가 없습니다.',action:'마스크와 주입 조건을 확인하세요.'}]}};
+const dq=D.designQuestion(sample,report);
+assert.equal(dq.findingId,'step-3');assert.equal(dq.choices.length,5);
+assert.equal(new Set(dq.choices.map(c=>c.id)).size,5);
+assert(D.answer(dq,'check','농도 조건 미충족을 주입 단계의 누락과 비교해서 확인합니다.').correct);
+assert(!D.answer(dq,'mask','현재 관측된 공정 차이를 다른 마스크 조건과 비교합니다.').correct);
+assert.equal(D.designQuestion({...sample,eligible:true},report).findingId,undefined,'valid alternate flow is not diagnosed as missing');
+assert.equal(D.designQuestion(sample,{...report,ai:{suggestions:[{id:'invented',analysis:'bad',action:'bad'}]}}).findingId,undefined);
+assert.equal(D.designQuestion(sample,null).correct,'geometry','offline fallback');
+assert(reverse.includes("if(!feedback?.correct)return;"));
+assert(reverse.includes('unlockedTargets.has(target.id)'));
+assert(reverse.includes('candidate.targetId!==target.id'));
+assert(reverse.includes('comparisonDrafts.set(target.id,currentDraft)'));
+const studio=fs.readFileSync('web/recipe-studio.js','utf8');
+assert(studio.includes('if(!result.correct)'),'incorrect submission must stay on the quiz');
+assert(!studio.includes('공정 흐름 보기'),'cards do not dump full recipes');
+const seconds=L.resources([{op:'deposition',params:{method:'ALD',cycles:30,pulse:.1,purge_time:5}}]);
+assert(Math.abs(seconds.knownSeconds-306)<1e-8,'two pulses and two purges per cycle');
+assert.equal(L.resources([{op:'cmp',params:{action:'Cleaning',clean_time:60,time:120}}]).knownSeconds,60);
+console.log('AI finding grounding, successful alternate routes, offline fallback, answer gate, target isolation, comparison drafts and ALD timing passed');

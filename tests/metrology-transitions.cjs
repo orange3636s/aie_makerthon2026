@@ -1,0 +1,20 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const wraps=[];
+function node(){return {value:'',hidden:true,clientWidth:400,scrollLeft:0,classList:{add(){},remove(){}},setAttribute(){},append(){},addEventListener(){},querySelectorAll(){return []},querySelector(){return null},closest(){return {querySelector:()=>({append(){}})}}}}
+const lists={timeline:node(),'r-flow':node()},hosts={'.viewer':node(),'.reverse-view':node()};
+const document={getElementById:id=>lists[id],querySelector:s=>hosts[s],createElement:()=>{const n=node(),button=node(),select=node();n.querySelector=s=>s==='button'?button:select;wraps.push({n,button,select});return n}};
+let calls=0,pending;
+const window={ProcessWorkbench:{measurement(id){calls++;if(calls>4)throw Error('recursive measurement redraw');window.MetrologySteps.update(id,pending)}}};
+vm.runInNewContext(fs.readFileSync('web/metrology-steps.js','utf8'),{window,document,MutationObserver:class{observe(){}},toast(){}});
+const M=window.MetrologySteps,frame={polygons:[]};
+pending={key:'mosfet:reverse',index:0,frame,pending:false,preview:false};M.update('r-current',pending);
+pending={...pending,index:1,pending:true};M.update('r-current',pending);M.update('r-current',pending);
+assert.equal(calls,0,'an unselected instrument must not recursively redraw pending process edits');
+pending={...pending,index:0,pending:false};M.update('r-current',pending);
+wraps[1].select.value='surface';wraps[1].select.onchange();assert(M.isActive('r-current'));
+assert.equal(calls,1);
+pending={...pending,index:1,pending:true};M.update('r-current',pending);
+assert.equal(calls,2,'leaving an active measurement redraws once, even while the new process is pending');
+assert.equal(M.isActive('r-current'),false);
+console.log('Pending recipe edits and active-measurement exit remain bounded under reentrant rendering');

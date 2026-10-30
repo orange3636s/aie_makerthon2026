@@ -25,5 +25,12 @@
   }
   return null;
  }
- const api={restore,invalid,defaults};if(typeof module==='object'&&module.exports)module.exports=api;else root.RecipeState=api;
+ // Old references omit newer default fields. Normalize both sides before
+ // comparing, and ignore labels/key order without ignoring any recipe value.
+ function equivalent(a,b,operations){
+  try{const left=restore(a,operations),right=restore(b,operations);
+   return left.length===right.length&&left.every((s,i)=>s.op===right[i].op&&Object.keys(s.params).every(k=>s.params[k]===right[i].params[k]));
+  }catch{return false;}
+ }
+ const api={restore,invalid,defaults,equivalent};if(typeof module==='object'&&module.exports)module.exports=api;else root.RecipeState=api;
 })(typeof window==='object'?window:globalThis);

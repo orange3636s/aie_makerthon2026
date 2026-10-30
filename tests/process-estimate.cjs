@@ -10,7 +10,7 @@ assert.equal(estimate(dep,{...p,time:4}).nm,200,'time changes reference thicknes
 assert.equal(estimate(dep,{...p,material:'W'}).nm,100,'material identity must not invent chemical calibration');
 assert.match(estimate(dep,p).note,/재료별.*온도.*미적용/);
 assert.equal(estimate(dep,{...p,sticking:.1}).nm,100,'local coverage cannot be inferred from nominal growth');
-for(const value of ['',null,NaN,Infinity,-1,100])assert(estimate(dep,{...p,time:value}).invalid,'reject invalid drafts');
+for(const value of ['',null,NaN,Infinity,-1,dep.fields.find(f=>f.key==='time').max+1])assert(estimate(dep,{...p,time:value}).invalid,'reject invalid drafts');
 const ald={...defaults(dep),method:'ALD',cycles:40,gpc:.0005};
 assert.equal(estimate(dep,ald).nm,20);
 assert.match(estimate(dep,ald).basis,/포화/);

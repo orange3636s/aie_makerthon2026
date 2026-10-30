@@ -17,13 +17,13 @@
   if(row?.op==='diffusion'&&row.params.method==='Ion implantation'){
    const p=row.params;
    if(p.implant_mask&&p.implant_mask!=='Existing')return {pattern:p.implant_mask,width:p.implant_width,pitch:p.implant_pitch,offset:p.implant_offset,arrows:true,species:p.species};
-   for(let i=rows.length-1;i>=0;i--){const s=rows[i];if(s.op==='photo'&&s.params.action==='Strip')break;if(s.op==='photo'&&['Pattern','Patterning'].includes(s.params.action)){const coat=rows.slice(0,i).findLast(x=>x.op==='photo'&&x.params.action==='Coat');return {...s.params,tone:s.params.action==='Pattern'?s.params.tone:coat?.params.tone,arrows:true,species:p.species};}}
+   for(let i=rows.length-1;i>=0;i--){const s=rows[i];if(s.op==='photo'&&s.params.action==='Strip')break;if(s.op==='photo'&&['Pattern','Patterning','Exposure'].includes(s.params.action)){const coat=rows.slice(0,i).findLast(x=>x.op==='photo'&&x.params.action==='Coat');return {...s.params,tone:s.params.action==='Pattern'?s.params.tone:coat?.params.tone,arrows:true,species:p.species};}}
    return {pattern:'Central',width:100,pitch:1,offset:0,arrows:true,species:p.species};
   }
   if(row?.op!=='photo')return null;const p=row.params;
-  if(['Patterning','Pattern'].includes(p.action))return {...p,arrows:false};
+  if(['Patterning','Pattern','Exposure'].includes(p.action))return {...p,arrows:p.action==='Exposure'};
   if(p.action!=='Develop')return null;
-  for(let i=rows.length-1;i>=0;i--){const s=rows[i];if(s.op!=='photo')continue;if(['Coat','Strip'].includes(s.params.action))break;if(s.params.action==='Patterning')return {...s.params,arrows:true};}
+  for(let i=rows.length-1;i>=0;i--){const s=rows[i];if(s.op!=='photo')continue;if(['Coat','Strip'].includes(s.params.action))break;if(['Patterning','Exposure'].includes(s.params.action))return {...s.params,arrows:true};}
   return frame?.photoMask?{...frame.photoMask,arrows:true}:null;
  }
  function paint(c,p,px,py,extra,mini=false){

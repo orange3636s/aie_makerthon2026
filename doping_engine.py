@@ -55,13 +55,13 @@ class Doping:
             moment.beta=float(row[prefix+'Beta']);moment.gamma=float(row[prefix+'Gamma']);moments.append(moment)
         model=ps.ImplantDualPearsonIV(*moments,float(row['headFraction']),0.,float(row['headLateralSigma'])*.001,0.,float(row['tailLateralSigma'])*.001)
         implant=ps.IonImplantation();implant.setImplantModel(model);implant.setDose(p['dose'])
-        implant.setLengthUnit(1e-4);implant.setTiltAngle(7.);implant.setDoseControl(ps.ImplantDoseControl.WaferDose)
+        implant.setLengthUnit(1e-4);implant.setTiltAngle(math.degrees(math.atan(math.tan(math.radians(p.get('tilt',7)))*math.cos(math.radians(p.get('twist',0))))));implant.setDoseControl(ps.ImplantDoseControl.WaferDose)
         implant.setMaskMaterials([m for m in self.domain.getMaterialsInDomain() if m!=ps.Material.Si])
         implant.setConcentrationLabel(p['species']+'_total')
         before=sum(self.fields.get(p['species']+'_total',[]))
         ps.Process(self.domain,implant,0.).apply();self.capture()
         if sum(self.fields[p['species']+'_total'])<=before:raise ValueError('주입 가능한 Si 표면이 없습니다. 상부 막이나 마스크 개구를 확인하세요.')
-        self.last_info={'operation':'implant','species':p['species'],'energyKeV':p['energy'],'doseCm2':p['dose'],'tiltDeg':7,'rotationReferenceDeg':22,'profile':'public dual-Pearson IV; Gaussian lateral spread; non-Si layers fully block'}
+        self.last_info={'operation':'implant','species':p['species'],'energyKeV':p['energy'],'doseCm2':p['dose'],'tiltDeg':p.get('tilt',7),'twistDeg':p.get('twist',0),'rotationReferenceDeg':22,'profile':'public dual-Pearson IV; Gaussian lateral spread; non-Si layers fully block'}
 
     def anneal(self,p):
         if not self.ready or not any(k.endswith('_total') for k in self.fields):raise ValueError('도핑을 먼저 추가하세요.')

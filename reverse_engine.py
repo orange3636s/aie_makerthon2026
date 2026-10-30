@@ -7,6 +7,7 @@ import viennals as ls
 from engine import contour_mesh
 from reverse_catalog import validate,BY_OP
 from measurements import side_coverage
+from recipe_models import resolve
 from photo_model import openings,complement,DEVELOP_RATE
 
 ROOT=Path(__file__).resolve().parent
@@ -20,6 +21,8 @@ def run(data):
     width=target['width']/4 if periodic else target['width']
     d=ps.Domain(gridDelta=.01,xExtent=width,yExtent=2.,boundary=ps.BoundaryType.REFLECTIVE_BOUNDARY)
     substrate_depth=target.get('substrateThickness')
+    if substrate_depth is None and target.get('substrateRoughness',0)>0:
+        substrate_depth=abs(target['bounds'][2])
     if substrate_depth is not None:
         def initial_layer(y0,y1,mat):
             level=ls.Domain(d.getGrid())
@@ -48,8 +51,9 @@ def run(data):
         ps.MakePlane(d,0.,ps.Material.Si,True).apply()
     frames=[];cmp_stop=None;doping_state=None;concentration=None;failure=None;oxidized=False
     implanted=set();diffused=set();annealed=set();mask_intervals=None;current_step=0
+    process_state={};defects=[]
     photo_mask=None;pr_tone='Positive';pr_top=0.;developed_depth=0.;pr_thickness=.06
-    def material(name):return ps.Material(201) if name=='HfZrO2' else getattr(ps.Material,name)
+    def material(name):return ps.Material({'HfZrO2':201,'Al':202}[name]) if name in ('HfZrO2','Al') else getattr(ps.Material,name)
     def box(x0,y0,x1,y1):
         level=ls.Domain(d.getGrid());geom=ls.MakeGeometry(level,ls.Box([x0,y0],[x1,y1]));geom.setIgnoreBoundaryConditions([True,True,False]);geom.apply();return level
     def surface_top():return max(p[1] for p in d.getSurfaceMesh(False).getNodes())
@@ -88,6 +92,8 @@ def run(data):
         if photo_mask and current_step and steps[current_step-1]['op']=='photo':frame['photoMask']={**photo_mask,'tone':pr_tone,'arrows':steps[current_step-1]['params']['action']=='Develop'}
         # Evidence records completed operations only, independently of user labels.
         frame['processEvidence']=dict(implantedSpecies=sorted(implanted),diffusedSpecies=sorted(diffused),dopedSpecies=sorted(implanted|diffused),annealedSpecies=sorted(annealed))
+        frame['processState']=dict(process_state)
+        frame['defects']=[dict(e) for e in defects]
         frames.append(frame)
     def transport(op,params):
         nonlocal doping_state,concentration
@@ -106,13 +112,29 @@ def run(data):
         result=json.loads(out.read_text(encoding='utf-8'))
         if result.get('error'):raise ValueError(result['error'])
         doping_state=result['state'];concentration=result['concentration']
-    snap(target.get('initialLabel','Si substrate'))
+    roughness=target.get('substrateRoughness',0.)
+    if roughness:
+        from wafer_model import levelset
+        bottom=-target['wafer']['body'] if target.get('wafer') else -(substrate_depth or 1.2)
+        replace_material(ps.Material.Si,levelset(ls,d.getGrid(),width,bottom,roughness))
+    snap('Wafer',dict(roughnessRqNm=roughness*1000))
     for i,row in enumerate(steps):
         current_step=i+1
         try:
             op=row['op'];p=row['params'];mats=d.getMaterialsInDomain();metric={};label=BY_OP[op]['title']
+            p,response,flags=resolve(op,p,process_state)
+            defects.extend(dict(code=code,step=current_step,severity='risk') for code in flags)
             if op=='photo':
-                if p['action']=='Strip':
+                if p['action'] in ('HMDS','Soft bake','Hard bake','PEB'):
+                    if p['action']!='HMDS' and ps.Material.Mask not in mats:raise ValueError('PR coating을 먼저 추가하세요.')
+                    label=p['action']
+                elif p['action']=='Ashing':
+                    if ps.Material.Mask not in mats:raise ValueError('제거할 PR이 없습니다.')
+                    advance(ps.DirectionalProcess(direction=[0.,-1.,0.],directionalVelocity=-response['prRemovalUm'],isotropicVelocity=0.,maskMaterial=[v for v in mats if v!=ps.Material.Mask],calculateVisibility=False),1.)
+                    if ps.Material.Mask not in d.getMaterialsInDomain() or d.getMaterialLevelSet(ps.Material.Mask).getNumberOfPoints()==0:
+                        mask_intervals=None;photo_mask=None
+                    label='PR ashing'
+                elif p['action']=='Strip':
                     if ps.Material.Mask not in mats:raise ValueError('제거할 PR이 없습니다.')
                     d.removeMaterial(ps.Material.Mask);label='PR strip';mask_intervals=None;photo_mask=None
                 elif p['action']=='Coat':
@@ -120,11 +142,11 @@ def run(data):
                     d.duplicateTopLevelSet(ps.Material.Mask);advance(ps.SphereDistribution(radius=p['thickness']),0)
                     pr_tone=p['tone'];pr_top=surface_top();pr_thickness=p['thickness'];developed_depth=0.;photo_mask=None;mask_intervals=None
                     label='PR coating'
-                elif p['action']=='Patterning':
+                elif p['action'] in ('Patterning','Exposure'):
                     if ps.Material.Mask not in mats:raise ValueError('PR coating을 먼저 추가하세요.')
                     if periodic and (p['pattern']!='Double' or p['offset']!=0 or p['pitch']!=.8):raise ValueError('LOCOS는 Double 마스크, 간격 800 nm, 위치 0 nm를 사용합니다.')
                     photo_mask={k:p[k] for k in ('pattern','width','pitch','offset')};developed_depth=0.;pr_top=surface_top()
-                    label='Patterning'
+                    label=p['action']
                 elif p['action']=='Develop':
                     if ps.Material.Mask not in mats or not photo_mask:raise ValueError('PR coating과 Patterning을 먼저 추가하세요.')
                     windows=openings(photo_mask,target['width'])
@@ -133,10 +155,19 @@ def run(data):
                     mask_intervals=complement(dissolving,width)
                     developed_depth+=DEVELOP_RATE*p['develop_time']
                     pr=d.getMaterialLevelSet(ps.Material.Mask)
+                    blur=response.get('edgeBlurUm',0.)
                     for a,b in dissolving:
-                        ls.BooleanOperation(pr,box(a,pr_top-developed_depth,b,2),ls.BooleanOperationEnum.RELATIVE_COMPLEMENT).apply()
+                        if blur>0:
+                            # Eight vertical slices approximate a focus-dependent taper.
+                            for band in range(8):
+                                y0=pr_top-developed_depth*(band+1)/8;y1=pr_top-developed_depth*band/8
+                                shrink=min((b-a)*.45,blur*(band+1)/8)
+                                ls.BooleanOperation(pr,box(a+shrink,y0,b-shrink,y1+.001),ls.BooleanOperationEnum.RELATIVE_COMPLEMENT).apply()
+                        else:ls.BooleanOperation(pr,box(a,pr_top-developed_depth,b,2),ls.BooleanOperationEnum.RELATIVE_COMPLEMENT).apply()
                     d.removeMaterial(ps.Material.Mask);d.insertNextLevelSetAsMaterial(pr,ps.Material.Mask,True)
                     metric={'development':dict(intervals=dissolving,fraction=min(1.,developed_depth/pr_thickness),depthNm=round(developed_depth*1000,3))}
+                    if response.get('darkLossUm',0)>0:
+                        advance(ps.DirectionalProcess(direction=[0.,-1.,0.],directionalVelocity=-response['darkLossUm'],isotropicVelocity=0.,maskMaterial=[v for v in d.getMaterialsInDomain() if v!=ps.Material.Mask],calculateVisibility=False),1.)
                     label='Developing'
                 else:
                     if ps.Material.Mask in mats:raise ValueError('기존 PR을 먼저 제거하세요.')
@@ -217,7 +248,7 @@ def run(data):
                     rate=p['epc']*p['cycles'] if p['method']=='ALE' else p['rate']
                     duration=1. if p['method']=='ALE' else p['time']
                     protected=None
-                    if target.get('projectedMask') and mask_intervals and p['method'] in ('Directional','ALE'):
+                    if target.get('projectedMask') and mask_intervals and p['method'] in ('Directional','ALE') and p.get('input_mode')!='Equipment':
                         before=d.getMaterialLevelSet(m)
                         undercut=rate*duration*ratio
                         for a,b in mask_intervals:
@@ -226,7 +257,12 @@ def run(data):
                             ls.BooleanOperation(piece,box(a+undercut,-2,b-undercut,2),ls.BooleanOperationEnum.INTERSECT).apply()
                             if protected is None:protected=piece
                             else:ls.BooleanOperation(protected,piece,ls.BooleanOperationEnum.UNION).apply()
-                    advance(ps.DirectionalProcess(direction=[0.,-1.,0.],directionalVelocity=-rate*(1-ratio),isotropicVelocity=-rate*ratio,maskMaterial=[a for a in mats if a!=m]),duration)
+                    chunks=4 if response.get('prLossUm') and ps.Material.Mask in mats else 1
+                    for chunk in range(chunks):
+                        live_mats=d.getMaterialsInDomain()
+                        if chunks>1 and ps.Material.Mask in live_mats:
+                            advance(ps.DirectionalProcess(direction=[0.,-1.,0.],directionalVelocity=-response['prLossUm']/chunks,isotropicVelocity=0.,maskMaterial=[v for v in live_mats if v!=ps.Material.Mask],calculateVisibility=False),1.)
+                        advance(ps.DirectionalProcess(direction=[0.,-1.,0.],directionalVelocity=-rate*(1-ratio),isotropicVelocity=-rate*ratio,maskMaterial=[a for a in d.getMaterialsInDomain() if a!=m]),duration/chunks)
                     if protected is not None:
                         remaining=d.getMaterialLevelSet(m)
                         ls.BooleanOperation(remaining,protected,ls.BooleanOperationEnum.UNION).apply()
@@ -292,11 +328,17 @@ def run(data):
                     model=ps.Oxidation();model.setTemperature(p['temperature']);model.setPressure(1.);model.setTime(p['oxidation_time']);model.setTimeStep(p['oxidation_time']/3)
                     name='Wet' if p['method'].startswith('Wet') else 'Dry';model.setOxidant(getattr(ps.OxidantType,name));model.setOrientation(ps.SiliconOrientation.Si100);model.setInitialOxideThickness(.025);model.setMaxGridPoints(100000)
                     advance(model,0);label=p['method'];oxidized=True
+            elif op=='cmp' and p['action']=='Cleaning':
+                loss=response.get('filmLossUm',0.)
+                if loss and ps.Material.SiO2 in mats:
+                    advance(ps.DirectionalProcess(direction=[0.,-1.,0.],directionalVelocity=0.,isotropicVelocity=-loss,maskMaterial=[v for v in mats if v!=ps.Material.SiO2],calculateVisibility=False),1.)
+                label=p['chemical']+' cleaning'
             elif op=='cmp':
                 if cmp_stop is None:raise ValueError('증착 후에 Global planarization을 추가하세요.')
                 top=surface_top();cut=max(cmp_stop,top-p['rate']*p['time'])
                 ps.Planarize(d,cut).apply();label='C&C';metric={'stopHeightUm':cmp_stop,'cutHeightUm':cut,'removedHeightNm':round((top-cut)*1000,3),'slurryRecord':p['slurry']}
             if doping_state and op!='diffusion':transport('sync',{})
+            metric.update(response)
             snap(row.get('label',label),metric)
             if op=='deposition' and not periodic:
                 measurement=side_coverage(frames[-2]['polygons'],frames[-1]['polygons'],int(m),metric['topGrowthUm'],width)
@@ -308,7 +350,7 @@ def run(data):
     bounds[2]=min(bounds[2],min(f['lowest'] for f in frames)-.08)
     bounds[3]=max(bounds[3],max(f['highest'] for f in frames)+.08)
     if substrate_depth is not None:bounds[2]=-substrate_depth-.04
-    return dict(**({'substrateThickness':substrate_depth} if substrate_depth is not None else {}),target=target['id'],view=data.get('view','gate'),section=target['section'],example=target['id'],frames=frames,steps=steps,bounds=bounds,roi=target['roi'],unit='µm',elapsed=round(time.perf_counter()-started,3),failure=failure,model='Native process flow',engine='ViennaPS '+ps.__version__)
+    return dict(**({'substrateThickness':substrate_depth} if substrate_depth is not None else {}),substrateRoughness=roughness,target=target['id'],view=data.get('view','gate'),section=target['section'],example=target['id'],frames=frames,steps=steps,bounds=bounds,roi=target['roi'],unit='µm',elapsed=round(time.perf_counter()-started,3),failure=failure,model='Native process flow',engine='ViennaPS '+ps.__version__)
 
 if __name__=='__main__':
     result=run(json.loads(Path(sys.argv[1]).read_text(encoding='utf-8')))
