@@ -22,6 +22,9 @@ const env={GEMINI_API_KEY:'test'},response=output=>({ok:true,json:async()=>({can
  let request;const result=await chat(c,{env,fetchImpl:async(_url,o)=>{request=JSON.parse(o.body);return response({answer:'활성 농도와 총 농도를 구분해 보세요.'})}});
  assert.equal(result.evidence,'server-verified');assert(request.systemInstruction.parts[0].text.includes('실측'));
  assert.equal(JSON.parse(request.contents[0].parts[0].text).selectedStep,final);
+ assert.equal(JSON.parse(request.contents[0].parts[0].text).selectedEvidence.dopantPeaks.P_active.value,'1.16069e+18');
+ assert.equal((await chat(c,{env,fetchImpl:async()=>response({answer:'활성 농도: [[dopant:P_active]]'})})).answer,'활성 농도: 1.16069e+18 cm^-3');
+ await assert.rejects(chat(c,{env,fetchImpl:async()=>response({answer:'[[dopant:unknown]]'})}),/측정값/);
  assert.equal((await chat({},{env,fetchImpl:async()=>response({answer:'일반 질문에 대한 답변'})})).evidence,'recipe-only');
  for(const output of [{answer:''},{answer:'a'.repeat(2401)},{answer:'ok',score:100},{answer:123},null])await assert.rejects(chat(c,{env,fetchImpl:async()=>response(output)}));
  console.log('Chat: bounded history, pending/missing evidence, stage bounds, schema and grounded context passed.');

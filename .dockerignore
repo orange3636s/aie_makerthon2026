@@ -2,6 +2,10 @@
 .venv
 .native
 .runtime
+node_modules
+public
+tests
+docs
 __pycache__
 *.log
 .env

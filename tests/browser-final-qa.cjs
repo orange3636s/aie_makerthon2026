@@ -10,7 +10,7 @@ const out='.runtime/browser-final-qa';fs.mkdirSync(out,{recursive:true});
  page.on('pageerror',e=>report.errors.push(e.message));
  await page.route('**/api/analyze',r=>r.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'QA simulated AI outage'})}));
  try{
-  await page.goto('http://127.0.0.1:3024/#mosfet');
+  await page.goto((process.env.QA_BASE||'http://127.0.0.1:3031')+'/#mosfet');
   await page.waitForFunction(()=>window.reverseLab&&window.RecipeStudio&&typeof busy!=='undefined'&&!busy,{},{timeout:150000});
   await page.evaluate(()=>{const f=RecipeStudio.diagnose;RecipeStudio.diagnose=function(...args){window.__qaQuestion=RecipeStudio.designQuestion(args[1],args[5]?.report);return f.apply(this,args)}});
   const ids=await page.evaluate(()=>catalog.map(x=>x.id));assert.equal(ids.length,24);
@@ -38,6 +38,7 @@ const out='.runtime/browser-final-qa';fs.mkdirSync(out,{recursive:true});
    await page.locator('#r2d').click();
    for(const axis of ['X','Z','Y']){await area.locator(`[data-axis="${axis}"]`).click();await area.locator('.slice-position').fill('650');await area.locator('.slice-position').dispatchEvent('input')}
    await page.locator('#r-flow [data-step="0"]').click();
+   await page.locator('#r-flow [data-step="0"]').locator('..').locator('.flow-disclosure').click();
    await page.locator('#r-wafer-depth').fill('600');await page.locator('#r-wafer-depth').dispatchEvent('input');
    assert.equal(await page.locator('#r-wafer-depth').inputValue(),'600');
    report.examples.push({id,candidates:3,quiz:true,wrongAnswerLocked:true,comparison:true,slices:true,explode:true,waferEdit:true});
@@ -47,6 +48,7 @@ const out='.runtime/browser-final-qa';fs.mkdirSync(out,{recursive:true});
    await page.setViewportSize({width,height});await page.waitForTimeout(200);
    const overflow=await page.evaluate(()=>({width:innerWidth,body:document.documentElement.scrollWidth}));
    report.screens.push({width,height,overflow:overflow.body>width+2});
+   assert(overflow.body<=width+2,'horizontal overflow '+width);
    await page.screenshot({path:`${out}/workspace-${width}.png`,fullPage:true});
    await page.locator('#r-answer').click();await page.locator('.rs-candidate').first().waitFor();
    await page.screenshot({path:`${out}/candidates-${width}.png`,fullPage:true});

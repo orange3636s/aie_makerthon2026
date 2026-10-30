@@ -7,10 +7,13 @@ async function post(route,data,status){const r=await fetch(base+route,{method:'P
  let ready=false;for(let i=0;i<80;i++){try{ready=(await fetch(base+'/api/health')).ok;if(ready)break}catch{}await delay(100)}assert(ready);
  for(const route of ['/api/run','/api/reverse','/api/analyze','/api/classify'])for(const data of [null,[],false])await post(route,data,400);
  for(let i=0;i<7;i++)await post('/api/classify',{image:'not an image'},400);
- await post('/api/classify',{image:'data:image/png;base64,YQ=='},503);
- const first=post('/api/run',{example:'mosfet'},200);await delay(150);
- const second=await post('/api/run',{example:'photo-lithography'},429);assert(second.error.includes('계산 중'));
+ await post('/api/classify',{image:'data:image/png;base64,YQ=='},400);
+ await post('/api/classify',{image:require('./image-fixture.cjs')},503);
+ const recipe=require('../reverse-catalog.json').targets.find(t=>t.id==='mosfet').recipe;
+ const input={target:'mosfet',steps:recipe,substrateThickness:.61};
+ const first=post('/api/reverse',input,200);await delay(150);
+ const second=await post('/api/reverse',{target:'sti',steps:[],substrateThickness:.61},429);assert(second.error.includes('계산 중'));
  assert.equal((await first).result.failure,null);
- assert.equal((await post('/api/run',{example:'mosfet'},200)).result.cached,true);
+ assert.equal((await post('/api/reverse',input,200)).result.cached,true);
  console.log(`${count} synchronous HTTP scenarios passed (malformed bodies, invalid images, missing AI key, concurrency and cache)`);
 }finally{server.kill()}})().catch(e=>{console.error(e);process.exitCode=1});

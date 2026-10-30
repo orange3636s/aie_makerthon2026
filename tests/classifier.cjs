@@ -1,8 +1,10 @@
 // Contract tests inject responses; no credential or network is used.
 const assert=require('node:assert/strict'),{classify}=require('../gemini.cjs'),{examples:targets}=require('../catalog.json');
-const image='data:image/png;base64,YQ==';
+const image=require('./image-fixture.cjs');
 const options=output=>({env:{GEMINI_API_KEY:'test'},referenceParts:[],fetchImpl:async()=>({ok:true,json:async()=>({candidates:[{content:{parts:[{text:JSON.stringify(output)}]}}]})})});
 (async()=>{
+ const {validateImage}=require('../gemini.cjs');
+ for(const bad of ['data:image/png;base64,YQ==',image.replace('image/png','image/jpeg'),image.slice(0,-6)])assert.throws(()=>validateImage(bad),/손상|형식/);
  const good={identification:'STI로 추정됩니다.',confidence:.9,ambiguous:false,recommendations:[{target:'sti'},{target:'pvd'},{target:'sadp'}]};
  const result=await classify(image,targets,options(good));assert.equal(result.recommendations.length,3);assert(result.recommendations.every(r=>r.category==='구조'));assert.equal(new Set(result.recommendations.map(r=>r.target)).size,3);assert(result.recommendations.every(r=>!r.reason));
  assert.equal((await classify(image,targets,options({...good,ambiguous:true}))).ambiguous,true);

@@ -84,13 +84,13 @@ function draw(canvas,data,bounds,options={}){
  const overlay=PhotoPreview.build(options.maskPreview||data.photoMask||data.exposure,bounds,data);
  if(overlay)bounds=[bounds[0],bounds[1],bounds[2],Math.max(bounds[3],overlay.top)];
  const axisUnit=options.unit||selected?.unit||current?.unit||'µm',axisField={unit:axisUnit};
- const mini=!!options.mini,compact=!!window.MetrologySteps?.isActive(canvas.id),margin=mini||compact?6:36,top=mini||compact?7:25,bottom=mini||compact?6:42;
+ const mini=!!options.mini,margin=mini?6:36,top=mini?7:25,bottom=mini?6:42;
  const extra=options.extrude&&!mini?Math.min(70,w*.12,Math.max(0,(h-top-bottom)*.2)):0;
  const camera=!mini&&window.SectionViewport?SectionViewport.attach(canvas,redraw,selected?.id||''):{zoom:1,x:0,y:0};
  const scale=camera.zoom*Math.min((w-margin*2-extra)/(bounds[1]-bounds[0]),(h-top-bottom-extra)/(bounds[3]-bounds[2]));
  const centerX=(bounds[0]+bounds[1])/2,centerY=(bounds[2]+bounds[3])/2;
  const px=x=>w/2-extra/2+(x-centerX)*scale+camera.x,py=y=>(h+top-bottom)/2+extra/2-(y-centerY)*scale+camera.y;
- if(!mini&&!compact){
+ if(!mini){
   c.strokeStyle='#edf0f5';c.lineWidth=.7;c.fillStyle='#526b84';c.font='10px ProcessSans, Segoe UI';
   const step=Math.pow(10,Math.floor(Math.log10((bounds[1]-bounds[0])/4)))*((bounds[1]-bounds[0])/Math.pow(10,Math.floor(Math.log10((bounds[1]-bounds[0])/4)))/4>5?5:1);
   const raw=(bounds[1]-bounds[0])/5,pow=Math.pow(10,Math.floor(Math.log10(raw))),gridStep=Math.ceil(raw/pow)*pow;
@@ -141,7 +141,6 @@ function draw(canvas,data,bounds,options={}){
  if(!mini)window.SolidView?.overlay(canvas,c,px,py);
  // Reference contours are drawn once on the front 2D plane, never extruded.
  if(options.reference){c.strokeStyle='#a85b00';c.lineWidth=1.4;c.setLineDash([5,4]);for(const poly of options.reference.polygons){c.beginPath();poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.stroke()}c.setLineDash([]);}
- if(!mini&&(!solid||solid.state.axis==='Y'))window.ProcessWorkbench?.overlay(canvas,c,px,py,bounds);
  c.restore();
  if(window.ParameterPreview?.active(canvas.id)){c.fillStyle='#315bd6';c.font='600 11px ProcessSans, sans-serif';c.fillText('미리보기',50,17)}
 }
@@ -150,7 +149,6 @@ function drawMain(){
  const data=window.ParameterPreview?.frame('section',current?.frames[frame])||current?.frames[frame],hasDoping=!!data?.concentration,field=dopingFieldFor(data);
  $('doping-tools').hidden=true;
  const saved=references.get(ProcessUI.referenceKey(selected?.id,current?.params)),reference=$('compare').checked&&saved?.params?.section===current?.params?.section?saved:null;
- window.ProcessWorkbench?.update('section',{key:selected?.id+':lab',frame:data,bounds:current?.bounds,previous:current?.frames[Math.max(0,frame-1)],reference:saved?refFrame():null,index:frame,recipe:window.simulationEditor?.recipe(),flow:window.simulationEditor?.flow(),preview:!!window.ParameterPreview?.active('section'),pending:!!window.simulationEditor?.pending});
  draw($('section'),data,current?combinedBounds(current,reference):null,{maskPreview:window.simulationEditor?.maskPreview(),extrude:mode==='2.5d',reference:reference?refFrame():null,doping:$('show-doping').checked,dopingField:field});
 }
 // Reveal only within the horizontal timeline; never move the document viewport.

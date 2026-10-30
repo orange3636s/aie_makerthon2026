@@ -7,7 +7,7 @@ const post=async(route,body)=>{const r=await fetch(base+route,{method:'POST',hea
 (async()=>{try{
  for(let i=0;i<80&&!ready;i++){assert(server.exitCode===null,'test server exited before readiness');await delay(100)}assert(ready);
  const id=crypto.randomUUID(),target=require('../reverse-catalog.json').targets.find(t=>t.id==='cfet');
- const running=post('/api/reverse',{target:'cfet',steps:target.recipe,requestId:id});await delay(300);
+ const running=post('/api/reverse',{target:'cfet',steps:target.recipe,substrateThickness:.61,requestId:id});await delay(300);
  const cancelled=await post('/api/cancel',{job:id});assert.equal(cancelled.data.cancelled,true);
  const result=await running;assert.equal(result.data.state,'cancelled');
  const next=await post('/api/reverse',{target:'sti',steps:[]});assert.equal(next.status,200);assert.equal(next.data.result.failure,null);assert.equal(next.data.result.frames.length,1);
