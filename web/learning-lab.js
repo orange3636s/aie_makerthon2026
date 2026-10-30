@@ -2,6 +2,7 @@
 // Optional analysis workspace: never changes solver geometry or numerical scores.
 (() => {
  const M=LearningLabModels,esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),fmt=(v,d=1)=>Number.isFinite(v)?v.toLocaleString('ko-KR',{maximumFractionDigits:d}):'—';
+ const axisFmt=v=>!Number.isFinite(v)?'—':v!==0&&(Math.abs(v)<.01||Math.abs(v)>=1e5)?v.toExponential(1):fmt(v,3);
  const KEY='processtrace.missions.v1',refs=new Map();let catalogData,ctx,tab='profile',generation=0,controller,ivOptions={},profileX=0,profileKind='dopant',material=30,lastCheck=null;
  const dialog=document.createElement('dialog');dialog.className='ll-dialog';dialog.setAttribute('aria-labelledby','ll-title');document.body.append(dialog);
  const openButton=document.createElement('button');openButton.id='learning-lab-open';openButton.textContent='학습 분석';openButton.type='button';document.querySelector('.heading-actions').append(openButton);
@@ -16,14 +17,14 @@
  function svg(series,xLabel,yLabel){
   const valid=series.flatMap(s=>s.points).filter(p=>p.every(Number.isFinite));if(!valid.length)return '<div class="ll-empty">이 위치에는 계산된 데이터가 없습니다. 단면 위치 또는 공정 단계를 바꿔보세요.</div>';
   const xs=valid.map(p=>p[0]),ys=valid.map(p=>p[1]);let x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
-  if(x1===x0)x1=x0+1;if(y1-y0<1e-9){y0-=.5;y1+=.5;}const pad=(y1-y0)*.08;y0=Math.min(...ys)>=0?Math.max(0,y0-pad):y0-pad;y1+=pad;
+  if(x1===x0)x1=x0+1;if(y1===y0){y0-=.5;y1+=.5;}const pad=(y1-y0)*.08;y0=Math.min(...ys)>=0?Math.max(0,y0-pad):y0-pad;y1+=pad;
   const width=Math.max(300,document.getElementById(tab==='device'?'ll-iv-plot':'ll-profile-plot')?.clientWidth||760),right=width-24;
   const x=v=>60+(v-x0)/(x1-x0)*(right-60),y=v=>286-(v-y0)/(y1-y0)*236,colors=['#245CE0','#DD6B30','#8B44C8','#14847C','#AF4164','#526071'];
-  const n=width<440?3:5,ticks=Array.from({length:n},(_,i)=>{const a=x0+(x1-x0)*i/(n-1),b=y0+(y1-y0)*i/(n-1);return `<line x1="60" y1="${y(b)}" x2="${right}" y2="${y(b)}" stroke="#e5eaf2"/><text x="50" y="${y(b)+4}" text-anchor="end">${fmt(b)}</text><text x="${x(a)}" y="310" text-anchor="middle">${fmt(a)}</text>`}).join('');
+  const n=width<440?3:5,ticks=Array.from({length:n},(_,i)=>{const a=x0+(x1-x0)*i/(n-1),b=y0+(y1-y0)*i/(n-1);return `<line x1="60" y1="${y(b)}" x2="${right}" y2="${y(b)}" stroke="#e5eaf2"/><text x="50" y="${y(b)+4}" text-anchor="end">${axisFmt(b)}</text><text x="${x(a)}" y="310" text-anchor="middle">${axisFmt(a)}</text>`}).join('');
   return `<svg class="ll-chart" viewBox="0 0 ${width} 350" role="img" aria-label="${esc(yLabel+' 대 '+xLabel)}"><text x="60" y="24">${esc(yLabel)}</text>${ticks}${series.map((s,i)=>{let pen=false;const path=s.points.map(p=>{if(!p.every(Number.isFinite)){pen=false;return '';}const a=(pen?'L':'M')+x(p[0]).toFixed(2)+' '+y(p[1]).toFixed(2);pen=true;return a;}).join(' ');return `<path d="${path}" fill="none" stroke="${colors[i%colors.length]}" stroke-width="2.5" ${s.dash?'stroke-dasharray="6 4"':''}/>`;}).join('')}<text x="${right}" y="339" text-anchor="end">${esc(xLabel)}</text></svg><div class="ll-legend">${series.map((s,i)=>`<span><i style="background:${colors[i%colors.length]}"></i>${esc(s.name)}</span>`).join('')}</div>`;
  }
  const field=(name,key,value,min,max,step=1)=>`<label class="ll-field">${esc(name)}<span><input type="range" data-range="${key}" aria-label="${esc(name)}" min="${min}" max="${max}" step="${step}" value="${value}"><input data-number="${key}" aria-label="${esc(name)} 값" type="number" min="${min}" max="${max}" step="${step}" value="${value}"></span></label>`;
- function bindFields(fn){dialog.querySelectorAll('[data-range],[data-number]').forEach(el=>el.oninput=()=>{const key=el.dataset.range||el.dataset.number;if(!el.value||!el.checkValidity())return;dialog.querySelectorAll(`[data-range="${key}"],[data-number="${key}"]`).forEach(n=>{if(n!==el)n.value=el.value;});fn(key,Number(el.value));});}
+ function bindFields(fn){dialog.querySelectorAll('[data-range],[data-number]').forEach(el=>el.oninput=()=>{const key=el.dataset.range||el.dataset.number;if(!el.value||!el.checkValidity()){if(tab==='device'&&document.getElementById('ll-iv-plot'))document.getElementById('ll-iv-plot').innerHTML='<div class="ll-empty">모델 입력 범위를 확인하세요.</div>';return;}dialog.querySelectorAll(`[data-range="${key}"],[data-number="${key}"]`).forEach(n=>{if(n!==el)n.value=el.value;});fn(key,Number(el.value));});}
  function shell(){
   dialog.innerHTML=`<header class="ll-head"><div><small>PROCESS LEARNING LAB</small><h2 id="ll-title">${esc(ctx.title)} <span>· STEP ${ctx.index}</span></h2></div><button id="ll-close" aria-label="학습 분석 닫기">×</button></header><nav class="ll-tabs" aria-label="학습 분석 메뉴">${[['profile','프로파일'],['device','소자 특성'],['mission','설계 미션'],['tutor','AI 튜터']].map(([id,t])=>`<button data-tab="${id}" aria-pressed="${tab===id}" class="${tab===id?'active':''}">${t}</button>`).join('')}</nav><div class="ll-body">${ctx.pending?'<p class="ll-notice" role="status">변경 조건은 아직 미계산입니다. 그래프는 마지막 계산 결과를 표시합니다.</p>':''}<div id="ll-content"></div></div>`;
   dialog.querySelector('#ll-close').onclick=()=>dialog.close();dialog.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{controller?.abort();generation++;tab=b.dataset.tab;shell();render();});
@@ -46,12 +47,18 @@
   document.getElementById('ll-profile-plot').innerHTML=chart;document.getElementById('ll-profile-notes').textContent=note;
  }
  function device(){
-  if(ctx.id!=='mosfet'){document.getElementById('ll-content').innerHTML='<h3>Id–Vg 적용 범위</h3><div class="ll-empty">현재 전기 특성 근사는 평면 NMOS / SiO₂ 게이트만 지원합니다.<br>이 소자의 농도·형상은 프로파일 탭에서 비교하세요.</div><a class="ll-model" href="/learning-models.html#iv" target="_blank" rel="noopener">모델 적용 범위 ↗</a>';return;}
-  const p={widthNm:1000,mobility:300,background:1e16,vfb:-.8,vds:.1,...ivOptions};
-  document.getElementById('ll-content').innerHTML=`<div class="ll-subhead"><div><h3>Id–Vg · 평면 NMOS</h3><p>계산 형상 + 명시한 가정으로 보는 개형</p></div><span class="ll-tag">장채널 근사</span></div><div class="ll-two"><div id="ll-iv-plot"></div><div class="ll-assumptions"><h4>전기 모델 입력 가정</h4>${field('Vds · V','vds',p.vds,.01,3,.01)}${field('채널 폭 W · nm','widthNm',p.widthNm,100,10000,100)}${field('이동도 · cm²/V·s','mobility',p.mobility,10,1000,10)}${field('배경 농도 · log₁₀(cm⁻³)','logNa',Math.log10(p.background),14,18,.1)}${field('Vfb · V','vfb',p.vfb,-2,2,.05)}</div></div><p class="ll-footnote">개형 비교용 · 전기 동작 판정 제외</p><a class="ll-model" href="/learning-models.html#iv" target="_blank" rel="noopener">식과 추출 기준 ↗</a>`;
-  bindFields((k,v)=>{ivOptions[k==='logNa'?'background':k]=k==='logNa'?10**v:v;drawIV();});drawIV();
+  if(!M.electricalDevices.includes(ctx.id)){document.getElementById('ll-content').innerHTML='<h3>소자 I–V</h3><div class="ll-empty">구조 예제에는 전기 단자가 정의되어 있지 않습니다. 소자 예제를 선택하세요.</div>';return;}
+  const p={...M.electricalDefaults(ctx.id),...ivOptions[ctx.id]},pn=ctx.id==='pn-junction';
+  const fields=pn?field('접합 면적 · µm²','areaUm2',p.areaUm2,.01,100,.01)+field('이상계수 n','ideality',p.ideality,1,2,.05)+field('소수 캐리어 수명 · µs','lifetimeUs',p.lifetimeUs,.01,100,.01):field('|Vds| · V','vds',p.vds,.01,3,.01)+field('유효 채널 폭 W_eff · nm','widthNm',p.widthNm,100,10000,100)+field('전자 이동도 · cm²/V·s','mobility',p.mobility,10,1000,10)+field('배경 농도 · log₁₀(cm⁻³)','logNa',Math.log10(p.background),14,18,.1)+field('nFET Vfb · V','vfb',p.vfb,-2,2,.05);
+  document.getElementById('ll-content').innerHTML=`<div class="ll-subhead"><div><h3>${pn?'I–V':'Id–Vg'} · ${esc(ctx.title)}</h3></div><span class="ll-tag">${pn?'다이오드 근사':'등가 FET 근사'}</span></div><div class="ll-two"><div id="ll-iv-plot" aria-live="polite"></div><div class="ll-assumptions"><h4>전기 모델 입력 가정</h4>${fields}<button id="ll-iv-reset" type="button">입력 초기화</button></div></div><p class="ll-footnote">개형 비교용 · 전기 동작 판정 제외</p><a class="ll-model" href="/learning-models.html#iv" target="_blank" rel="noopener">식과 추출 기준 ↗</a>`;
+  bindFields((k,v)=>{(ivOptions[ctx.id]??={})[k==='logNa'?'background':k]=k==='logNa'?10**v:v;drawIV();});
+  document.getElementById('ll-iv-reset').onclick=()=>{delete ivOptions[ctx.id];device();};drawIV();
  }
- function drawIV(){const r=M.mosfet(ctx.frame,ctx.id,ivOptions),ref=M.mosfet(ctx.reference?.frames.at(-1),ctx.id,ivOptions);const series=[{name:'현재 구조 · 근사 Id',points:r.points||[]},...(ref.available?[{name:'목표 형상 · 같은 입력 가정',points:ref.points,dash:true}]:[])];document.getElementById('ll-iv-plot').innerHTML=r.available?`${svg(series,'Vgs (V)','Id (µA)')}<div class="ll-facts"><span>L <b>${fmt(r.lengthNm)} nm</b></span><span>tₒₓ <b>${fmt(r.toxNm)} nm</b></span><span>근사 Vth <b>${fmt(r.threshold,3)} V</b></span></div><details class="ll-footnote"><summary>계산 가정</summary>${esc(r.assumptions)}</details>`:`<div class="ll-empty">${esc(r.reason)}</div>`;}
+ function drawIV(){
+  const opts=ivOptions[ctx.id]||{},r=M.deviceIV(ctx.frame,ctx.id,opts),ref=M.deviceIV(ctx.reference?.frames.at(-1),ctx.id,opts);
+  const series=[...(r.series||[]).map(s=>({...s,name:'현재 · '+s.name})),...(ref.series||[]).map(s=>({...s,name:'목표 · '+s.name,dash:true}))];
+  document.getElementById('ll-iv-plot').innerHTML=r.available?`${svg(series,r.xLabel,r.yLabel)}<div class="ll-facts">${r.facts.map(([label,value,unit])=>`<span>${esc(label)} <b>${axisFmt(value)} ${esc(unit)}</b></span>`).join('')}</div>${(r.notes||[]).map(n=>`<p class="ll-notice">${esc(n)}</p>`).join('')}<details class="ll-footnote"><summary>계산 가정</summary>${esc(r.assumptions)}</details>`:`<div class="ll-empty">${esc(r.reason)}</div>`;
+ }
  const target=()=>catalogData.targets.find(t=>t.id===ctx.id);
  function mission(){
   const m=M.mission(ctx.reference,target()),history=records().filter(r=>r.target===ctx.id);if(!m){document.getElementById('ll-content').textContent='목표 데이터를 불러올 수 없습니다.';return;}

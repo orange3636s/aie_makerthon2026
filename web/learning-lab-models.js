@@ -64,6 +64,109 @@
   const points=Array.from({length:101},(_,i)=>{const vg=i*.03,over=vg-threshold;const id=over<=0?0:p.vds<over?beta*(over*p.vds-p.vds*p.vds/2):beta*over*over/2;return [vg,id*1e6];});
   return {available:true,version,lengthNm,toxNm,threshold,cox,options:p,points,scope:'장채널 square-law · 300 K · VSB = 0 · 누설·단채널·접촉저항 제외',assumptions:'W·이동도·p형 배경 농도·Vfb는 입력 가정입니다. L·산화막 두께만 계산 단면에서 추출합니다.'};
  }
+ const electricalDevices=Object.freeze(['pn-junction','mosfet','fdsoi','pdsoi','rcat','bcat','finfet','gaafet','mbcfet','charge-trap','cfet']);
+ const dielectricK=Object.freeze({16:7.5,30:3.9,31:9,32:20,201:25});
+ function electricalDefaults(target){
+  if(target==='pn-junction')return {areaUm2:1,ideality:1,lifetimeUs:1};
+  return {widthNm:1000,mobility:300,background:1e16,vfb:target==='mosfet'?-.8:-.5,vds:.1};
+ }
+ // Extract a *vertical* Si / dielectric / conductor stack at the channel centre.
+ // W_eff is explicitly supplied: an extruded longitudinal section cannot establish
+ // Fin/GAA gated perimeter, sheet count, or a real 3-D electrostatic solution.
+ function gateSections(frame){
+  const layers=Object.keys(dielectricK).flatMap(id=>spans(frame,+id,0).map(([a,b])=>({a,b,k:dielectricK[id],id:+id})));
+  const gates=[11,70,79].flatMap(id=>spans(frame,id,0).map(([a,b])=>({a,b,id})));
+  return spans(frame,10,0).flatMap(([bottom,surface])=>{
+   let end=surface,eot=0,materials=[];
+   for(let i=0;i<8;i++){
+    const layer=layers.find(p=>Math.abs(p.a-end)<.003&&p.b>end+.0001);
+    if(!layer)break; eot+=(layer.b-layer.a)*1000*3.9/layer.k;end=layer.b;materials.push(layer.id);
+   }
+   const gate=gates.find(g=>Math.abs(g.a-end)<.003);
+   if(!gate||eot<.5||eot>300)return [];
+   const span=L.intervals(frame,gate.id,0,(gate.a+gate.b)/2).find(([a,b])=>a<0&&b>0);
+   if(!span||span[1]-span[0]<.02)return [];
+   return [{bottom,surface,eot,gate,span,materials,lengthNm:(span[1]-span[0])*1000}];
+  });
+ }
+ // Use only active net dopants in surviving Si, and separate the two sides.
+ // Peaks are readiness checks, not inferred channel background doping.
+ function activePeaks(frame,{left=0,right=0,y0=-Infinity,y1=Infinity}={}){
+  const d=frame?.concentration,out={n:[0,0],p:[0,0]};
+  if(!d?.fields?.net_active||!(d.dx>0))return out;
+  for(let i=0;i<d.nx;i++){
+   const x=d.origin[0]+(i+.5)*d.dx,side=x<left?0:x>right?1:-1;if(side<0)continue;
+   const silicon=spans(frame,10,x);
+   for(let j=0;j<d.ny;j++){
+    const k=j*d.nx+i,y=d.origin[1]+(j+.5)*d.dx,v=d.fields.net_active[k];
+    if(!d.mask?.[k]||!finite(v)||y<y0||y>y1||!silicon.some(([a,b])=>y>=a&&y<=b))continue;
+    out.n[side]=Math.max(out.n[side],v);out.p[side]=Math.max(out.p[side],-v);
+   }
+  }return out;
+ }
+ function deviceIV(frame,target,options={}){
+  const fail=reason=>({available:false,reason}),q=1.602176634e-19,eps0=8.8541878128e-12,vt=.025852;
+  if(!electricalDevices.includes(target))return fail('구조 예제에는 전기 단자가 정의되어 있지 않습니다. 소자 예제를 선택하세요.');
+  if(!frame?.polygons?.length)return fail('계산된 소자 단면이 필요합니다.');
+  const p={...electricalDefaults(target),...options};
+  if(!Object.values(p).every(finite))return fail('모델 입력 범위를 확인하세요.');
+  if(target==='mosfet'){
+   const r=mosfet(frame,target,p);
+   return {...r,series:r.available?[{name:'NMOS',points:r.points}]:[],xLabel:'Vgs (V)',yLabel:'Id (µA)',facts:r.available?[['L',r.lengthNm,'nm'],['SiO₂',r.toxNm,'nm'],['Vth',r.threshold,'V']]:[]};
+  }
+  if(target==='pn-junction'){
+   if(p.areaUm2<.01||p.areaUm2>100||p.ideality<1||p.ideality>2||p.lifetimeUs<.01||p.lifetimeUs>100)return fail('모델 입력 범위를 확인하세요.');
+   const peaks=activePeaks(frame),nd=Math.max(...peaks.n),na=Math.max(...peaks.p);
+   if(nd<1e14||na<1e14)return fail('Si 내부의 활성 n형·p형 영역이 모두 필요합니다. 주입 후 열처리를 확인하세요.');
+   // Low-injection Shockley diffusion-current estimate, cm-based quantities.
+   const dn=1350*vt,dp=480*vt,tau=p.lifetimeUs*1e-6;
+   const is=q*p.areaUm2*1e-8*1e20*(dn/(Math.sqrt(dn*tau)*na)+dp/(Math.sqrt(dp*tau)*nd));
+   const points=Array.from({length:121},(_,i)=>{const v=-.3+i*.0075;return [v,is*Math.expm1(v/(p.ideality*vt))*1e6];});
+   return {available:true,series:[{name:'PN Junction',points}],points,xLabel:'접합 전압 V (V)',yLabel:'I (µA)',facts:[['Vbi',vt*Math.log(na*nd/1e20),'V'],['Is',is,'A']],options:p,
+    assumptions:'300 K Shockley 저준위 주입 근사. 활성 n/p 최고 농도를 균일한 접합 농도로 대신 사용합니다. 접합 면적·수명·이상계수는 입력 가정이며 μn=1350, μp=480 cm²/V·s입니다. 실제 접합 면적·재결합·직렬저항·항복은 해석하지 않습니다.'};
+  }
+  if(p.widthNm<100||p.widthNm>10000||p.mobility<10||p.mobility>1000||p.background<1e14||p.background>1e18||p.vds<.01||p.vds>3||p.vfb<-2||p.vfb>2)return fail('모델 입력 범위를 확인하세요.');
+  let sections=gateSections(frame).sort((a,b)=>a.surface-b.surface);
+  if(!sections.length)return fail('Si 채널과 게이트 사이의 연속된 절연막이 필요합니다.');
+  if(target==='cfet'&&sections.length<2)return fail('CFET의 상부·하부 게이트와 채널을 모두 계산하세요.');
+  sections=target==='cfet'?[sections[0],sections.at(-1)]:[sections.at(-1)];
+  const branches=[];
+  for(let index=0;index<sections.length;index++){
+   const s=sections[index],polarity=target==='cfet'&&index===1?-1:1;
+   const mid=target==='cfet'?(sections[0].surface+sections[1].bottom)/2:null;
+   const peaks=activePeaks(frame,{left:s.span[0],right:s.span[1],y0:mid!==null&&index===1?mid:-Infinity,y1:mid!==null&&index===0?mid:Infinity});
+   if(peaks[polarity===1?'n':'p'].some(v=>v<1e16))return fail(`${polarity===1?'n형':'p형'} 양쪽 S/D 활성 도핑이 필요합니다. 주입·열처리를 확인하세요.`);
+   let lengthNm=s.lengthNm;
+   if(['rcat','bcat'].includes(target)){
+    const tops=[s.span[0]-.12,s.span[1]+.12].map(x=>spans(frame,10,x).at(-1)?.[1]);
+    if(!tops.every(finite))return fail('리세스 양쪽 Si 표면을 확인할 수 없습니다.');
+    lengthNm+=Math.max(0,(tops[0]+tops[1])/2-s.surface)*2000;
+   }
+   const cox=3.9*eps0/(s.eot*1e-9),phi=vt*Math.log(p.background/1e10),na=p.background*1e6;
+   const depletion=Math.sqrt(4*11.7*eps0*phi/(q*na));
+   const body=['fdsoi','pdsoi'].includes(target)?Math.min(depletion,(s.surface-s.bottom)*1e-6):depletion;
+   const threshold=p.vfb+2*phi+q*na*body/cox;
+   const beta=p.mobility*(polarity===-1?.4:1)*1e-4*cox*p.widthNm/lengthNm;
+   branches.push({polarity,lengthNm,eot:s.eot,threshold,beta});
+  }
+  // Common voltage window for both CFET branches. Negative values use conventional PMOS signs.
+  const vmax=Math.max(3,...branches.map(b=>Math.ceil(b.threshold+1)));
+  const series=branches.map(b=>({name:target==='cfet'?(b.polarity===1?'하부 nFET':'상부 pFET'):'등가 nFET',points:Array.from({length:121},(_,i)=>{
+   const v=i*vmax/120,u=v-b.threshold,id=u<=0?0:p.vds<u?b.beta*(u*p.vds-p.vds*p.vds/2):b.beta*u*u/2;
+   return [v*b.polarity,id*1e6*b.polarity];
+  })}));
+  const s=sections[0],b=branches[0];
+  const notes=[];
+  if(target==='charge-trap'&&!s.materials.includes(16))notes.push('현재 게이트 아래 Si₃N₄가 검출되지 않아 ONO 저장층이 없는 등가 FET 곡선입니다.');
+  let assumptions='300 K 장채널 square-law 등가 모델. L과 EOT는 중앙 단면에서 추출합니다. W_eff·이동도·배경 농도·Vfb는 입력 가정입니다. 유전율 가정: SiO₂ 3.9, Si₃N₄ 7.5, HfO₂ 20, Al₂O₃ 9, HZO 25. 누설·단채널·접촉저항·양자효과는 제외합니다.';
+  if(['fdsoi','pdsoi'].includes(target))assumptions+=' 공핍 전하는 min(공핍 폭, 계산된 Si 몸체 두께)로 제한합니다. 완전/부분 공핍은 농도와 몸체 두께에 따라 달라지며, 후면 게이트·부유 몸체 효과는 제외합니다.';
+  if(['rcat','bcat'].includes(target))assumptions+=' L_eff = 게이트 폭 + 2 × 리세스 깊이로 U자 채널을 근사합니다.';
+  if(['finfet','gaafet','mbcfet','cfet'].includes(target))assumptions+=' W_eff는 핀/시트의 전체 유효 채널 둘레를 포함하는 사용자 가정입니다. 단면에서 시트 수나 3D 게이트 둘레를 복원하지 않으며 BSIM-CMG 모델이 아닙니다.';
+  if(target==='cfet')assumptions+=' 상부 pFET는 Vfb의 부호를 반전한 대칭 임계전압 가정, 이동도는 nFET의 0.4배입니다. 두 독립 소자의 곡선이며 인버터 전달 특성이 아닙니다.';
+  if(target==='charge-trap')assumptions+=' 적층 절연막의 직렬 용량만 반영합니다. 트랩 전하·program/erase·보존시간은 계산하지 않습니다.';
+  return {available:true,series,points:series[0].points,xLabel:'Vgs (V)',yLabel:'Id (µA)',options:p,branches,notes,assumptions,
+   facts:[['L_eff',b.lengthNm,'nm'],['EOT',b.eot,'nm'],...branches.map((b,i)=>[branches.length>1?(i?'pFET Vth':'nFET Vth'):'Vth',b.threshold*b.polarity,'V'])]};
+ }
  function diagnostics(frame,steps,bounds){
   const rows=[],d=frame?.concentration;
   if(!frame?.polygons)return rows;
@@ -95,6 +198,6 @@
   const pass=score.components.geometry>=90&&score.measures.length>0&&score.measures.every(m=>m.pass)&&score.checks.every(c=>c.pass);
   return {status:pass?'pass':'retry',score:score.score,components:score.components,checks:score.checks,measures:score.measures,tradeoffs:score.tradeoffs,version};
  }
- const api={version,density,dopantProfile,filmProfile,coverage,mosfet,diagnostics,mission,checkMission};
+ const api={version,density,dopantProfile,filmProfile,coverage,mosfet,electricalDevices,electricalDefaults,deviceIV,diagnostics,mission,checkMission};
  if(typeof module==='object'&&module.exports)module.exports=api;else root.LearningLabModels=api;
 })(typeof window==='object'?window:globalThis);
