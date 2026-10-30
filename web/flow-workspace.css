@@ -123,3 +123,6 @@ input[type=range],input[type=checkbox]{accent-color:var(--accent)}
 .integrated-workspace .flow-disclosure{z-index:1}
 .slice-axis button[aria-pressed=true]{background:#315bd6!important;border-color:#315bd6!important;color:#fff!important}
 .library .nav-item,.flow-step strong,.frame-name{font-weight:550!important}
+
+/* Explanations live in tutorial; preserve units, warnings and result values. */
+.inline-recipe .field-help{display:none}

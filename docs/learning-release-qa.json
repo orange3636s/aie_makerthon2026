@@ -1,0 +1,65 @@
+{
+  "scope": "ProcessTrace learning analysis, concise tutorial, MOSFET demo cache",
+  "status": "local checks passed; production verification pending",
+  "demo": {
+    "flows": {
+      "reference": 23,
+      "extension": 24,
+      "barrier": 25
+    },
+    "localBrowserCandidateMs": [
+      1265,
+      1806,
+      1477
+    ],
+    "localInitialMosfetMs": 1208,
+    "cachedApiMs": [
+      373,
+      575,
+      408
+    ],
+    "timingNote": "Single local observations; excludes production network variability. Native full MOSFET computation previously measured about 23 s."
+  },
+  "executed": [
+    "npm test (all existing suites plus learning models)",
+    "npm run build",
+    "node tests/demo-cache.cjs",
+    "node tests/demo-cache-api.cjs",
+    "node tests/tutorial-demo-browser.cjs",
+    "node tests/learning-lab-browser.cjs",
+    "node tests/learning-library-browser.cjs",
+    "node tests/learning-lab-api.cjs",
+    "node tests/workspace-browser.cjs",
+    "python tests/recipe-models.py --native (earlier in this change set)"
+  ],
+  "verified": [
+    "24 target saved-result profiles and mission checks",
+    "72 candidate integrity checks in existing regression suite",
+    "missing implantation and annealing do not pass unchanged-geometry mission",
+    "MOSFET tox change changes approximate Id-Vg",
+    "all 3 MOSFET full-frame demo artifacts load without native job",
+    "changed cycles, steps, substrate or section do not reuse demo results",
+    "changed engine fingerprint disables demo reuse",
+    "cached API preserves custom step labels",
+    "invalid recipe and unknown demo ID rejected",
+    "tutorial 7 process cards and keyboard disclosure at 1440, 768, 390 px",
+    "learning dialog at 1280, 768, 390 px",
+    "AI HTML injection escaping and 429 recovery (mock responses)",
+    "API origin and input validation",
+    "one live Gemini grounded tutoring response (earlier in change set)"
+  ],
+  "fixed": [
+    "cached target change could select out-of-range frame",
+    "older reference defaults prevented server evidence matching",
+    "demo candidate HTTP route missing during first QA run",
+    "Windows/Linux text line endings could invalidate demo manifest"
+  ],
+  "limits": [
+    "Library browser test replays saved native references, not a fresh solve of all 24 recipes.",
+    "Planar NMOS square-law model only; no leakage, DIBL, quantum effects or electrical pass certification.",
+    "3D is extrusion of a 2D process cross-section.",
+    "Learning records remain local to this browser.",
+    "Demo cache removes solver wait, not transfer/render latency.",
+    "No new external AI calls in the latest cache/tutorial regression checks."
+  ]
+}

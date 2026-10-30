@@ -116,7 +116,7 @@
  async function calculate(){await ParameterPreview.cancelAll();if(working||!reference)return;const bad=RecipeState.invalid(steps,info.operations);if(bad){chosen=bad.step;renderFlow();editor();revealStep();el('rp-'+bad.key)?.focus();notify(`STEP ${bad.step} · ${bad.message}`,true);return}if(!el('r-form').reportValidity())return;busyState(true);score=null;el('r-score').hidden=true;const start=Date.now(),tick=setInterval(()=>notify(`공정 계산 · ${Math.floor((Date.now()-start)/1000)}초`),1000);
   try{const job=await request('/api/reverse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:target.id,view:sectionView,steps,substrateThickness,substrateRoughness})});let done=job.result;
    for(let i=0;!done&&i<250;i++){const j=await request('/api/jobs/'+job.job);if(j.state==='error')throw Error(j.error);if(j.state==='done'){done=j.result;break}await new Promise(r=>setTimeout(r,800))}
-   if(!done)throw Error('계산 응답이 지연되고 있습니다. 잠시 후 다시 시도하세요.');result=done;if(done.steps)steps=done.steps.map(s=>({...s,params:{...s.params}}));valid=Math.min(steps.length,result.frames.length-1,result.failure?result.failure.step-1:steps.length);chosen=Math.min(chosen,steps.length);notify(result.failure?`STEP ${result.failure.step} · ${result.failure.message}`:`계산 완료 · ${result.elapsed.toFixed(1)}초`,!!result.failure);stored();
+   if(!done)throw Error('계산 응답이 지연되고 있습니다. 잠시 후 다시 시도하세요.');result=done;if(done.steps)steps=done.steps.map(s=>({...s,params:{...s.params}}));valid=Math.min(steps.length,result.frames.length-1,result.failure?result.failure.step-1:steps.length);chosen=Math.min(chosen,steps.length);notify(result.failure?`STEP ${result.failure.step} · ${result.failure.message}`:result.cached?'저장된 계산 결과':`계산 완료 · ${result.elapsed.toFixed(1)}초`,!!result.failure);stored();
   }catch(e){notify(e.message,true)}finally{clearInterval(tick);busyState(false);refresh()}
  }
  function add(op){if(working||steps.length>=96)return;const kind=op;op=['implant','oxidation'].includes(kind)?'diffusion':kind;const o=info.operations.find(o=>o.id===op),params=RecipeState.defaults(o);if(op==='diffusion')params.method=kind==='implant'?'Ion implantation':kind==='oxidation'?'Wet oxidation':'Pre-deposition';remember();steps.push({op,params});chosen=steps.length;el('r-picker').hidden=true;invalidate(steps.length-1);editor();revealStep()}
@@ -157,14 +157,20 @@
  el('rpng').onclick=()=>el('r-current').toBlob(b=>b&&download(b,'ProcessTrace-'+target.id+'.png'));
  el('upload-target').onclick=async()=>{if(!await ready)return;if(!working&&!busy)showImage()};el('image-attach').onclick=()=>el('r-file').click();el('r-file').onchange=e=>{imageSelected(e.target.files[0]);e.target.value=''};el('r-image').onclick=()=>showImage();el('image-close').onclick=()=>{cancelImage();el('image-dialog').close()};el('image-dialog').addEventListener('cancel',cancelImage);
  const ready=Promise.all([request('/api/reverse-catalog'),request('/api/config')]).then(([a,b])=>{info=a;config=b;el('r-picker').innerHTML=['photo','etch','deposition','implant','diffusion','oxidation','cmp'].map(id=>({id,title:id==='implant'?'Ion implantation':id==='oxidation'?'Oxidation':info.operations.find(o=>o.id===id).title})).map(o=>`<button data-op="${o.id}">${o.title}</button>`).join('');el('r-picker').querySelectorAll('button').forEach(b=>b.onclick=()=>add(b.dataset.op));return true}).catch(e=>{toast('공정 설정을 불러오지 못했습니다. 새로고침해 주세요.');return false});
- function loadCandidate(candidate){
+ async function loadCandidate(candidate){
   if(working||!reference||!candidate?.steps)throw Error('계산 중에는 후보를 적용할 수 없습니다.');
   if(candidate.targetId&&candidate.targetId!==target.id)throw Error('예제가 변경되었습니다. 후보를 다시 선택하세요.');
   const restored=RecipeState.restore(candidate.steps,info.operations),bad=RecipeState.invalid(restored,info.operations);if(bad)throw Error(bad.message);
+  const candidateToken=token,targetId=target.id,originalSteps=JSON.stringify(steps),originalDepth=substrateThickness,originalRoughness=substrateRoughness;
+  let demo=null;
+  if(targetId==='mosfet'&&sectionView==='gate'&&substrateThickness===undefined&&!substrateRoughness){
+   try{const r=await request('/api/demo/mosfet/'+encodeURIComponent(candidate.id));if(r.result&&!r.result.failure&&RecipeState.equivalent(restored,r.result.steps,info.operations))demo=r.result;}catch{}
+  }
+  if(token!==candidateToken||target?.id!==targetId||working||JSON.stringify(steps)!==originalSteps||substrateThickness!==originalDepth||substrateRoughness!==originalRoughness)throw Error('화면 또는 조건이 변경되었습니다. 후보를 다시 선택하세요.');
   comparisonDrafts.set(target.id,{steps:structuredClone(steps),chosen,valid,result,substrateThickness,substrateRoughness});if(comparisonDrafts.size>2)comparisonDrafts.delete(comparisonDrafts.keys().next().value);el('r-compare').hidden=false;
   remember();ParameterPreview.cancelAll();cancelReview();steps=restored;result=null;valid=0;chosen=0;score=null;el('r-score').hidden=true;
-  const same=substrateThickness===undefined&&!substrateRoughness&&RecipeState.equivalent(steps,reference.steps,info.operations);if(same){result=reference;valid=steps.length;chosen=valid;}
-  stored();renderFlow();editor();revealStep();notify(candidate.name+(same?' 적용 · 조건을 바꿔 실험하세요.':' 적용 · 공정 계산으로 결과를 확인하세요.'));
+  const same=substrateThickness===undefined&&!substrateRoughness&&RecipeState.equivalent(steps,reference.steps,info.operations);if(demo||same){result=demo||reference;valid=steps.length;chosen=valid;}
+  stored();renderFlow();editor();revealStep();notify(candidate.name+(demo||same?' · 저장 결과':' · 계산 필요'));
  }
  el('r-compare').onclick=()=>{
   const saved=comparisonDrafts.get(target?.id);if(!saved||working)return;
@@ -174,6 +180,6 @@
   comparisonDrafts.set(target.id,currentDraft);score=null;el('r-score').hidden=true;
   stored();renderFlow();editor();revealStep();notify('이전 설계로 전환했습니다. 다시 누르면 비교 설계로 돌아갑니다.');
  };
- window.reverseLab={recipe(){return steps[chosen-1]||null},loadCandidate,redraw:refresh,get active(){return active},get busy(){return working},select:enter,save(){download(new Blob([JSON.stringify({version:3,target:target.id,view:sectionView,steps,substrateThickness,substrateRoughness,score},null,2)],{type:'application/json'}),'ProcessTrace-recipe-'+target.id+'.json')}};
+ window.reverseLab={context(){return {id:target?.id,title:target?.title,frame:currentFrame(),previous:result?.frames[Math.max(0,Math.min(chosen,valid)-1)],index:Math.min(chosen,valid),result,reference,steps:structuredClone(steps),pending:working||chosen>valid||valid<steps.length,view:sectionView,substrateThickness,substrateRoughness,bounds:result?.bounds||reference?.bounds}},recipe(){return steps[chosen-1]||null},loadCandidate,redraw:refresh,get active(){return active},get busy(){return working},select:enter,save(){download(new Blob([JSON.stringify({version:3,target:target.id,view:sectionView,steps,substrateThickness,substrateRoughness,score},null,2)],{type:'application/json'}),'ProcessTrace-recipe-'+target.id+'.json')}};
  new ResizeObserver(refresh).observe(el('reverse-lab'));
 })();

@@ -1,0 +1,1039 @@
+{
+  "version": 1,
+  "modelHash": "1aaa1b6f85c2b7e81e7ea227b7358f8c4575b27238b0c0cc500df5475b308e60",
+  "createdAt": "2026-10-30T02:56:42.745Z",
+  "entries": [
+    {
+      "id": "reference",
+      "name": "기존 교육 기준",
+      "file": "reference.json.gz",
+      "sha256": "8fdc0faf128670fd0e430b00eda05ddf09fa6d37e975bb8672f2b6a32e826244",
+      "steps": [
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "SiO2",
+            "rate": 0.08,
+            "time": 1,
+            "sticking": 0.2,
+            "exponent": 1,
+            "cycles": 25,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "PVD",
+            "material": "PolySi",
+            "rate": 0.08,
+            "time": 1.875,
+            "sticking": 1,
+            "exponent": 30,
+            "cycles": 30,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          }
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Coat",
+            "pattern": "Central",
+            "tone": "Negative",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          },
+          "label": "PR coating"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Patterning",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          },
+          "label": "Patterning"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Develop",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 150
+          },
+          "label": "Developing"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "PolySi",
+            "method": "Directional",
+            "rate": 0.1,
+            "time": 1.8,
+            "isotropic": 0,
+            "access": "Exposed",
+            "cycles": 100,
+            "epc": 0.0002
+          }
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "method": "Directional",
+            "rate": 0.001,
+            "time": 34.99999999999999,
+            "isotropic": 0,
+            "access": "Exposed",
+            "cycles": 100,
+            "epc": 0.0002
+          }
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Ion implantation",
+            "species": "P",
+            "energy": 30,
+            "dose": 10000000000000,
+            "implant_mask": "Existing",
+            "implant_width": 0.3,
+            "implant_pitch": 0.6,
+            "implant_offset": 0,
+            "temperature": 1000,
+            "time": 30,
+            "surface_concentration": 100000000000000000000,
+            "diffusion_time": 600,
+            "oxidation_time": 0.03
+          },
+          "label": "Source / drain implant · P"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Anneal",
+            "species": "P",
+            "energy": 30,
+            "dose": 10000000000000,
+            "implant_mask": "Existing",
+            "implant_width": 0.3,
+            "implant_pitch": 0.6,
+            "implant_offset": 0,
+            "temperature": 1000,
+            "time": 30,
+            "surface_concentration": 100000000000000000000,
+            "diffusion_time": 600,
+            "oxidation_time": 0.03
+          },
+          "label": "Dopant activation"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "Si3N4",
+            "rate": 0.08,
+            "time": 1,
+            "sticking": 0.2,
+            "exponent": 1,
+            "cycles": 40,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "Si3N4",
+            "method": "Directional",
+            "rate": 0.001,
+            "time": 45.00000000000001,
+            "isotropic": 0,
+            "access": "Exposed",
+            "cycles": 100,
+            "epc": 0.0002
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "CVD",
+            "material": "SiO2",
+            "rate": 0.001,
+            "time": 320,
+            "sticking": 0.15,
+            "exponent": 1,
+            "cycles": 30,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          },
+          "label": "ILD deposition"
+        },
+        {
+          "op": "cmp",
+          "params": {
+            "rate": 0.01,
+            "time": 120,
+            "slurry": "Ceria oxide"
+          },
+          "label": "ILD planarization"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "CVD",
+            "material": "SiO2",
+            "rate": 0.001,
+            "time": 100,
+            "sticking": 0.15,
+            "exponent": 1,
+            "cycles": 30,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          },
+          "label": "Contact dielectric cap"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Coat",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          },
+          "label": "PR coating"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Patterning",
+            "pattern": "Repeat",
+            "tone": "Positive",
+            "width": 0.2,
+            "pitch": 0.5,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          },
+          "label": "S/D + gate contact openings"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Develop",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 150
+          },
+          "label": "Developing"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "method": "Directional",
+            "rate": 0.001,
+            "time": 600.0000000000001,
+            "isotropic": 0,
+            "access": "Exposed",
+            "cycles": 100,
+            "epc": 0.0002
+          },
+          "label": "Contact-hole etch · ILD"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          },
+          "label": "Contact PR strip"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "CVD",
+            "material": "W",
+            "rate": 0.08,
+            "time": 6.875,
+            "sticking": 0.03,
+            "exponent": 10,
+            "cycles": 30,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          },
+          "label": "W contact fill"
+        },
+        {
+          "op": "cmp",
+          "params": {
+            "rate": 0.01,
+            "time": 120,
+            "slurry": "Silica tungsten"
+          },
+          "label": "Contact metal CMP"
+        }
+      ],
+      "params": {
+        "length": 0.3,
+        "oxide": 0.025,
+        "spacer": 0.04
+      },
+      "frames": 23
+    },
+    {
+      "id": "extension",
+      "name": "Extension → spacer → S/D",
+      "file": "extension.json.gz",
+      "sha256": "ec8ba397756bbeab8805726b3c75d15320ddb1d8f42d2a8131ede7aeb11d007a",
+      "steps": [
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "SiO2",
+            "rate": 0.08,
+            "time": 1,
+            "sticking": 0.2,
+            "exponent": 1,
+            "cycles": 25,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "PVD",
+            "material": "PolySi",
+            "rate": 0.08,
+            "time": 1.875,
+            "sticking": 1,
+            "exponent": 30,
+            "cycles": 30,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          }
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Coat",
+            "pattern": "Central",
+            "tone": "Negative",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          },
+          "label": "PR coating"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Patterning",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          },
+          "label": "Patterning"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Develop",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 150
+          },
+          "label": "Developing"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "PolySi",
+            "method": "Directional",
+            "rate": 0.1,
+            "time": 1.8,
+            "isotropic": 0,
+            "access": "Exposed",
+            "cycles": 100,
+            "epc": 0.0002
+          }
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "method": "Directional",
+            "rate": 0.001,
+            "time": 34.99999999999999,
+            "isotropic": 0,
+            "access": "Exposed",
+            "cycles": 100,
+            "epc": 0.0002
+          }
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Ion implantation",
+            "species": "P",
+            "energy": 10,
+            "dose": 2000000000000,
+            "implant_mask": "Existing",
+            "implant_width": 0.3,
+            "implant_pitch": 0.6,
+            "implant_offset": 0,
+            "temperature": 1000,
+            "time": 30,
+            "surface_concentration": 100000000000000000000,
+            "diffusion_time": 600,
+            "oxidation_time": 0.03
+          },
+          "label": "Shallow extension implant"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "Si3N4",
+            "rate": 0.08,
+            "time": 1,
+            "sticking": 0.2,
+            "exponent": 1,
+            "cycles": 40,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "Si3N4",
+            "method": "Directional",
+            "rate": 0.001,
+            "time": 45.00000000000001,
+            "isotropic": 0,
+            "access": "Exposed",
+            "cycles": 100,
+            "epc": 0.0002
+          }
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Ion implantation",
+            "species": "P",
+            "energy": 30,
+            "dose": 8000000000000,
+            "implant_mask": "Existing",
+            "implant_width": 0.3,
+            "implant_pitch": 0.6,
+            "implant_offset": 0,
+            "temperature": 1000,
+            "time": 30,
+            "surface_concentration": 100000000000000000000,
+            "diffusion_time": 600,
+            "oxidation_time": 0.03
+          },
+          "label": "Source / drain implant · P"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Anneal",
+            "species": "P",
+            "energy": 30,
+            "dose": 10000000000000,
+            "implant_mask": "Existing",
+            "implant_width": 0.3,
+            "implant_pitch": 0.6,
+            "implant_offset": 0,
+            "temperature": 1000,
+            "time": 30,
+            "surface_concentration": 100000000000000000000,
+            "diffusion_time": 600,
+            "oxidation_time": 0.03
+          },
+          "label": "Dopant activation"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "CVD",
+            "material": "SiO2",
+            "rate": 0.001,
+            "time": 320,
+            "sticking": 0.15,
+            "exponent": 1,
+            "cycles": 30,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          },
+          "label": "ILD deposition"
+        },
+        {
+          "op": "cmp",
+          "params": {
+            "rate": 0.01,
+            "time": 120,
+            "slurry": "Ceria oxide"
+          },
+          "label": "ILD planarization"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "CVD",
+            "material": "SiO2",
+            "rate": 0.001,
+            "time": 100,
+            "sticking": 0.15,
+            "exponent": 1,
+            "cycles": 30,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          },
+          "label": "Contact dielectric cap"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Coat",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          },
+          "label": "PR coating"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Patterning",
+            "pattern": "Repeat",
+            "tone": "Positive",
+            "width": 0.2,
+            "pitch": 0.5,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          },
+          "label": "S/D + gate contact openings"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Develop",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 150
+          },
+          "label": "Developing"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "method": "Directional",
+            "rate": 0.001,
+            "time": 600.0000000000001,
+            "isotropic": 0,
+            "access": "Exposed",
+            "cycles": 100,
+            "epc": 0.0002
+          },
+          "label": "Contact-hole etch · ILD"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          },
+          "label": "Contact PR strip"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "CVD",
+            "material": "W",
+            "rate": 0.08,
+            "time": 6.875,
+            "sticking": 0.03,
+            "exponent": 10,
+            "cycles": 30,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          },
+          "label": "W contact fill"
+        },
+        {
+          "op": "cmp",
+          "params": {
+            "rate": 0.01,
+            "time": 120,
+            "slurry": "Silica tungsten"
+          },
+          "label": "Contact metal CMP"
+        }
+      ],
+      "params": {
+        "length": 0.3,
+        "oxide": 0.025,
+        "spacer": 0.04
+      },
+      "frames": 24
+    },
+    {
+      "id": "barrier",
+      "name": "TiN → ALD W → CVD W",
+      "file": "barrier.json.gz",
+      "sha256": "702eeda0ac92d8d0dc2527a839a99ac4ead9f5d7cfcfbc7ac5618ebb84f2613e",
+      "steps": [
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "SiO2",
+            "rate": 0.08,
+            "time": 1,
+            "sticking": 0.2,
+            "exponent": 1,
+            "cycles": 25,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "PVD",
+            "material": "PolySi",
+            "rate": 0.08,
+            "time": 1.875,
+            "sticking": 1,
+            "exponent": 30,
+            "cycles": 30,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          }
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Coat",
+            "pattern": "Central",
+            "tone": "Negative",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          },
+          "label": "PR coating"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Patterning",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          },
+          "label": "Patterning"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Develop",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 150
+          },
+          "label": "Developing"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "PolySi",
+            "method": "Directional",
+            "rate": 0.1,
+            "time": 1.8,
+            "isotropic": 0,
+            "access": "Exposed",
+            "cycles": 100,
+            "epc": 0.0002
+          }
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "method": "Directional",
+            "rate": 0.001,
+            "time": 34.99999999999999,
+            "isotropic": 0,
+            "access": "Exposed",
+            "cycles": 100,
+            "epc": 0.0002
+          }
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Ion implantation",
+            "species": "P",
+            "energy": 30,
+            "dose": 10000000000000,
+            "implant_mask": "Existing",
+            "implant_width": 0.3,
+            "implant_pitch": 0.6,
+            "implant_offset": 0,
+            "temperature": 1000,
+            "time": 30,
+            "surface_concentration": 100000000000000000000,
+            "diffusion_time": 600,
+            "oxidation_time": 0.03
+          },
+          "label": "Source / drain implant · P"
+        },
+        {
+          "op": "diffusion",
+          "params": {
+            "method": "Anneal",
+            "species": "P",
+            "energy": 30,
+            "dose": 10000000000000,
+            "implant_mask": "Existing",
+            "implant_width": 0.3,
+            "implant_pitch": 0.6,
+            "implant_offset": 0,
+            "temperature": 1000,
+            "time": 30,
+            "surface_concentration": 100000000000000000000,
+            "diffusion_time": 600,
+            "oxidation_time": 0.03
+          },
+          "label": "Dopant activation"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "Si3N4",
+            "rate": 0.08,
+            "time": 1,
+            "sticking": 0.2,
+            "exponent": 1,
+            "cycles": 40,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          }
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "Si3N4",
+            "method": "Directional",
+            "rate": 0.001,
+            "time": 45.00000000000001,
+            "isotropic": 0,
+            "access": "Exposed",
+            "cycles": 100,
+            "epc": 0.0002
+          }
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "CVD",
+            "material": "SiO2",
+            "rate": 0.001,
+            "time": 320,
+            "sticking": 0.15,
+            "exponent": 1,
+            "cycles": 30,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          },
+          "label": "ILD deposition"
+        },
+        {
+          "op": "cmp",
+          "params": {
+            "rate": 0.01,
+            "time": 120,
+            "slurry": "Ceria oxide"
+          },
+          "label": "ILD planarization"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "CVD",
+            "material": "SiO2",
+            "rate": 0.001,
+            "time": 100,
+            "sticking": 0.15,
+            "exponent": 1,
+            "cycles": 30,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          },
+          "label": "Contact dielectric cap"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Coat",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          },
+          "label": "PR coating"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Patterning",
+            "pattern": "Repeat",
+            "tone": "Positive",
+            "width": 0.2,
+            "pitch": 0.5,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          },
+          "label": "S/D + gate contact openings"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Develop",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 150
+          },
+          "label": "Developing"
+        },
+        {
+          "op": "etch",
+          "params": {
+            "material": "SiO2",
+            "method": "Directional",
+            "rate": 0.001,
+            "time": 600.0000000000001,
+            "isotropic": 0,
+            "access": "Exposed",
+            "cycles": 100,
+            "epc": 0.0002
+          },
+          "label": "Contact-hole etch · ILD"
+        },
+        {
+          "op": "photo",
+          "params": {
+            "action": "Strip",
+            "pattern": "Central",
+            "tone": "Positive",
+            "width": 0.3,
+            "pitch": 0.6,
+            "offset": 0,
+            "thickness": 0.06,
+            "develop_time": 60
+          },
+          "label": "Contact PR strip"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "TiN",
+            "rate": 0.08,
+            "time": 1,
+            "sticking": 0.2,
+            "exponent": 1,
+            "cycles": 10,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          },
+          "label": "Contact TiN barrier · ALD"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "ALD",
+            "material": "W",
+            "rate": 0.08,
+            "time": 1,
+            "sticking": 0.2,
+            "exponent": 1,
+            "cycles": 10,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          },
+          "label": "W nucleation · ALD"
+        },
+        {
+          "op": "deposition",
+          "params": {
+            "method": "CVD",
+            "material": "W",
+            "rate": 0.08,
+            "time": 6.625,
+            "sticking": 0.15,
+            "exponent": 1,
+            "cycles": 30,
+            "gpc": 0.001,
+            "pulse": 0.1,
+            "ald_sticking": 0.00005
+          },
+          "label": "W bulk fill · CVD"
+        },
+        {
+          "op": "cmp",
+          "params": {
+            "rate": 0.01,
+            "time": 120,
+            "slurry": "Silica tungsten"
+          },
+          "label": "Contact metal CMP"
+        }
+      ],
+      "params": {
+        "length": 0.3,
+        "oxide": 0.025,
+        "spacer": 0.04
+      },
+      "frames": 25
+    }
+  ]
+}
