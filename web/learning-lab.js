@@ -57,7 +57,8 @@
  function drawIV(){
   const opts=ivOptions[ctx.id]||{},r=M.deviceIV(ctx.frame,ctx.id,opts),ref=M.deviceIV(ctx.reference?.frames.at(-1),ctx.id,opts);
   const series=[...(r.series||[]).map(s=>({...s,name:'현재 · '+s.name})),...(ref.series||[]).map(s=>({...s,name:'목표 · '+s.name,dash:true}))];
-  document.getElementById('ll-iv-plot').innerHTML=r.available?`${svg(series,r.xLabel,r.yLabel)}<div class="ll-facts">${r.facts.map(([label,value,unit])=>`<span>${esc(label)} <b>${axisFmt(value)} ${esc(unit)}</b></span>`).join('')}</div>${(r.notes||[]).map(n=>`<p class="ll-notice">${esc(n)}</p>`).join('')}<details class="ll-footnote"><summary>계산 가정</summary>${esc(r.assumptions)}</details>`:`<div class="ll-empty">${esc(r.reason)}</div>`;
+  const charts=ctx.id==='cfet'&&r.available?r.series.map((s,i)=>`<h4>${esc(s.name)}</h4>${svg([{...s,name:'현재'},...(ref.series?.[i]?[{...ref.series[i],name:'목표',dash:true}]:[])],r.xLabel,r.yLabel)}`).join(''):r.available?svg(series,r.xLabel,r.yLabel):'';
+  document.getElementById('ll-iv-plot').innerHTML=r.available?`${charts}<div class="ll-facts">${r.facts.map(([label,value,unit])=>`<span>${esc(label)} <b>${axisFmt(value)} ${esc(unit)}</b></span>`).join('')}</div>${(r.notes||[]).map(n=>`<p class="ll-notice">${esc(n)}</p>`).join('')}<details class="ll-footnote"><summary>계산 가정</summary>${esc(r.assumptions)}</details>`:`<div class="ll-empty">${esc(r.reason)}</div>`;
  }
  const target=()=>catalogData.targets.find(t=>t.id===ctx.id);
  function mission(){

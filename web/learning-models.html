@@ -12,6 +12,12 @@
 <h3>FET 계산</h3><p>EOT = Σ(tᵢ × 3.9 / κᵢ), Cox = 3.9ε₀ / EOT<br>φF = (kT/q) ln(NA/ni)<br>Wd = √(4εSiφF / qNA)<br>Vth = Vfb + 2φF + qNAWd / Cox</p>
 <p>SOI에서는 Wd를 min(Wd, Si 몸체 두께)로 대체합니다. FD/PD라는 예제 이름만으로 공핍 상태를 고정하지 않습니다. 중앙 Si/절연막/게이트의 연속된 수직 구간에서 EOT를 구하며 게이트 중간 높이의 폭을 L로 사용합니다. 리세스 소자는 양쪽 Si 표면과 중앙 Si 표면의 높이 차로 채널 길이를 보정합니다.</p>
 <p>Vgs ≤ Vth: Id = 0<br>0 &lt; Vds &lt; Vgs−Vth: Id = μ Cox (W_eff/L) [(Vgs−Vth)Vds − Vds²/2]<br>Vds ≥ Vgs−Vth: Id = ½ μ Cox (W_eff/L)(Vgs−Vth)²</p>
+<h3>공정 조건 → I–V 변화</h3>
+<p>산화막·게이트 절연막 두께는 계산 단면의 EOT와 Cox에 반영합니다. 주입량·에너지·열처리를 바꾸면 계산된 순 활성 농도로 S/D 접근 저항을 다시 계산합니다.</p>
+<p>Nsheet = ∫ max(0, 극성 × Nactive(z)) dz<br>Rsh = 1 / (q μ Nsheet)<br>Rs,d = Rsh × Laccess / W_eff<br>Vgs,int = Vgs − Id Rs<br>Vds,int = Vds − Id (Rs + Rd)</p>
+<p>게이트 양옆 각각 100 nm의 Si 농도 열을 깊이 적분하고 평균합니다. Laccess = 100 nm, 접근 영역 이동도는 입력 이동도와 같다고 가정합니다. cm⁻³ 농도와 cm 깊이를 사용하며, 내부 전압과 전류가 일치할 때까지 이분법으로 계산합니다. CFET은 상부 pFET와 하부 nFET를 분리합니다. S/D 농도를 채널 배경 농도로 바꾸지 않습니다.</p>
+<p>이것은 활성 도핑과 접근 저항의 관계를 관찰하는 교육용 근사입니다. 실제 접촉 면적·전류 경로·농도 의존 이동도는 추출하지 않습니다. 단순 확산으로 총 활성 면밀도가 보존된다면 곡선 변화가 작을 수도 있습니다. PN 소자의 보호 산화막은 게이트가 아니므로 두께만 바꾸어 전류를 강제로 변경하지 않습니다.</p>
+<p>근거: <a href="https://www.nist.gov/pml/nanoscale-device-characterization-division/popular-links/hall-effect/hall-effect">NIST · 면밀도·이동도·면저항</a>, <a href="https://ngspice.sourceforge.io/docs/ngspice-45-manual.pdf">ngspice · MOS 소스/드레인 직렬 저항</a>.</p>
 <p>고정 조건은 300 K, ni = 10¹⁰ cm⁻³, VSB = 0입니다. 대표 상대 유전율은 Si 11.7, SiO₂ 3.9, Si₃N₄ 7.5, HfO₂ 20, Al₂O₃ 9, HZO 25로 가정합니다. 박막 조성·온도별 측정값은 아닙니다. 이동도·배경 농도·Vfb·유효 폭은 단면에서 추정하지 않고 명시적 입력 가정으로 둡니다.</p>
 <p>FINFET/GAA/MBCFET은 전체 게이트 둘레, 시트 수, 양자 구속을 이 단면에서 복원하지 않습니다. W_eff에 전체 유효 폭을 입력한 등가 장채널 곡선이며 BSIM-CMG가 아닙니다. CFET pFET는 nFET Vfb의 반대 부호와 전자 이동도의 0.4배를 가정하고, Vgs·Id를 음수로 표시합니다. 인버터 전달 곡선은 아닙니다.</p>
 <p>Charge Trap은 현재 형상에 존재하는 절연막만 용량에 반영합니다. Si₃N₄가 없으면 화면에 알립니다. 트랩 전하, program/erase, 보존시간은 계산하지 않습니다. 모든 FET에서 누설·DIBL·접촉저항·속도 포화·양자효과는 제외되므로 미세 소자의 실제 성능을 예측하지 못합니다.</p>

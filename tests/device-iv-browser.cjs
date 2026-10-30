@@ -10,7 +10,11 @@ const {chromium}=require('../.runtime/browser-qa/node_modules/playwright'),asser
   for(const id of ids){
    await page.evaluate(async id=>{await select(id);frame=current.frames.length-1;updateFrame();},id);
    await page.locator('#learning-lab-open').click();await page.locator('#ll-content').getByText('학습 데이터 준비 중…').waitFor({state:'hidden'});
-   await page.locator('[data-tab=device]').click();await page.locator('#ll-iv-plot .ll-chart').waitFor();
+   await page.locator('[data-tab=device]').click();await page.locator('#ll-iv-plot .ll-chart').first().waitFor();
+   if(id==='cfet'){
+    assert.equal(await page.locator('#ll-iv-plot .ll-chart').count(),2,'CFET branches use separate readable scales');
+    for(const chart of await page.locator('#ll-iv-plot .ll-chart').all())assert(await chart.locator('path').first().evaluate(e=>e.getBBox().height)>100,'each CFET branch visible');
+   }
    const paths=page.locator('#ll-iv-plot .ll-chart path');assert.equal(await paths.count(),id==='cfet'?4:2,id+' curves incl reference');
    const before=await paths.first().getAttribute('d');
    const key=id==='pn-junction'?'ideality':'vfb',value=id==='pn-junction'?'1.5':'0.5';
