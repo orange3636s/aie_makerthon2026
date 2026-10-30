@@ -126,3 +126,27 @@ input[type=range],input[type=checkbox]{accent-color:var(--accent)}
 
 /* Explanations live in tutorial; preserve units, warnings and result values. */
 .inline-recipe .field-help{display:none}
+
+/* Reverse flow uses the same row grid as the laboratory timeline. */
+.integrated-workspace #r-flow .flow-card .flow-step{display:grid;grid-template-columns:58px minmax(0,1fr);align-items:center;gap:8px;border-radius:8px;padding:12px 72px 12px 10px;min-height:56px}
+.integrated-workspace #r-flow .flow-step small{align-self:center;padding:0;white-space:nowrap;font-size:11px!important;line-height:1.4}
+.integrated-workspace #r-flow .flow-step strong{padding:0;min-width:0;line-height:1.45;display:block}
+.integrated-workspace #r-flow .flow-step.selected{box-shadow:none!important;background:#edf3ff!important}
+.integrated-workspace #r-flow .flow-disclosure{top:10px;right:2px}
+.integrated-workspace #r-flow .flow-remove{top:10px;right:36px;width:32px;height:36px}
+.integrated-workspace #r-flow .process-row:after{top:24px}
+.integrated-workspace #r-flow .process-row:first-child:before{top:28px}
+.integrated-workspace #r-flow .process-row:last-of-type:before{bottom:calc(100% - 28px)}
+.integrated-workspace #r-flow .flow-add{flex:none;min-height:40px;margin:10px 0 0 17px;align-self:stretch;font-size:22px;border-radius:8px}
+.integrated-workspace .flow-header-actions{flex-wrap:wrap;justify-content:flex-start;gap:6px}
+
+/* Numeric value and unit get separate space; no duplicate unit padding. */
+.recipe-gauge{grid-template-columns:minmax(40px,1fr) var(--value-width,126px);gap:10px}
+.recipe-gauge>.number-wrap{display:flex;align-items:center;padding:0 8px 0 0;overflow:hidden;gap:4px}
+.recipe-gauge>.number-wrap input{flex:1 1 0;width:0;min-width:0;padding:6px 7px!important;font:inherit;font-size:13px;font-variant-numeric:tabular-nums;appearance:textfield;-moz-appearance:textfield}
+.recipe-gauge input[type=number]::-webkit-inner-spin-button,.recipe-gauge input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.recipe-gauge>.number-wrap span{position:static;flex:none;margin:0!important;padding:0;white-space:nowrap;font-size:10px}
+.integrated-workspace #r-flow .flow-card.process-row .flow-remove{top:10px!important;right:36px!important}
+
+.integrated-workspace .inline-recipe .field.has-gauge{grid-column:1/-1}
+.integrated-workspace #r-flow .flow-add{width:calc(100% - 17px);max-width:calc(100% - 17px)}

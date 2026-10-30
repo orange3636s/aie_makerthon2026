@@ -62,7 +62,7 @@ assert.equal(D.designQuestion({...sample,eligible:true},report).findingId,undefi
 assert.equal(D.designQuestion(sample,{...report,ai:{suggestions:[{id:'invented',analysis:'bad',action:'bad'}]}}).findingId,undefined);
 assert.equal(D.designQuestion(sample,null).correct,'geometry','offline fallback');
 assert(reverse.includes("if(!feedback?.correct)return;"));
-assert(reverse.includes('unlockedTargets.has(target.id)'));
+assert(!reverse.includes('unlockedTargets.has(target.id)'), 'candidates accessible without quiz');
 assert(reverse.includes('candidate.targetId!==target.id'));
 assert(reverse.includes('comparisonDrafts.set(target.id,currentDraft)'));
 const studio=fs.readFileSync('web/recipe-studio.js','utf8');

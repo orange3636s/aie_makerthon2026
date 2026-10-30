@@ -33,7 +33,10 @@ for(const file of fs.readdirSync(path.join(__dirname,'../references')).filter(f=
  const polys=r.frames.at(-1).polygons.map(p=>({...p,points:E.clipPolygon(p.points,r.bounds)})).filter(p=>p.points.length>=3);
  const g=G.build(T,polys,.8,()=> '#8899aa');assert(g.children.length,file);
  const before=new T.Box3().setFromObject(g).clone();
- for(const mode of ['layer','material'])for(const gap of [.02,.12,.3]){G.explode(g,mode,gap);assert(g.children.every(m=>Number.isFinite(m.position.z)&&m.position.z>=0),file+' explosion position');}
+ for(const mode of ['layer','material'])for(const gap of [.02,.12,.3]){G.explode(g,mode,gap);assert(g.children.every(m=>Number.isFinite(m.position.z)&&m.position.z>=0),file+' explosion position');
+ const bands=new Map();for(const mesh of g.children){const d=mesh.position.z,p=mesh.userData.part,v=bands.get(d)||[Infinity,-Infinity];v[0]=Math.min(v[0],p.min+d);v[1]=Math.max(v[1],p.max+d);bands.set(d,v);}
+ const sorted=[...bands].sort((a,b)=>a[0]-b[0]);for(let i=1;i<sorted.length;i++)assert(sorted[i][1][0]>=sorted[i-1][1][1]+gap-1e-8,file+' '+mode+' overlapping exploded groups');
+ const ps=G.parts(polys),ds=G.offsets(ps,mode,gap);assert.deepEqual(ds,g.children.map(m=>m.position.z),'GPU and fallback offsets agree');}
  G.explode(g,'layer',0);assert(new T.Box3().setFromObject(g).equals(before),file+' exact restoration');
  for(const mesh of g.children){assert([...mesh.geometry.attributes.position.array].every(Number.isFinite),file);assert(volume(mesh)>1e-12,file+' missing caps or degenerate solid');mesh.geometry.dispose();mesh.material.dispose();}
  count++;
