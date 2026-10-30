@@ -63,5 +63,5 @@
    updateAll();status(result.failure?`STEP ${result.failure.step} · ${result.failure.message}`:`단계 조건 반영 · ${result.elapsed.toFixed(1)}초`,!!result.failure);
   }catch(error){if(mine===calculationGeneration)status(error.message,true)}finally{if(mine===calculationGeneration){setBusy(false);paint()}}
  };
- window.simulationEditor={get pending(){return unsolved},flow(){return draft.slice(0,at()||0)},recipe(){return draft[(at()||0)-1]||null},maskPreview(){const index=at(),row=draft[(index||0)-1];return PhotoPreview.context(row,draft.slice(0,(index||0)-1),current?.frames[frame])},reset(){source=null;paint()},result(){paint()},selectFrame(){paint();drawMain()}};
+ window.simulationEditor={chatContext(){sync();return {steps:structuredClone(draft),index:at()||0,pending:busy||unsolved,substrateThickness,substrateRoughness}},get pending(){return unsolved},flow(){return draft.slice(0,at()||0)},recipe(){return draft[(at()||0)-1]||null},maskPreview(){const index=at(),row=draft[(index||0)-1];return PhotoPreview.context(row,draft.slice(0,(index||0)-1),current?.frames[frame])},reset(){source=null;paint()},result(){paint()},selectFrame(){paint();drawMain()}};
 })();
