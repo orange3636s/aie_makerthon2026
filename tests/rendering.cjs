@@ -32,9 +32,10 @@ console.log('Nearest-surface 2.5D occlusion, shading, pattern gaps and bounds pa
 // Doping outlines must use the same clipped silicon as the visible fill.
 {
  const outlines=[];let points=[];
- const ctx={scale(){},fillRect(){},save(){},restore(){},rect(){},clip(){},fill(){},fillText(){},setLineDash(){},closePath(){},beginPath(){points=[]},moveTo(x,y){points.push([x,y])},lineTo(x,y){points.push([x,y])},stroke(){if(this.strokeStyle==='#718096')outlines.push(...points)}};
+ const ctx={scale(){},fillRect(){},drawImage(){},save(){},restore(){},rect(){},clip(){},fill(){},fillText(){},setLineDash(){},closePath(){},beginPath(){points=[]},moveTo(x,y){points.push([x,y])},lineTo(x,y){points.push([x,y])},stroke(){if(this.strokeStyle==='#718096')outlines.push(...points)}};
  const scope={PhotoPreview:require('../web/photo-preview.js'),ProcessUI:require('../web/ui-contract.js'),ProcessExtrusion:require('../web/extrusion.js'),window:{devicePixelRatio:1,ProcessExtrusion:require('../web/extrusion.js')},selected:{unit:'µm'},current:null,materialStyle:()=>({color:'#e4e8ee'}),shade:c=>c};
- vm.createContext(scope);vm.runInContext(drawSource,scope);
+ scope.document={createElement:()=>({getContext:()=>({createImageData:(w,h)=>({data:new Uint8ClampedArray(w*h*4)}),putImageData(){}})})};
+ vm.createContext(scope);vm.runInContext(fs.readFileSync('web/dopant-view.js','utf8'),scope);scope.DopantView=scope.window.DopantView;vm.runInContext(drawSource,scope);
  const canvas={getBoundingClientRect:()=>({width:1000,height:500}),getContext:()=>ctx};
  scope.draw(canvas,{polygons:[rect(10,-.8,-4,.8,0)],concentration:{fields:{net_total:[]},mask:[]}},[-.8,.8,-.5,.5],{doping:true,dopingField:'net_total'});
  assert(outlines.length>0);assert(outlines.every(([,y])=>y<=458.001&&y>=25),'silicon outline cannot extend below the visible substrate');

@@ -13,7 +13,8 @@ const solid=G.build(T,data.polygons,.8,()=> '#8899aa');
 assert(Math.abs(solid.children.reduce((s,m)=>s+volume(m),0)-.928)<1e-7,'closed extrusion volume includes both end caps and floor');
 const ring=G.build(T,[rect(-1,-1,1,1),rect(-.5,-.5,.5,.5)],.8,()=> '#8899aa');
 assert(Math.abs(volume(ring.children[0])-2.4)<1e-6,'real cavity remains a hole; do not fill physical air');
-for(const mesh of solid.children){assert.equal(mesh.material.opacity,1);assert.equal(mesh.material.transparent,false);assert(mesh.material.depthWrite);}
+for(const mesh of solid.children){assert.equal(mesh.material.opacity,1);assert.equal(mesh.material.transparent,false);assert(mesh.material.depthWrite);assert(mesh.castShadow&&mesh.receiveShadow);assert(mesh.children.some(c=>c.userData.surfaceOutline));assert([...mesh.geometry.attributes.normal.array].every(Number.isFinite));}
+assert(G.finish(70).metalness>G.finish(30).metalness,'metal finish differs from dielectric without changing material color');
 const snapshot=JSON.stringify(data),originalBox=new T.Box3().setFromObject(solid).clone();
 G.explode(solid,'layer',.12);
 assert.equal(solid.children[0].position.z,0,'substrate remains anchored');

@@ -164,7 +164,7 @@
   const restored=RecipeState.restore(candidate.steps,info.operations),bad=RecipeState.invalid(restored,info.operations);if(bad)throw Error(bad.message);
   const candidateToken=token,targetId=target.id,originalSteps=JSON.stringify(steps),originalDepth=substrateThickness,originalRoughness=substrateRoughness;
   let demo=null;
-  if(targetId==='mosfet'&&sectionView==='gate'&&substrateThickness===undefined&&!substrateRoughness){
+  if(candidate.id&&targetId==='mosfet'&&sectionView==='gate'&&substrateThickness===undefined&&!substrateRoughness){
    try{const r=await request('/api/demo/mosfet/'+encodeURIComponent(candidate.id));if(r.result&&!r.result.failure&&RecipeState.equivalent(restored,r.result.steps,info.operations))demo=r.result;}catch{}
   }
   if(token!==candidateToken||target?.id!==targetId||working||JSON.stringify(steps)!==originalSteps||substrateThickness!==originalDepth||substrateRoughness!==originalRoughness)throw Error('화면 또는 조건이 변경되었습니다. 후보를 다시 선택하세요.');

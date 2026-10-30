@@ -15,7 +15,7 @@
  function get(id){return states.get(id)}
  function mount(canvas,redraw){
   let s=states.get(canvas.id);if(s){s.redraw=redraw;return s;}
-  s={id:canvas.id,axis:'Y',fraction:.5,depth:.8,view:'2d',yaw:-.55,pitch:.35,zoom:1,panX:0,panY:0,exploded:false,explodeMode:'layer',explodeGap:.12,redraw};states.set(canvas.id,s);
+  s={id:canvas.id,axis:'Y',fraction:.5,depth:.8,view:'2d',yaw:-.48,pitch:.46,zoom:1,panX:0,panY:0,exploded:false,explodeMode:'layer',explodeGap:.12,redraw};states.set(canvas.id,s);
   const box=canvas.closest('.viewer,.reverse-view'),bar=document.createElement('div');bar.className='solid-controls';bar.innerHTML='<div class="slice-axis" role="group" aria-label="절단 축">'+['X','Y','Z'].map(a=>`<button type="button" data-axis="${a}" aria-pressed="${a==='Y'}">${a} 단면</button>`).join('')+'</div><input class="slice-position" type="range" min="0" max="1000" value="500" aria-label="절단 위치"><output class="slice-value">0 nm</output><label class="solid-depth">깊이 <input type="number" min="100" max="2000" step="10" value="800" aria-label="3D 확장 깊이 nm"> nm</label><button type="button" class="live-toggle" aria-pressed="false">▷ Live</button><span class="solid-model" title="계산된 2D 단면을 일정 깊이로 확장한 3D 모델">단면 기반 3D</span>';
   const explode=document.createElement('div');explode.className='explode-controls';explode.hidden=true;
   explode.innerHTML='<button type="button" class="explode-toggle" aria-pressed="false">분리 보기</button><div class="explode-options" hidden><select aria-label="분리 기준"><option value="layer">층별</option><option value="material">재료별</option></select><label>표시 간격 <input type="range" min="20" max="300" step="10" value="120" aria-label="분리 간격 nm"></label><output>120 nm</output><button type="button" class="explode-reset">원래 구조</button></div>';
@@ -40,7 +40,7 @@
   canvas.addEventListener('keydown',e=>{if(s.view!=='3d')return;let used=true;if(e.key==='ArrowLeft')s.yaw-=.1;else if(e.key==='ArrowRight')s.yaw+=.1;else if(e.key==='ArrowUp')s.pitch=clamp(s.pitch-.1,-1.3,1.3);else if(e.key==='ArrowDown')s.pitch=clamp(s.pitch+.1,-1.3,1.3);else if(['+','='].includes(e.key))s.zoom=clamp(s.zoom*1.2,.4,8);else if(e.key==='-')s.zoom=clamp(s.zoom/1.2,.4,8);else if(e.key==='0')reset(s);else used=false;if(used){e.preventDefault();e.stopImmediatePropagation();s.redraw()}},{capture:true});
   return s;
  }
- function reset(s){s.yaw=-.55;s.pitch=.35;s.zoom=1;s.panX=s.panY=0;}
+ function reset(s){s.yaw=-.48;s.pitch=.46;s.zoom=1;s.panX=s.panY=0;}
  function position(s,b){return s.axis==='X'?b[0]+s.fraction*(b[1]-b[0]):s.axis==='Z'?b[2]+s.fraction*(b[3]-b[2]):(s.fraction-.5)*s.depth;}
  function minimap(canvas,s){
   if(!s.mini){const wrap=document.createElement('div');wrap.className='section-minimap';const mini=document.createElement('canvas');mini.id=canvas.id+'-minimap';mini.tabIndex=0;mini.setAttribute('role','slider');mini.setAttribute('aria-label','3D 미니맵 절단 위치');mini.setAttribute('aria-valuemin','0');mini.setAttribute('aria-valuemax','100');const label=document.createElement('div');wrap.append(mini,label);canvas.parentElement.append(wrap);s.mini={wrap,canvas:mini,label};
@@ -67,6 +67,7 @@
  }
  function render(canvas,s,style){
   if(window.SolidGPU?.render(canvas,s,style))return;
+  canvas.dataset.renderer='canvas';
   const r=canvas.getBoundingClientRect(),w=Math.max(80,r.width),h=Math.max(80,r.height),dpr=Math.min(devicePixelRatio||1,2);canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.scale(dpr,dpr);c.fillStyle='#fff';c.fillRect(0,0,w,h);
   const rawBounds=s.bounds,clipped=s.data.polygons.map(p=>({...p,points:ProcessExtrusion.clipPolygon(p.points,rawBounds)})).filter(p=>p.points.length>=3),parts=SolidGeometry.parts(clipped),offsets=SolidGeometry.offsets(parts,s.explodeMode,s.exploded?s.explodeGap:0);
   const b=[...rawBounds];b[3]=Math.max(b[3]+Math.max(0,...offsets),!s.exploded&&s.mask?s.mask.top:-Infinity);

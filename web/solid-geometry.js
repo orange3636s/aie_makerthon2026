@@ -31,14 +31,34 @@
   return parts.map(p=>shifts.get(p));
  }
  function explode(group,mode,gap){const ps=group.children.map(m=>m.userData.part),ds=offsets(ps,mode,gap);group.children.forEach((m,i)=>m.position.z=ds[i]);}
+ // Display finishes only: these do not change material IDs or process properties.
+ function finish(id){
+  if([5,70,71,72,78,79,80,202].includes(+id))return {roughness:.32,metalness:.62};
+  if([10,11,13].includes(+id))return {roughness:.5,metalness:.12};
+  if([0,1].includes(+id))return {roughness:.57,metalness:0};
+  return {roughness:.63,metalness:0};
+ }
+ function smoothSides(geometry){
+  const pos=geometry.attributes.position,n=geometry.attributes.normal,vertices=new Map();
+  for(const g of geometry.groups.filter(g=>g.materialIndex===1))for(let i=g.start;i<g.start+g.count;i++){
+   const key=[pos.getX(i),pos.getY(i),pos.getZ(i)].map(v=>v.toFixed(7)).join('|');
+   if(!vertices.has(key))vertices.set(key,[]);vertices.get(key).push({i,x:n.getX(i),y:n.getY(i),z:n.getZ(i)});
+  }
+  for(const list of vertices.values())for(const a of list){let x=0,y=0,z=0;for(const b of list)if(a.x*b.x+a.y*b.y+a.z*b.z>.707){x+=b.x;y+=b.y;z+=b.z;}const length=Math.hypot(x,y,z);if(length)n.setXYZ(a.i,x/length,y/length,z/length);}
+  n.needsUpdate=true;
+ }
  function build(THREE,polygons,depth,color){
   const group=new THREE.Group(),materials=new Map();for(const p of polygons){if(!materials.has(p.material))materials.set(p.material,[]);materials.get(p.material).push(p)}
   for(const [id,ps] of materials){const rs=rings(ps);for(const ring of rs.filter(r=>r.depth%2===0)){
    const shape=new THREE.Shape(ring.points.map(p=>new THREE.Vector2(...p)));
    for(const hole of rs.filter(r=>r.parent===ring&&r.depth%2===1))shape.holes.push(new THREE.Path(hole.points.map(p=>new THREE.Vector2(...p))));
    const geometry=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:false,steps:1,curveSegments:1});geometry.rotateX(Math.PI/2);geometry.translate(0,depth/2,0);geometry.computeVertexNormals();
-   const mesh=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color:color(id),roughness:.72,metalness:0,side:THREE.DoubleSide,transparent:false,opacity:1,depthWrite:true}));mesh.userData.materialId=id;const zs=ring.points.map(p=>p[1]);mesh.userData.part={material:id,min:Math.min(...zs),max:Math.max(...zs),center:(Math.min(...zs)+Math.max(...zs))/2};group.add(mesh);
+   smoothSides(geometry);
+   const mesh=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color:color(id),...finish(id),envMapIntensity:.7,side:THREE.DoubleSide,transparent:false,opacity:1,depthWrite:true,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1}));
+   mesh.castShadow=true;mesh.receiveShadow=true;
+   const edge=new THREE.LineSegments(new THREE.EdgesGeometry(geometry,38),new THREE.LineBasicMaterial({color:new THREE.Color(color(id)).multiplyScalar(.48),transparent:true,opacity:.3,depthWrite:false}));edge.userData.surfaceOutline=true;mesh.add(edge);
+   mesh.userData.materialId=id;const zs=ring.points.map(p=>p[1]);mesh.userData.part={material:id,min:Math.min(...zs),max:Math.max(...zs),center:(Math.min(...zs)+Math.max(...zs))/2};group.add(mesh);
   }}return group;
  }
- const api={inside,area,rings,parts,offsets,explode,build};if(typeof module==='object'&&module.exports)module.exports=api;else root.SolidGeometry=api;
+ const api={inside,area,rings,parts,offsets,explode,finish,build};if(typeof module==='object'&&module.exports)module.exports=api;else root.SolidGeometry=api;
 })(typeof window==='object'?window:globalThis);
