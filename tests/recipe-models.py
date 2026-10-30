@@ -20,6 +20,10 @@ for op,variations in [('deposition',[dict(method='PVD',material='Cu',power=1000,
   p=params(op,input_mode='Equipment',**values);q,m,_=resolve(op,p,{})
   nm=m.get('nominalThicknessNm',q['epc']*q['cycles']*1000 if q.get('method')=='ALE' else q['rate']*q['time']*1000)
   cases.append(dict(op=op,params=p,nm=nm))
+# Unified reference recipes: condition changes must agree in browser and native resolver.
+for op,values in [('deposition',dict(method='PVD',power=1100,pvd_pressure=12,argon_flow=80)),('deposition',dict(method='CVD',depo_temperature=480,cvd_pressure=2,source_flow=160)),('etch',dict(method='Directional',rf_power=700,gas_flow=90,pressure=70)),('etch',dict(method='Isotropic',etch_temperature=40))]:
+ p=params(op,**values);q,_,_=resolve(op,p,{})
+ cases.append(dict(op=op,params=p,nm=q['rate']*q['time']*1000))
 js="const fs=require('fs'),r=require('./web/recipe-response.js');const cases=JSON.parse(fs.readFileSync(0,'utf8'));for(const c of cases){const n=r.nominal(c.op,c.params).nm;if(Math.abs(n-c.nm)>1e-8)throw Error('preview/backend mismatch '+JSON.stringify(c));}console.log(cases.length+' frontend/backend nominal-response parity cases passed');"
 subprocess.run(['node','-e',js],input=json.dumps(cases),text=True,cwd=ROOT,check=True)
 print('Spin, adhesion, exposure, develop, pressure, CMP and unsupported chemistry tests passed',flush=True)

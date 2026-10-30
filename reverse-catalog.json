@@ -795,6 +795,57 @@
           }
         },
         {
+          "key": "pvd_pressure",
+          "label": "Ar pressure",
+          "default": 5,
+          "min": 1,
+          "max": 30,
+          "unit": "mTorr",
+          "step": 1,
+          "when": {
+            "input_mode": [
+              "Equipment"
+            ],
+            "method": [
+              "PVD"
+            ]
+          }
+        },
+        {
+          "key": "argon_flow",
+          "label": "Ar flow",
+          "default": 50,
+          "min": 5,
+          "max": 200,
+          "unit": "sccm",
+          "step": 5,
+          "when": {
+            "input_mode": [
+              "Equipment"
+            ],
+            "method": [
+              "PVD"
+            ]
+          }
+        },
+        {
+          "key": "cvd_pressure",
+          "label": "챔버 압력",
+          "default": 1,
+          "min": 0.1,
+          "max": 10,
+          "unit": "Torr",
+          "step": 0.1,
+          "when": {
+            "input_mode": [
+              "Equipment"
+            ],
+            "method": [
+              "CVD"
+            ]
+          }
+        },
+        {
           "key": "power",
           "label": "DC / RF power",
           "default": 500,

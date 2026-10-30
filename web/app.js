@@ -38,7 +38,7 @@ function nav(){
  document.querySelectorAll('[data-theme]').forEach(b=>b.addEventListener('click',()=>{openTheme=openTheme===b.dataset.theme?null:b.dataset.theme;nav();if(window.reverseLab?.busy)document.querySelectorAll('[data-example]').forEach(el=>el.disabled=true)}));
  document.querySelectorAll('[data-example]').forEach(b=>b.addEventListener('click',()=>select(b.dataset.example)));
 }
-async function select(id){if(window.reverseLab?.busy)return;const cancellation=cancelCalculation(),selectionGeneration=calculationGeneration;await cancellation;if(selectionGeneration!==calculationGeneration)return;if(window.reverseLab?.active)return window.reverseLab.select(id);stop();selected=catalog.find(s=>s.id===id);if(!selected)return;$('export-json').textContent='결과 저장';openTheme=ProcessUI.level(selected);current=lastResults.get(id)||null;nav();$('theme-label').textContent=ProcessUI.level(selected)+' / PROCESS FLOW';$('model-link').textContent=selected.mode==='physics'?'공정 모델':selected.mode==='effective'?'유효 속도 모델':'형상 모델';$('model-link').href='/tutorial#'+id;$('title').textContent=selected.title;$('subtitle').textContent=selected.subtitle;$('category').textContent=selected.group;$('description').textContent=selected.description;$('hint').textContent=tips[id];$('model-note').textContent=ProcessUI.displayText(selected.note);$('source').href=selected.source;$('compare').checked=false;
+async function select(id){if(window.reverseLab?.busy)return;const cancellation=cancelCalculation(),selectionGeneration=calculationGeneration;await cancellation;if(selectionGeneration!==calculationGeneration)return;if(window.reverseLab?.active)return window.reverseLab.select(id);stop();selected=catalog.find(s=>s.id===id);if(!selected)return;$('export-json').textContent='결과 저장';openTheme=ProcessUI.level(selected);current=lastResults.get(id)||null;nav();$('theme-label').textContent=ProcessUI.level(selected)+' / PROCESS FLOW';$('model-link').textContent='공정 모델';$('model-link').href='/tutorial#'+id;$('title').textContent=selected.title;$('subtitle').textContent=selected.subtitle;$('category').textContent=selected.group;$('description').textContent=selected.description;$('hint').textContent=tips[id];$('model-note').textContent=ProcessUI.displayText(selected.note);$('source').href=selected.source;$('compare').checked=false;
  history.replaceState(null,'','#'+id);$('model-badge').textContent=representation();$('view-note').textContent=viewNote();$('axis-type').textContent=id==='gds'?'MASK · X–Y':id==='finfet'?'GATE CENTER · X–Y':'X–Y';$('provenance').textContent=selected.mode==='geometry'?'◉ 공정 모델 기하 공정 · 치수 기반 형상 계산':selected.mode==='mask'?'◉ 동봉된 GDS layer 0 · 원본과 블러 결과':'◉ 재료 경계는 공정 모델의 중간 계산 결과입니다.';
  window.simulationEditor?.reset();const params=current?current.params:defaults(selected);
  $('fields').innerHTML=ProcessUI.groupControls(selected.fields,raw=>{const f=ProcessUI.displayField(raw);return f.options?`<div class="field"><label for="number-${f.key}">${ProcessUI.text(f.label)}</label><select id="number-${f.key}">${f.options.map(v=>`<option value="${v}" ${v===params[f.key]?'selected':''}>${ProcessUI.label(v)}</option>`).join('')}</select></div>`:`<div class="field"><div class="field-top"><label for="number-${f.key}">${ProcessUI.text(f.label)}</label><div class="number-wrap"><input id="number-${f.key}" type="number" min="${f.min}" max="${f.max}" step="${ProcessUI.integer(f)?1:'any'}" value="${shortNumber(ProcessUI.displayValue(raw,params[f.key]))}" required><span>${f.unit}</span></div></div><input id="range-${f.key}" aria-label="${ProcessUI.text(f.label)} 조절" type="range" min="${f.min}" max="${f.max}" step="${f.key.includes('dose')?'any':f.step}" value="${ProcessUI.displayValue(raw,params[f.key])}"><div class="range-labels"><span>${shortNumber(f.min)}</span><span>${shortNumber(f.max)}</span></div>${ProcessUI.hint(raw)?`<p class="field-help">${ProcessUI.hint(raw)}</p>`:''}</div>`});
@@ -62,15 +62,13 @@ async function run(){if(busy||!selected)return;if(!$('condition-form').reportVal
 }
 function combinedBounds(result,reference){if(!reference)return result.bounds;return [Math.min(result.bounds[0],reference.bounds[0]),Math.max(result.bounds[1],reference.bounds[1]),Math.min(result.bounds[2],reference.bounds[2]),Math.max(result.bounds[3],reference.bounds[3])]}
 function refFrame(){const ref=references.get(ProcessUI.referenceKey(selected.id,current?.params));if(!ref||!current)return null;const progress=current.frames[frame].progress;return ref.frames.reduce((best,f)=>Math.abs(f.progress-progress)<Math.abs(best.progress-progress)?f:best,ref.frames[0]);}
-function dopingFieldFor(data){const d=data?.concentration;return d?.info?.operation==='implant'||!d?.fields?.net_active?'net_total':'net_active'}
+function dopingFieldFor(data){return window.DopantView?.field(data)||'net_total'}
 function draw(canvas,data,bounds,options={}){
  const source={data,bounds,options};
  const redraw=()=>draw(canvas,source.data,source.bounds,source.options);
  const solid=window.SolidView?.prepare(canvas,data,bounds,options,redraw);
  if(solid?.solid){window.SectionViewport?.attach(canvas,()=>draw(canvas,data,bounds,options),selected?.id||'');SolidView.render(canvas,solid.solid,materialStyle);return;}
  if(solid){data=solid.data;bounds=solid.bounds;options={...options,axisLabels:solid.labels};if(solid.state.axis!=='Y'){options.maskPreview=null;if(options.reference)options.reference=SolidView.section(options.reference,source.bounds,solid.state.axis,solid.position,solid.state.depth).data;}}
- if((window.MetrologySteps&&!window.MetrologySteps.isDoping(canvas.id)))options={...options,doping:false};
- if(window.MetrologySteps?.isDoping(canvas.id))options={...options,doping:true,dopingField:window.ProcessWorkbench?.field(canvas.id)||'P_total'};
  if(options.mini&&!canvas.getClientRects().length)return;
  const rect=canvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2),w=Math.max(rect.width,80),h=Math.max(rect.height,50);
  if(options.mini&&data&&bounds){
@@ -141,12 +139,12 @@ function draw(canvas,data,bounds,options={}){
  if(options.reference){c.strokeStyle='#a85b00';c.lineWidth=1.4;c.setLineDash([5,4]);for(const poly of options.reference.polygons){c.beginPath();poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.stroke()}c.setLineDash([]);}
  if(!mini&&(!solid||solid.state.axis==='Y'))window.ProcessWorkbench?.overlay(canvas,c,px,py,bounds);
  c.restore();
- if(window.ParameterPreview?.active(canvas.id)){c.fillStyle='#087f76';c.font='bold 11px Segoe UI';c.fillText('미리보기',50,17)}
+ if(window.ParameterPreview?.active(canvas.id)){c.fillStyle='#315bd6';c.font='600 11px ProcessSans, sans-serif';c.fillText('미리보기',50,17)}
 }
 function drawMain(){
  renderSectionViews();
  const data=window.ParameterPreview?.frame('section',current?.frames[frame])||current?.frames[frame],hasDoping=!!data?.concentration,field=dopingFieldFor(data);
- $('doping-tools').hidden=!hasDoping;
+ $('doping-tools').hidden=true;
  const saved=references.get(ProcessUI.referenceKey(selected?.id,current?.params)),reference=$('compare').checked&&saved?.params?.section===current?.params?.section?saved:null;
  window.ProcessWorkbench?.update('section',{key:selected?.id+':lab',frame:data,bounds:current?.bounds,previous:current?.frames[Math.max(0,frame-1)],reference:saved?refFrame():null,index:frame,recipe:window.simulationEditor?.recipe(),flow:window.simulationEditor?.flow(),preview:!!window.ParameterPreview?.active('section'),pending:!!window.simulationEditor?.pending});
  draw($('section'),data,current?combinedBounds(current,reference):null,{maskPreview:window.simulationEditor?.maskPreview(),extrude:mode==='2.5d',reference:reference?refFrame():null,doping:$('show-doping').checked,dopingField:field});
@@ -183,3 +181,5 @@ window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(!bu
 $('library-toggle').onclick=()=>{const collapsed=document.body.classList.toggle('library-collapsed');$('library-toggle').setAttribute('aria-expanded',String(!collapsed));$('library-toggle').setAttribute('aria-label',collapsed?'예제 목록 펼치기':'예제 목록 접기');};
 
 if(window.matchMedia('(max-width:650px)').matches)$('library-toggle').click();
+
+document.fonts?.ready.then(()=>{if(current)drawMain();window.reverseLab?.redraw();});

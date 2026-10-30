@@ -7,18 +7,20 @@ const dep=operations.find(o=>o.id==='deposition'),etch=operations.find(o=>o.id==
 const p={...defaults(dep,'PVD'),method:'PVD',material:'SiO2',rate:.05,time:2};
 assert.equal(estimate(dep,p).nm,100,'µm/s converts to nm before displaying');
 assert.equal(estimate(dep,{...p,time:4}).nm,200,'time changes reference thickness');
+assert.equal(estimate(dep,{...p,power:1000}).nm,200,'power changes the unified reference response');
+assert(estimate(dep,{...p,pvd_pressure:20}).nm<100,'pressure changes transport');
 assert.equal(estimate(dep,{...p,material:'W'}).nm,100,'material identity must not invent chemical calibration');
-assert.match(estimate(dep,p).note,/재료별.*온도.*미적용/);
+assert.match(estimate(dep,p).note,/교육용 응답 모델/);
 assert.equal(estimate(dep,{...p,sticking:.1}).nm,100,'local coverage cannot be inferred from nominal growth');
 for(const value of ['',null,NaN,Infinity,-1,dep.fields.find(f=>f.key==='time').max+1])assert(estimate(dep,{...p,time:value}).invalid,'reject invalid drafts');
 const ald={...defaults(dep),method:'ALD',cycles:40,gpc:.0005};
 assert.equal(estimate(dep,ald).nm,20);
-assert.match(estimate(dep,ald).basis,/포화/);
+assert.match(estimate(dep,ald).basis,/노출 평면/);
 assert(estimate(dep,{...ald,cycles:40.5}).invalid);
 assert.equal(estimate(dep,{...ald,time:''}).nm,20,'inactive continuous-deposition fields do not corrupt ALD');
 const ep={...defaults(etch),method:'Directional',rate:.1,time:2};
 assert.equal(estimate(etch,ep).nm,200);
-assert.match(estimate(etch,ep).note,/완전 보호/);
+assert.match(estimate(etch,ep).note,/교육용 응답 모델/);
 assert.equal(estimate(etch,{...ep,method:'Selective removal',rate:'',time:''}).nm,undefined,'total removal must not claim a timed depth');
 assert.equal(estimate(operations.find(o=>o.id==='diffusion'),{}),null,'do not fabricate concentration/temperature forecasts');
 for(const target of targets)for(const row of restore(target.recipe,operations)){

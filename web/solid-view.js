@@ -9,7 +9,8 @@
   const polygons=[];for(const [material,ps] of groups(data))for(const [a,b] of intervals(ps,axis==='X'?0:1,position)){
    const points=axis==='X'?[[-depth/2,a],[depth/2,a],[depth/2,b],[-depth/2,b]]:[[a,-depth/2],[b,-depth/2],[b,depth/2],[a,depth/2]];polygons.push({material,points,closed:true});
   }
-  return {data:{...data,polygons,concentration:null,photoMask:null,metrics:{}},bounds:axis==='X'?[-depth/2,depth/2,bounds[2],bounds[3]]:[bounds[0],bounds[1],-depth/2,depth/2],labels:axis==='X'?['Y','Z']:['X','Y']};
+  const nextBounds=axis==='X'?[-depth/2,depth/2,bounds[2],bounds[3]]:[bounds[0],bounds[1],-depth/2,depth/2];
+  return {data:{...data,polygons,concentration:root.DopantView?.slice(data,nextBounds,axis,position,depth)||null,photoMask:null,exposure:null,metrics:{}},bounds:nextBounds,labels:axis==='X'?['Y','Z']:['X','Y']};
  }
  function get(id){return states.get(id)}
  function mount(canvas,redraw){
@@ -41,41 +42,61 @@
  }
  function reset(s){s.yaw=-.55;s.pitch=.35;s.zoom=1;s.panX=s.panY=0;}
  function position(s,b){return s.axis==='X'?b[0]+s.fraction*(b[1]-b[0]):s.axis==='Z'?b[2]+s.fraction*(b[3]-b[2]):(s.fraction-.5)*s.depth;}
- function prepare(canvas,data,bounds,options,redraw){if(options.mini||!['section','r-current'].includes(canvas.id)||!data)return null;const s=mount(canvas,redraw);s.view=options.extrude?'3d':'2d';s.data=data;s.bounds=bounds;s.recipe=canvas.id==='section'?window.simulationEditor?.recipe():window.reverseLab?.recipe?.();
+ function minimap(canvas,s){
+  if(!s.mini){const wrap=document.createElement('div');wrap.className='section-minimap';const mini=document.createElement('canvas');mini.id=canvas.id+'-minimap';mini.tabIndex=0;mini.setAttribute('role','slider');mini.setAttribute('aria-label','3D 미니맵 절단 위치');mini.setAttribute('aria-valuemin','0');mini.setAttribute('aria-valuemax','100');const label=document.createElement('div');wrap.append(mini,label);canvas.parentElement.append(wrap);s.mini={wrap,canvas:mini,label};
+   let dragging=false;
+   const move=e=>{const m=s.mini.state;if(!m?.projectWorld)return;const b=s.bounds,c=[(b[0]+b[1])/2,0,(b[2]+b[3])/2],lo=[...c],hi=[...c],a=s.axis==='X'?0:s.axis==='Y'?1:2;lo[a]=a===0?b[0]:a===1?-s.depth/2:b[2];hi[a]=a===0?b[1]:a===1?s.depth/2:b[3];const u=m.projectWorld(lo),v=m.projectWorld(hi),r=mini.getBoundingClientRect(),dx=v[0]-u[0],dy=v[1]-u[1];s.fraction=clamp(((e.clientX-r.left-u[0])*dx+(e.clientY-r.top-u[1])*dy)/(dx*dx+dy*dy),0,1);s.bar.querySelector('.slice-position').value=s.fraction*1000;s.redraw();};
+   mini.onpointerdown=e=>{e.preventDefault();e.stopPropagation();dragging=true;mini.setPointerCapture(e.pointerId);move(e);};mini.onpointermove=e=>{if(dragging)move(e)};mini.onpointerup=mini.onpointercancel=()=>dragging=false;
+   mini.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key))return;e.preventDefault();s.fraction=e.key==='Home'?0:e.key==='End'?1:clamp(s.fraction+(['ArrowRight','ArrowUp'].includes(e.key)?.02:-.02),0,1);s.bar.querySelector('.slice-position').value=s.fraction*1000;s.redraw();};
+  }
+  s.mini.wrap.hidden=s.view!=='2d';if(s.mini.wrap.hidden)return;
+  const m={...s,id:s.mini.canvas.id,view:'3d',isMinimap:true,miniMapPlane:{axis:s.axis,at:position(s,s.bounds)},live:false,mask:null,mini:null,exploded:false,zoom:.95,panX:0,panY:0,yaw:-.65,pitch:.45,redraw:s.redraw};s.mini.state=m;
+  s.mini.label.textContent=s.axis+' 단면 · '+Math.round(position(s,s.bounds)*1000)+' nm';s.mini.canvas.setAttribute('aria-valuenow',String(Math.round(s.fraction*100)));s.mini.canvas.setAttribute('aria-valuetext',s.mini.label.textContent);
+  render(s.mini.canvas,m,materialStyle);
+ }
+ function prepare(canvas,data,bounds,options,redraw){if(!data&&states.get(canvas.id)?.mini)states.get(canvas.id).mini.wrap.hidden=true;if(options.mini||!['section','r-current'].includes(canvas.id)||!data)return null;const s=mount(canvas,redraw);s.view=options.extrude?'3d':'2d';s.data=data;s.bounds=bounds;s.recipe=canvas.id==='section'?window.simulationEditor?.recipe():window.reverseLab?.recipe?.();
+  s.doping=options.doping!==false;
+  s.mask=PhotoPreview.build(options.maskPreview||data.photoMask||data.exposure,bounds,data);
   for(const node of s.bar.querySelectorAll('.slice-axis,.slice-position,.slice-value'))node.hidden=s.view==='3d';
   s.bar.querySelector('.explode-controls').hidden=s.view!=='3d';
   const liveButton=s.bar.querySelector('.live-toggle');liveButton.disabled=s.view==='3d'&&s.exploded;
   if(liveButton.disabled&&s.live){s.live=false;cancelAnimationFrame(s.raf);liveButton.setAttribute('aria-pressed','false');liveButton.textContent='▷ Live';}
   const pos=position(s,bounds);s.bar.querySelector('output').textContent=Math.round(pos*1000)+' nm';s.bar.querySelector('.slice-position').disabled=false;s.bar.querySelector('.solid-depth').hidden=s.view!=='3d';s.bar.querySelector('.solid-model').hidden=s.view!=='3d';canvas.title=s.view==='3d'?'드래그: 회전 · Shift+드래그: 이동 · 휠: 확대/축소 · 0: 맞춤':'드래그: 이동 · 휠: 확대/축소';
+  minimap(canvas,s);
   if(s.view==='3d')return {solid:s};return {...section(data,bounds,s.axis,pos,s.depth),state:s,position:pos};
  }
  function render(canvas,s,style){
   if(window.SolidGPU?.render(canvas,s,style))return;
   const r=canvas.getBoundingClientRect(),w=Math.max(80,r.width),h=Math.max(80,r.height),dpr=Math.min(devicePixelRatio||1,2);canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.scale(dpr,dpr);c.fillStyle='#fff';c.fillRect(0,0,w,h);
   const rawBounds=s.bounds,clipped=s.data.polygons.map(p=>({...p,points:ProcessExtrusion.clipPolygon(p.points,rawBounds)})).filter(p=>p.points.length>=3),parts=SolidGeometry.parts(clipped),offsets=SolidGeometry.offsets(parts,s.explodeMode,s.exploded?s.explodeGap:0);
-  const b=[...rawBounds];b[3]+=Math.max(0,...offsets);
-  const cx=(b[0]+b[1])/2,cz=(b[2]+b[3])/2,scale=s.zoom*Math.min((w-100)/Math.hypot(b[1]-b[0],s.depth),(h-85)/Math.hypot(b[3]-b[2],s.depth));
+  const b=[...rawBounds];b[3]=Math.max(b[3]+Math.max(0,...offsets),!s.exploded&&s.mask?s.mask.top:-Infinity);
+  const cx=(b[0]+b[1])/2,cz=(b[2]+b[3])/2,scale=s.zoom*Math.min((w-(s.isMinimap?20:100))/Math.hypot(b[1]-b[0],s.depth),(h-(s.isMinimap?20:85))/Math.hypot(b[3]-b[2],s.depth));
   const transform=([x,y,z])=>{x-=cx;z-=cz;const a=x*Math.cos(s.yaw)-y*Math.sin(s.yaw),d=x*Math.sin(s.yaw)+y*Math.cos(s.yaw);return [w/2+a*scale+s.panX,h/2-(z*Math.cos(s.pitch)-d*Math.sin(s.pitch))*scale+s.panY,d*Math.cos(s.pitch)+z*Math.sin(s.pitch)]};
-  s.project=transform;
+  s.project=transform;s.projectWorld=transform;
   const faces=[];
   for(let partIndex=0;partIndex<parts.length;partIndex++){
    const id=parts[partIndex].material,polys=parts[partIndex].polygons.map(p=>({...p,points:p.points.map(([x,z])=>[x,z+offsets[partIndex]])}));
-   for(const y of [-s.depth/2,s.depth/2]){const paths=polys.map(p=>p.points.map(([x,z])=>transform([x,y,z])));faces.push({id,paths,z:paths.flat().reduce((sum,p)=>sum+p[2],0)/paths.flat().length,light:y<0?1:.8});}
+   for(const y of [-s.depth/2,s.depth/2]){const paths=polys.map(p=>p.points.map(([x,z])=>transform([x,y,z])));faces.push({id,paths,z:paths.flat().reduce((sum,p)=>sum+p[2],0)/paths.flat().length,light:y<0?1:.8,cap:y,offset:offsets[partIndex]});}
    for(const p of polys)for(let i=0;i<p.points.length;i++){const a=p.points[i],q=p.points[(i+1)%p.points.length];if(Math.hypot(a[0]-q[0],a[1]-q[1])<1e-7)continue;const pts=[transform([a[0],-s.depth/2,a[1]]),transform([q[0],-s.depth/2,q[1]]),transform([q[0],s.depth/2,q[1]]),transform([a[0],s.depth/2,a[1]])];faces.push({id,paths:[pts],z:pts.reduce((v,p)=>v+p[2],0)/4,light:.85});}
   }
-  faces.sort((a,b)=>b.z-a.z);for(const f of faces){c.beginPath();for(const ps of f.paths){ps.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath()}const hex=style(f.id).color;c.fillStyle=shadeColor(hex,f.light);c.fill('evenodd');c.strokeStyle=shadeColor(hex,.78);c.lineWidth=.35;c.stroke();}
+  if(s.mask&&!s.exploded)for(const [a,e] of s.mask.solid){const m=s.mask;for(const y of [-s.depth/2,s.depth/2]){const ps=[[a,y,m.y],[e,y,m.y],[e,y,m.y+m.t],[a,y,m.y+m.t]].map(transform);faces.push({id:-1,paths:[ps],z:ps.reduce((v,p)=>v+p[2],0)/4,light:1});}for(const z of [m.y,m.y+m.t]){const ps=[[a,-s.depth/2,z],[e,-s.depth/2,z],[e,s.depth/2,z],[a,s.depth/2,z]].map(transform);faces.push({id:-1,paths:[ps],z:ps.reduce((v,p)=>v+p[2],0)/4,light:.85});}}
+  faces.sort((a,b)=>b.z-a.z);for(const f of faces){c.beginPath();for(const ps of f.paths){ps.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath()}const hex=f.id===-1?'#959DA9':style(f.id).color;c.fillStyle=shadeColor(hex,f.light);c.fill('evenodd');
+   if(s.doping&&s.data.concentration&&[10,13].includes(f.id)&&f.cap!==undefined){const tex=DopantView.texture(s.data,rawBounds,hex),a=transform([rawBounds[0],f.cap,rawBounds[3]+f.offset]),e=transform([rawBounds[1],f.cap,rawBounds[3]+f.offset]),d=transform([rawBounds[0],f.cap,rawBounds[2]+f.offset]);c.save();c.clip('evenodd');c.transform((e[0]-a[0])/tex.width,(e[1]-a[1])/tex.width,(d[0]-a[0])/tex.height,(d[1]-a[1])/tex.height,a[0],a[1]);c.drawImage(tex,0,0);c.restore();}
+   c.strokeStyle=shadeColor(hex,.78);c.lineWidth=.35;c.stroke();}
+  if(s.mask?.arrows&&!s.exploded)for(const [a,e] of s.mask.open)for(const f of [.25,.5,.75]){const x=a+(e-a)*f,u=transform([x,0,s.mask.top]),v=transform([x,0,s.mask.surface+.008]);c.strokeStyle=s.mask.species==='B'?'#c2185b':s.mask.species?'#1255cd':'#c99b35';c.beginPath();c.moveTo(u[0],u[1]);c.lineTo(v[0],v[1]);c.lineTo(v[0]-3,v[1]-6);c.moveTo(v[0],v[1]);c.lineTo(v[0]+3,v[1]-6);c.stroke();}
+  if(s.miniMapPlane){const {axis,at}=s.miniMapPlane,a=axis==='X'?0:axis==='Y'?1:2,others=[0,1,2].filter(i=>i!==a),ranges=[[b[0],b[1]],[-s.depth/2,s.depth/2],[b[2],b[3]]];c.beginPath();for(const [n,[j,k]] of [[0,0],[1,0],[1,1],[0,1]].entries()){const p=[0,0,0];p[a]=at;p[others[0]]=ranges[others[0]][j];p[others[1]]=ranges[others[1]][k];const q=transform(p);n?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]);}c.closePath();c.fillStyle='#e19c364d';c.fill();c.strokeStyle='#b46b15';c.stroke();}
   c.font='12px ProcessSans, sans-serif';
   for(const [name,v,color] of [['X',[.15,0,0],'#c55c44'],['Y',[0,.15,0],'#157f77'],['Z',[0,0,.15],'#536eb1']]){const o=transform([cx,0,cz]),e=transform([cx+v[0],v[1],cz+v[2]]);c.strokeStyle=c.fillStyle=color;c.beginPath();c.moveTo(w-70,h-55);c.lineTo(w-70+(e[0]-o[0])*.7,h-55+(e[1]-o[1])*.7);c.stroke();c.fillText(name,w-70+(e[0]-o[0])*.8,h-55+(e[1]-o[1])*.8);}
   if(s.live&&!s.exploded)particles(c,s,w,h,(x,z)=>transform([x,0,z]));
  }
  function shadeColor(hex,f){return '#'+hex.slice(1).match(/../g).map(x=>Math.round(parseInt(x,16)*f).toString(16).padStart(2,'0')).join('');}
  function particles(c,s,w,h,project){
-  const row=s.recipe,p=row?.params||{},b=s.bounds;if(!row)return;const t=(performance.now()-s.start)/1000,dep=row.op==='deposition',etch=row.op==='etch',impl=row.op==='diffusion'&&p.method==='Ion implantation';
-  if(!dep&&!etch&&!impl){c.fillStyle='#476771';c.font='11px ProcessSans';c.fillText('Live · 단계 관찰',18,20);return;}
+  const row=s.recipe,p=row?.params||{},b=s.bounds;if(!row)return;const t=(performance.now()-s.start)/1000,dep=row.op==='deposition',etch=row.op==='etch',impl=row.op==='diffusion'&&p.method==='Ion implantation',light=row.op==='photo'&&['Exposure','Develop'].includes(p.action);
+  if(!dep&&!etch&&!impl&&!light){c.fillStyle='#476771';c.font='11px ProcessSans';c.fillText('Live · 단계 관찰',18,20);return;}
   const ps=s.data.polygons,topAt=x=>{let top=b[2];for(const poly of ps)for(const [a,z] of intervals([poly],0,x))top=Math.max(top,z);return top;};
-  c.fillStyle=impl?'#c05e7f':etch?'#d28c42':'#268c9b';const n=48,sticking=p.method==='PVD'?1:clamp(p.sticking||.2,.01,1);
-  for(let i=0;i<n;i++){const seed=(i*.61803398875)%1,x=b[0]+seed*(b[1]-b[0]),surface=topAt(x),phase=(t*.45+i/n)%1;let z=surface+(b[3]-surface+.15)*(1-phase),xx=x;if(dep&&p.method!=='PVD')xx+=Math.sin(phase*13+i)*.015*(1-sticking);const xy=project(xx,z);c.beginPath();c.arc(xy[0],xy[1],2.2,0,Math.PI*2);c.fill();if(phase>.9){c.globalAlpha=(1-phase)*10;c.beginPath();c.arc(xy[0],xy[1],4,0,Math.PI*2);c.stroke();c.globalAlpha=1;}}
-  c.fillStyle='#476771';c.font='11px ProcessSans';c.fillText(`Live · ${dep?(p.method==='PVD'?'타겟 원자 이동':'기상종 이동·표면 부착'):impl?'이온 주입':'식각종 이동'} · 개념 애니메이션`,18,20);
+  c.fillStyle=light?'#d3aa43':impl?'#c05e7f':etch?'#d28c42':'#268c9b';const n=48,sticking=p.method==='PVD'?1:clamp(p.sticking||.2,.01,1);
+  for(let i=0;i<n;i++){const seed=(i*.61803398875)%1,x=b[0]+seed*(b[1]-b[0]),blocked=s.mask?.solid.some(([a,e])=>x>=a&&x<=e),surface=blocked?s.mask.y+s.mask.t:topAt(x),phase=(t*.45+i/n)%1;let z=surface+(Math.max(b[3],s.mask?.top||b[3])-surface+.15)*(1-phase),xx=x;if(dep&&p.method!=='PVD')xx+=Math.sin(phase*13+i)*.015*(1-sticking);const xy=project(xx,z);c.beginPath();c.arc(xy[0],xy[1],2.2,0,Math.PI*2);c.fill();if(phase>.9){c.globalAlpha=(1-phase)*10;c.beginPath();c.arc(xy[0],xy[1],4,0,Math.PI*2);c.stroke();c.globalAlpha=1;}}
+  c.fillStyle='#476771';c.font='11px ProcessSans';c.fillText(`Live · ${dep?(p.method==='PVD'?'타겟 원자 이동':'기상종 이동·표면 부착'):impl?'이온 주입':light?'노광 · 마스크 차폐':'식각종 이동'} · 개념 애니메이션`,18,20);
  }
  function overlay(canvas,c,px,py){const s=get(canvas.id);if(s?.live&&s.view==='2d'&&s.axis==='Y')particles(c,s,canvas.clientWidth,canvas.clientHeight,(x,z)=>[px(x),py(z)]);}
  const api={intervals,section,prepare,render,get,overlay,particles};if(typeof module==='object'&&module.exports)module.exports=api;else root.SolidView=api;

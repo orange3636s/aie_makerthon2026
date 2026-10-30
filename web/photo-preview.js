@@ -33,7 +33,7 @@
    c.fillStyle='#959DA9';c.fillRect(x,y,r-x,bottom-y);
   }
   if(p.arrows){c.strokeStyle=p.species==='B'?'#CB7099':p.species==='P'?'#428AD0':'#D3AA43';c.lineWidth=1.15;for(const [a,b] of p.open)for(const ratio of [.25,.5,.75]){const x=px(a+(b-a)*ratio),end=py(p.surface+.008);c.beginPath();c.moveTo(x,py(p.y+p.t+.025));c.lineTo(x,end);c.lineTo(x-3,end-5);c.moveTo(x,end);c.lineTo(x+3,end-5);c.stroke();}}
-  if(!mini){c.font='11px Segoe UI';c.fillStyle='#64748B';c.textAlign='left';c.fillText(p.species?p.species+' implantation':p.arrows?'Mask / UV · 도식':'Mask preview',px(p.solid[0]?.[0]??p.open[0][0]),py(p.top)+8);}
+  if(!mini){c.font='11px ProcessSans, sans-serif';c.fillStyle='#64748B';c.textAlign='left';c.fillText(p.species?p.species+' implantation':p.arrows?'Mask / UV · 도식':'Mask preview',px(p.solid[0]?.[0]??p.open[0][0]),py(p.top)+8);}
  }
  const api={windows,build,context,paint};if(typeof module==='object'&&module.exports)module.exports=api;else root.PhotoPreview=api;
 })(typeof window==='object'?window:globalThis);

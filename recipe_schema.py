@@ -36,6 +36,9 @@ def extend(ops,n,choice):
       n('selectivity','타겟 / PR 선택비',10,1,100,'',1,{'input_mode':['Equipment'],'method':['Isotropic','Directional']})])
     by['etch']['fields'][0]['when']={'method':['Directional','Isotropic']}
     by['deposition']['fields'].extend([
+      n('pvd_pressure','Ar pressure',5,1,30,'mTorr',1,{'input_mode':['Equipment'],'method':['PVD']}),
+      n('argon_flow','Ar flow',50,5,200,'sccm',5,{'input_mode':['Equipment'],'method':['PVD']}),
+      n('cvd_pressure','챔버 압력',1,.1,10,'Torr',.1,{'input_mode':['Equipment'],'method':['CVD']}),
       n('power','DC / RF power',500,50,2000,'W',10,{'input_mode':['Equipment'],'method':['PVD','CVD']}),
       choice('cvd_type','CVD 방식',['Thermal CVD','PECVD'],'PECVD',{'input_mode':['Equipment'],'method':['CVD']}),
       choice('source_gas','Source 가스',['SiH4/O2','SiH4/NH3','SiH4','WF6/H2'],'SiH4/O2',{'input_mode':['Equipment'],'method':['CVD']}),

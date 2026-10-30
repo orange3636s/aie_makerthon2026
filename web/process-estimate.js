@@ -9,7 +9,7 @@
   const invalid=operation.fields.find(f=>ui.active(f,params)&&!ui.valid(f,params[f.key]));
   if(invalid)return {invalid:true,title:'계산 전 미리보기',message:ui.text(invalid.label)+' 입력 범위를 확인하세요.'};
   const material=ui.label(params.material);
-  if(params.input_mode==='Equipment'){
+  if(['PVD','CVD','ALD','Directional','Isotropic','ALE'].includes(params.method)){
    try{const value=response.nominal(operation.id,params);if(!value||!Number.isFinite(value.nm))throw Error('조건을 확인하세요.');return {title:operation.id==='etch'?'예상 식각 깊이':'예상 증착 두께',material,nm:value.nm,value:format(value.nm)+'nm',basis:'학습 모델 · 노출 평면 기준',note:'실측 보정 전 교육용 응답 모델'};}
    catch(e){return {invalid:true,title:'계산 전 미리보기',message:e.message};}
   }

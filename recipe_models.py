@@ -13,6 +13,25 @@ def arrhenius(temp,reference,energy):
 
 def resolve(op,params,state):
     p=dict(params);m={};events=[];action=p.get('action');equipment=p.get('input_mode')=='Equipment'
+    # Existing recipes retain their calibrated reference rates. Equipment
+    # conditions modulate these rates around the same nominal operating point.
+    if not equipment:
+        if op=='deposition' and p['method']=='PVD':
+            pressure=p.get('pvd_pressure',5);flow=p.get('argon_flow',50)
+            p['rate']*=p.get('power',500)/500*1.25/(1+pressure/20)*2*flow/(flow+50)
+            p['exponent']=clamp(p['exponent']*(5/pressure)**.4,0,40)
+        elif op=='deposition' and p['method']=='CVD':
+            pressure=p.get('cvd_pressure',1)
+            p['rate']*=arrhenius(p.get('depo_temperature',400),400,.3)*(p.get('source_flow',100)/100)**.4*2*pressure/(pressure+1)
+            if p.get('cvd_type','PECVD')=='PECVD':p['rate']*=(p.get('power',500)/500)**.3
+        elif op=='etch' and p['method']=='Directional':
+            p['rate']*=(p.get('rf_power',300)/300)**.5*(p.get('gas_flow',50)/50)**.3
+            p['isotropic']=clamp(p['isotropic']*(p.get('pressure',30)/30)**.5*(300/p.get('rf_power',300))**.3,0,1)
+        elif op=='etch' and p['method']=='Isotropic':
+            p['rate']*=arrhenius(p.get('etch_temperature',25),25,.25)
+        elif op=='cmp' and action=='CMP':
+            p['rate']*=p.get('down_force',3)/3*p.get('platen_speed',60)/60
+        if op in ('etch','deposition','cmp') and 'rate' in p:m['referenceRateNmS']=params['rate']*1000
     if op=='photo':
         if action=='HMDS':
             coverage=1-math.exp(-p['treatment_time']/30*arrhenius(p['bake_temperature'],110,.25))
@@ -34,6 +53,8 @@ def resolve(op,params,state):
             else:
                 state['hardness']=1+.8*(1-math.exp(-t/50*arrhenius(T,120,.4)));m['hardnessIndex']=state['hardness']
         elif action=='Exposure':
+            if p['na']>{248:.93,193:1.35,13.5:.55}[p['wavelength']]:
+                raise ValueError('선택한 광원의 NA 범위를 확인하세요.')
             resolution=.6*p['wavelength']/p['na'];dof=.5*p['wavelength']/p['na']**2
             focus_nm=p['focus']*1000;contrast=1/(1+(focus_nm/max(dof,1))**2)
             conversion=(1-math.exp(-p['exposure_dose']/35))*contrast*(1-.25*state.get('solvent',0))
@@ -54,12 +75,12 @@ def resolve(op,params,state):
         if p['method']=='Isotropic':
             table={'HF':{'SiO2':.003},'H3PO4':{'Si3N4':.002},'HNA':{'Si':.004,'PolySi':.004,'SiGe':.005}}
             base=table[p['etchant']].get(material)
-            if base is None:raise ValueError('이 Etchant의 '+material+' 속도 모델은 없습니다. 유효 속도 모드를 사용하세요.')
+            if base is None:raise ValueError('이 Etchant의 '+material+' 속도 모델은 없습니다. 재료·공정 조합을 변경하세요.')
             p['rate']=min(.05,base*arrhenius(p['etch_temperature'],25,.25));p['isotropic']=1.
         else:
             table={'CF4':{'SiO2':.003,'Si3N4':.002,'Si':.001},'Cl2':{'Si':.004,'PolySi':.004,'TiN':.002,'Al':.003},'HBr':{'Si':.002,'PolySi':.002}}
             base=table[p['gas']].get(material)
-            if base is None:raise ValueError('이 가스의 '+material+' 속도 모델은 없습니다. 유효 속도 모드를 사용하세요.')
+            if base is None:raise ValueError('이 가스의 '+material+' 속도 모델은 없습니다. 재료·공정 조합을 변경하세요.')
             p['rate']=min(.05,base*(p['rf_power']/300)**.5*(p['gas_flow']/50)**.3)
             p['isotropic']=clamp(.12*(p['pressure']/30)**.5*(300/p['rf_power'])**.3,.02,.85)
         m.update(etchRateNmS=p['rate']*1000,anisotropy=1-p['isotropic'],selectivity=p['selectivity'])
@@ -68,14 +89,17 @@ def resolve(op,params,state):
         mat=p['material']
         if p['method']=='PVD':
             rates={'Al':.004,'Cu':.003,'Ti':.002,'W':.0015,'Co':.002,'Mo':.0018,'TiN':.002,'Si':.003,'PolySi':.003,'SiO2':.002,'Si3N4':.0018}
-            if mat not in rates:raise ValueError('이 재료의 PVD 기준 모델은 없습니다. 유효 속도 모드를 사용하세요.')
-            p.update(rate=min(.05,rates[mat]*p['power']/500),sticking=.95,exponent=20.)
+            if mat not in rates:raise ValueError('이 재료의 PVD 기준 모델은 없습니다. 재료·공정 조합을 변경하세요.')
+            pressure=p.get('pvd_pressure',5);flow=p.get('argon_flow',50)
+            transport=1.25/(1+pressure/20);supply=2*flow/(flow+50)
+            p.update(rate=min(.05,rates[mat]*p['power']/500*transport*supply),sticking=.95,exponent=clamp(20*(5/pressure)**.4,2,40))
         elif p['method']=='CVD':
             allowed={'SiH4/O2':['SiO2'],'SiH4/NH3':['Si3N4'],'SiH4':['Si','PolySi'],'WF6/H2':['W']}
             if mat not in allowed[p['source_gas']]:raise ValueError('Source 가스와 증착 재료가 맞지 않습니다.')
             temperature=p['depo_temperature'];thermal=arrhenius(temperature,400,.3)
             plasma=(p['power']/300)**.3 if p['cvd_type']=='PECVD' else 1.
-            p.update(rate=clamp(.002*thermal*(p['source_flow']/100)**.4*plasma,.00001,.03),sticking=clamp(.15*thermal,.03,.8),exponent=1.)
+            pressure=p.get('cvd_pressure',1);supply=2*pressure/(pressure+1)
+            p.update(rate=clamp(.002*thermal*(p['source_flow']/100)**.4*plasma*supply,.00001,.03),sticking=clamp(.15*thermal,.03,.8),exponent=1.)
         elif p['method']=='ALD':
             recipes={'TMA/H2O':('Al2O3',.00011),'TDMAH/H2O':('HfO2',.00010),'BDEAS/O2':('SiO2',.00008),'TiCl4/NH3':('TiN',.00005)}
             material,gpc=recipes[p['precursor']]
@@ -92,7 +116,7 @@ def resolve(op,params,state):
             state[kind]=state.get(kind,1)*(1-removed);m.update(removalFraction=removed,filmLossUm=loss*p['clean_time'],contaminant=kind)
         elif equipment:
             factors={'Ceria oxide':1.2,'Silica oxide':1.,'Silica tungsten':.6,'Silica silicon':.8,'Silica polysilicon':.8,'Silica nitride':.35,'Silica SiGe':.7,'Cobalt formulated':.7,'Silica molybdenum':.6,'Silica TiN':.4,'Silica hafnia':.25}
-            if p['slurry'] not in factors:raise ValueError('선택한 Slurry의 Preston 계수가 없습니다. 유효 속도 모드를 사용하세요.')
+            if p['slurry'] not in factors:raise ValueError('선택한 Slurry의 Preston 계수가 없습니다. 재료·공정 조합을 변경하세요.')
             velocity=2*math.pi*.15*p['platen_speed']/60
             p['rate']=.0001*factors[p['slurry']]*p['down_force']*velocity
             m.update(removalRateNmS=p['rate']*1000,velocityMS=velocity,removalBudgetNm=p['rate']*p['time']*1000)

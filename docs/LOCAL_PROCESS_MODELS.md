@@ -41,3 +41,41 @@ This update is local only; no deployment or repository push is part of it.
 - Browser at `http://127.0.0.1:3024/#mosfet`: observation and reverse-design mode switching; adding and calculating equipment CVD; X/Z position changes; opaque whole 3D; rotation and zoom; Live toggle; desktop/mobile viewport transitions checked.
 - Fixed a reproduced `Maximum call stack size exceeded` on pending recipe edits: leaving a measurement now triggers only one redraw. Added `tests/metrology-transitions.cjs`.
 - No production deployment, live Gemini API verification, full 3D physical calculation, or calibrated equipment accuracy is asserted by these tests.
+
+## Unified recipe controls (2026-10-30)
+
+The workspace exposes one recipe editor. Serialized `input_mode` is retained only
+for backwards compatibility with saved equipment recipes. Existing reference
+recipes use their explicit R0/GPC and transport parameters as the nominal point.
+The editor hides the old mode selector. Reference rates remain editable under
+advanced settings; pressure/power/flow/temperature multiply that reference rate.
+No real-tool calibration is implied.
+
+PVD: R/R0 = (P/500 W) * 1.25/(1+p/20 mTorr) * 2F/(F+50 sccm).
+CVD: R/R0 = Arrhenius(T, 400 C, 0.3 eV) * (F/100)^0.4 * 2p/(p+1),
+with p in Torr; PECVD additionally uses (P/500 W)^0.3.
+Dry etch: R/R0 = (P/300)^0.5 * (F/50)^0.3; lateral fraction scales
+with (pressure/30)^0.5 * (300/P)^0.3, bounded to [0,1].
+Wet etch: reference rate times Arrhenius(T,25 C,0.25 eV).
+CMP: reference rate times pressure/3 psi and platen speed/60 RPM.
+Defaults are identity factors to preserve existing example targets.
+These transfer functions are teaching assumptions, not universal equipment laws.
+Existing equipment recipes retain the prior chemistry-specific coefficients.
+
+Photo choices: KrF 248 nm, ArF 193 nm, EUV 13.5 nm. Default NA values are
+0.60/0.85/0.33. Supported upper NA is 0.93/1.35/0.55. Patterning is an ideal
+mask operation; Exposure activates the simplified optical model. Resolution
+check is R=0.6*lambda/NA against the exposure pattern width, not the final
+multi-patterned CD. Node names are not physical feature widths. Exposure effort
+weights 2/3/6 are educational units, never actual price ratios.
+Source: https://www.asml.com/en/technology/lithography-principles/light-and-lasers
+
+3D and minimap show finite extrusion of the calculated 2D geometry. X/Z cuts
+resample concentration assuming uniform extrusion in Y. They are not a 3D
+transport solver. Implant frames display total net concentration; after active
+concentration exists, display active net concentration. Both are clipped to
+silicon-containing materials. Live particle motion is conceptual; mask openings
+and blocking are shared with the preview, while native transport computes the
+actual geometry/concentration.
+
+Typography: SUIT Variable, locally hosted; SIL OFL at web/fonts/SUIT-LICENSE.txt.

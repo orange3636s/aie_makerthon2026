@@ -50,7 +50,7 @@
    if(p.method==='ALD'){const pulse=(p.cycles||0)*(p.pulse||0);seconds=Number.isFinite(p.purge_time)?2*(p.cycles||0)*((p.pulse||0)+p.purge_time):pulse;partial=!Number.isFinite(p.purge_time);effort=3+(p.cycles||0)*.05+seconds*.1}
    else {seconds=p.time||0;effort=(p.method==='PVD'?2:3)+seconds*.25}
   }else if(s.op==='etch'){if(p.method==='ALE'){effort=2+(p.cycles||0)*.025;partial=true}else{seconds=p.time||0;effort=2+seconds*.25}}
-  else if(s.op==='photo'){effort={Coat:1,Patterning:2,Develop:1,Strip:.5}[p.action]||2;const key={Coat:'spin_time',HMDS:'treatment_time','Soft bake':'bake_time',PEB:'bake_time','Hard bake':'bake_time',Develop:'develop_time',Ashing:'ash_time'}[p.action];seconds=key?(p[key]||0):0;partial=!key||!Number.isFinite(p[key])}
+  else if(s.op==='photo'){effort={Coat:1,Patterning:2,Develop:1,Strip:.5}[p.action]||2;if(p.action==='Exposure')effort=({248:2,193:3,13.5:6}[p.wavelength]||3);const key={Coat:'spin_time',HMDS:'treatment_time','Soft bake':'bake_time',PEB:'bake_time','Hard bake':'bake_time',Develop:'develop_time',Ashing:'ash_time'}[p.action];seconds=key?(p[key]||0):0;partial=!key||!Number.isFinite(p[key])}
   else if(s.op==='cmp'){seconds=p.action==='Cleaning'?(p.clean_time||0):(p.time||0);effort=2+seconds/120}
   else if(s.op==='diffusion'){seconds=/oxidation/.test(p.method)?(p.oxidation_time||0)*3600:p.method==='Anneal'?(p.time||0):['Drive-in','Pre-deposition'].includes(p.method)?(p.diffusion_time||0):0;partial=p.method==='Ion implantation';effort=3+seconds/600}
   return {index:index+1,op:s.op,method:p.method||p.action,effort,seconds,partial,cycles:p.method==='ALD'?(p.cycles||0):0};
@@ -70,6 +70,11 @@
     checks.push({name:species+' 활성 농도 최고값',pass:expected>0&&value>=expected*.5&&value<=expected*2,detail:`목표 ${expected.toExponential(1)} · 계산값 ${value.toExponential(1)} cm⁻³`});
    }
   }
+  const opticalChecks=actualSteps.flatMap((s,i)=>{
+   const p=s.params||{};if(s.op!=='photo'||p.action!=='Exposure')return [];
+   const limit=.6*p.wavelength/p.na,cd=p.width*1000;
+   return [{kind:'photo',name:`STEP ${i+1} 노광 해상도`,pass:Number.isFinite(limit)&&cd>=limit,detail:`패턴 폭 ${cd.toFixed(1)} nm · 모델 해상도 ${limit.toFixed(1)} nm`}];
+  });checks.push(...opticalChecks);
   const eligible=core.components.geometry>=.9&&measures.every(m=>m.pass)&&checks.every(c=>c.pass);
   const referenceCost=cost(referenceSteps),actualCost=cost(actualSteps);
   const efficiency=eligible?100*(Math.min(1,referenceSteps.length/Math.max(1,actualSteps.length))+Math.min(1,referenceCost/Math.max(1,actualCost)))/2:0;
@@ -80,7 +85,8 @@
   if(!checks.every(c=>c.pass))score=Math.min(score,core.score,79);
   const hints=[];
   for(const m of measures.filter(m=>!m.pass).sort((a,b)=>b.error-a.error).slice(0,2))hints.push({id:m.id,text:`${m.kind} ${m.actual.toFixed(1)} nm / 목표 ${m.target.toFixed(1)} nm. 해당 재료의 ${m.actual>m.target?'성장량을 줄이거나 제거량을 늘리는':'성장량을 늘리거나 제거량을 줄이는'} 조건을 한 가지씩 비교하세요.`});
-  if(!checks.every(c=>c.pass))hints.push({text:'도핑종·주입 마스크·에너지와 마지막 열처리 순서를 확인하세요.'});
+  if(checks.some(c=>!c.pass&&c.kind!=='photo'))hints.push({text:'도핑종·주입 마스크·에너지와 마지막 열처리 순서를 확인하세요.'});
+  if(opticalChecks.some(c=>!c.pass))hints.push({text:'선택 광원의 모델 해상도보다 패턴이 작습니다. 선폭·NA·광원을 비교하세요.'});
   if(eligible&&actualCost>referenceCost)hints.push({text:'목표 조건은 충족했습니다. 추가 증착·식각·마스크 단계 중 결과에 필요하지 않은 단계를 비교해 보세요.'});
   if(!hints.length)hints.push({text:eligible?'현재 형상·치수와 필수 조건이 목표 범위에 있습니다.':'재료별 형상 차이와 공정 누락을 먼저 확인하세요.'});
   const referenceResources=resources(referenceSteps),actualResources=resources(actualSteps),tradeoffs=[];

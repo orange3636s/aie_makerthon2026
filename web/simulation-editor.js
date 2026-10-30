@@ -34,15 +34,16 @@
    $('obs-substrate-roughness').oninput=e=>{substrateRoughness=e.target.value===''?'':Number(e.target.value)/1000;unsolved=true;ParameterPreview.cancelAll();status('')};
    $('obs-step-run').disabled=busy;ProcessEstimate.render($('obs-step-estimate'),null);$('obs-preview').hidden=true;
    const input=$('obs-substrate-thickness');input.oninput=()=>{substrateThickness=input.value===''?'':Number(input.value)/1000;unsolved=true;ParameterPreview.cancelAll();status('')};
-   window.ProcessWorkbench?.sliders($('obs-step-fields'));return;
+   window.RecipeSliders?.sliders($('obs-step-fields'));return;
   }
   $('obs-step-fields').innerHTML=op?ProcessUI.groupControls(ProcessUI.recipeFields(op,row.params),raw=>{const f=ProcessUI.displayField(raw);return `<div class="field"><label for="obs-p-${f.key}">${esc(ProcessUI.text(f.label))}${f.unit?' · '+esc(f.unit):''}</label>${f.options?`<select id="obs-p-${f.key}">${ProcessUI.optionsFor(f,row.params[f.key]).map(v=>`<option value="${esc(v)}" ${v===row.params[f.key]?'selected':''} ${ProcessUI.legacy(v)?'disabled':''}>${esc(ProcessUI.label(v))}</option>`).join('')}</select>`:`<input id="obs-p-${f.key}" type="number" min="${f.min}" max="${f.max}" step="${ProcessUI.integer(f)?1:'any'}" value="${esc(row.params[f.key]===''?'':shortNumber(ProcessUI.displayValue(raw,row.params[f.key])))}" required>`}${ProcessUI.hint(raw)?`<p class="field-help">${esc(ProcessUI.hint(raw))}</p>`:''}</div>`},advancedOpen):'<p class="caption">공정 단계를 선택하세요.</p>';
-  window.ProcessWorkbench?.sliders($('obs-step-fields'));
+  window.RecipeSliders?.sliders($('obs-step-fields'));
   $('obs-step-run').disabled=busy||!op;
   function mountPreview(){ParameterPreview.mount($('obs-preview'),{id:'section',target:current.target||selected.id,steps:draft,index:index||0,operation:op,substrateThickness,substrateRoughness,disabled:busy,draw:()=>{drawMain();ProcessEstimate.render($('obs-step-estimate'),ParameterPreview.active('section')?null:op?ProcessEstimate.estimate(op,row.params):null)},apply:(f,v)=>{const input=$('obs-p-'+f.key);input.value=ProcessUI.displayValue(f,v);input.dispatchEvent(new Event('input',{bubbles:true}))}});}
   const preview=()=>ProcessEstimate.render($('obs-step-estimate'),op?ProcessEstimate.estimate(op,row.params):null);preview();mountPreview();
   if(op)for(const f of op.fields){const input=$('obs-p-'+f.key);if(!input)continue;input.disabled=busy;input.addEventListener(f.options?'change':'input',()=>{
    unsolved=true;row.params[f.key]=f.options?f.options.find(v=>String(v)===input.value):input.value===''?'':ProcessUI.inputValue(f,Number(input.value));
+   if(f.key==='wavelength')row.params.na=ProcessUI.lightSource(row.params.wavelength).na;
    if(f.key==='method')Object.assign(row.params,op.presets?.[row.params.method]||{});
    row.params=ProcessUI.normalizeInactive(op.fields,row.params);delete row.label;
    ParameterPreview.cancelAll();status('');if(f.options)paint();else {preview();mountPreview()}drawMain();
