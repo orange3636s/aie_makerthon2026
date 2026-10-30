@@ -1,4 +1,7 @@
 const assert=require('node:assert/strict'),M=require('../web/defect-lab-models.js'),L=require('../web/learning-lab-models.js'),S=require('../web/learning-score.js'),R=require('../references/mosfet.json'),T=require('../reverse-catalog.json').targets.find(t=>t.id==='mosfet'),cache=require('../demo-cache.cjs').create(require('node:path').resolve(__dirname,'..'));
+assert.equal(M.chooseCase(null,()=>0).id,'activation');
+assert.equal(M.chooseCase(null,()=>.999).id,'cost');
+for(const previous of M.cases)for(const value of [0,.5,.999])assert.notEqual(M.chooseCase(previous.id,()=>value).id,previous.id,'new assignment must not repeat the previous case');
 for(const c of M.cases){
  const bad=cache.candidate('defect-'+c.id);assert(bad&&!bad.failure,c.id+' complete native initial calculation');
  const verdict=M.check(c.id,{reference:R,result:bad,pending:false},T,L,S,require('../reverse-catalog.json').operations);console.log(c.id,JSON.stringify({status:verdict.status,geometry:verdict.components.geometry,cd:verdict.components.cd,cost:verdict.cost,limit:verdict.costLimit}));

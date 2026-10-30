@@ -11,7 +11,12 @@ try{
  await p.setViewportSize({width:1440,height:900});await card.locator('..').locator('.flow-disclosure').click();assert.equal(await card.locator('..').locator('.flow-disclosure').getAttribute('aria-expanded'),'false');
  const saved=await p.evaluate(()=>localStorage.getItem('simulation.recipe.mosfet'));
  for(const id of ['activation','oxide','cost']){
-  await p.locator('#defect-mode').click();await p.locator(`[data-case="${id}"]`).click();await p.waitForFunction(id=>window.DefectLab?.active===id&&reverseLab.context().result&&!reverseLab.context().pending,id,{timeout:60000});assert(await p.locator('.defect-brief').isVisible());assert(!await p.locator('.design-brief').isVisible());
+  await p.evaluate(value=>{window.qaRandom=Math.random;Math.random=()=>value},id==='cost'?.99:0);
+  await p.locator(id==='activation'?'#defect-mode':'#defect-change').click();
+  await p.evaluate(()=>{Math.random=window.qaRandom;delete window.qaRandom});
+  await p.waitForFunction(id=>window.DefectLab?.active===id&&reverseLab.context().result&&!reverseLab.context().pending,id,{timeout:60000});assert(await p.locator('.defect-brief').isVisible());assert(!await p.locator('.design-brief').isVisible());
+  assert.equal(await p.locator('[data-case]').count(),0,'no case picker');
+  await p.locator('#defect-mode').click();assert.equal(await p.evaluate(()=>DefectLab.active),id,'active mode click must preserve current exercise');
   await p.locator('#r-grade').click();assert(await p.getByText('추가 개선 필요',{exact:true}).isVisible());await p.locator('#defect-return').click();
   assert.equal(await p.evaluate(()=>localStorage.getItem('simulation.recipe.mosfet')),saved,'normal reverse draft preserved');
   if(id==='oxide'){

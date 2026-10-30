@@ -6,6 +6,10 @@
   {id:'oxide',title:'절연막 두께 편차',symptom:'게이트 아래 절연막이 목표보다 두껍습니다. 이후 공정에도 치수 차이가 이어집니다.',goal:'게이트 절연막과 최종 구조의 치수 오차를 허용 범위로 줄이세요.'},
   {id:'cost',title:'불필요한 처리 비용',symptom:'목표 형상은 충족하지만 중복 처리가 포함되어 공정 비용 지수가 증가했습니다.',goal:'형상·치수·도핑 목표를 유지하면서 비용 지수를 기준 흐름 이하로 줄이세요.'}
  ];
+ function chooseCase(previousId,random=Math.random){
+  const pool=cases.filter(c=>c.id!==previousId);
+  return pool[Math.min(pool.length-1,Math.max(0,Math.floor(random()*pool.length)))];
+ }
  function recipe(id,reference){
   let steps=structuredClone(reference.steps);
   if(id==='activation')steps=steps.filter(s=>!(s.op==='diffusion'&&['Anneal','Drive-in'].includes(s.params.method)));
@@ -26,5 +30,5 @@
   }
   return {...out,status:out.status==='pass'&&oxidePass&&(id!=='cost'||current<=limit+1e-8)?'pass':'retry',cost:current,costLimit:limit,oxide};
  }
- const api={cases,recipe,check};if(typeof module==='object'&&module.exports)module.exports=api;else root.DefectLabModels=api;
+ const api={cases,chooseCase,recipe,check};if(typeof module==='object'&&module.exports)module.exports=api;else root.DefectLabModels=api;
 })(typeof window==='object'?window:globalThis);
