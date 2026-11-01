@@ -37,8 +37,8 @@
    const key=b.join('|')+'|'+s.depth+'|'+s.doping;
    if(r.source!==s.data||r.key!==key){if(r.group){r.scene.remove(r.group);r.group.traverse(o=>{o.geometry?.dispose();o.material?.map?.dispose();if(o.material)o.material.dispose()});}
     const polys=s.data.polygons.map(p=>({...p,points:ProcessExtrusion.clipPolygon(p.points,b)})).filter(p=>p.points.length>=3);r.group=SolidGeometry.build(T,polys,s.depth,id=>style(id).color);r.scene.add(r.group);r.source=s.data;r.key=key;r.lightingKey=null;
-    if(s.doping&&s.data.concentration)for(const mesh of r.group.children){if(![10,13].includes(mesh.userData.materialId))continue;
-     const bitmap=DopantView.texture(s.data,b,style(mesh.userData.materialId).color),texture=new T.CanvasTexture(bitmap);texture.colorSpace=T.SRGBColorSpace;
+    if(s.doping&&s.data.concentration)for(const mesh of r.group.children){if(![10,11,13].includes(mesh.userData.materialId))continue;
+     const bitmap=DopantView.texture(s.data,b,style(mesh.userData.materialId).color,undefined,mesh.userData.materialId),texture=new T.CanvasTexture(bitmap);texture.colorSpace=T.SRGBColorSpace;
      const pos=mesh.geometry.attributes.position,uv=mesh.geometry.attributes.uv;for(let i=0;i<pos.count;i++)uv.setXY(i,(pos.getX(i)-b[0])/(b[1]-b[0]),(pos.getZ(i)-b[2])/(b[3]-b[2]));uv.needsUpdate=true;
      mesh.material.map=texture;mesh.material.color.set('#ffffff');mesh.material.needsUpdate=true;
     }

@@ -10,6 +10,9 @@ for(const target of targets){
  assert.equal(result.frames.length,raw.frames.length);assert.equal(result.substrateDoping.type,'p');
  for(const f of result.frames){
   count++;const c=f.concentration;assert(c&&f.substrateDoping);
+  const poly=f.polygons.some(p=>p.material===11);
+  if(poly&&target.id!=='sadp'){assert.equal(f.materialDoping[11].type,'n');assert.equal(f.materialDoping[11].concentration,1e20);assert(D.legend(f).includes('n+'));}
+  else assert(!f.materialDoping[11],'no doping in absent poly or sacrificial mandrel');
   for(const [key,values] of Object.entries(c.fields)){assert.equal(values.length,c.nx*c.ny,target.id+key);assert(values.every(Number.isFinite));assert(values.every((v,i)=>c.mask[i]||v===0),target.id+' no doping in oxide/air');}
  }
  const end=result.frames.at(-1),grade=L.assess(end,end,target.roi,target,result.steps,result.steps);assert(grade.checks.every(c=>c.pass),target.id+' self-evaluation');
@@ -25,6 +28,14 @@ for(const target of targets){
 const raw=JSON.parse(fs.readFileSync('references/mosfet.json')),p=B.apply(raw,{type:'p',concentration:1e16}),n=B.apply(raw,{type:'n',concentration:1e16}),intrinsic=B.apply(raw,{type:'intrinsic',concentration:1e16});
 assert(p.frames[0].concentration.fields.net_active.some(v=>v<0));assert(n.frames[0].concentration.fields.net_active.some(v=>v>0));assert(!Object.values(intrinsic.frames[0].concentration.fields).some(a=>a.some(v=>v)));
 const f=p.frames.at(-1),c=f.concentration,old=raw.frames.at(-1).concentration;
+const pmos=B.apply(raw,{type:'n',concentration:1e16},'pmos').frames.at(-1);
+assert.equal(pmos.materialDoping[11].type,'p');assert(D.legend(pmos).includes('p+'));
+// A material-local gate value cannot masquerade as implanted Si or a 1e20 S/D peak.
+assert(Math.max(...c.fields.P_active)<1e19);assert(Math.max(...c.fields.P_active)>1e18);
+let image;
+global.document={createElement:()=>({getContext:()=>({createImageData:(w,h)=>({data:new Uint8ClampedArray(w*h*4)}),putImageData:im=>image=im})})};
+for(const [frame,sign] of [[f,1],[pmos,-1]]){D.texture(frame,raw.bounds,'#A4B3C6',undefined,11);assert.deepEqual([...image.data.slice(0,3)],D.rgb(sign*1e20,[164,179,198]));}
+delete global.document;
 let compensated=0;for(let k=0;k<c.mask.length;k++){const y=c.origin[1]+(Math.floor(k/c.nx)+.5)*c.dx;if(c.mask[k]&&y<0&&old.fields.net_active[k]>1e17){assert(Math.abs(c.fields.net_active[k]-(old.fields.net_active[k]-1e16))<1000);compensated++;}}
 assert(compensated>0,'opposite background subtracts from net donors');
 const heavy=B.apply(raw,{type:'p',concentration:1e17});assert.notEqual(M.deviceIV(f,'mosfet').threshold,M.deviceIV(heavy.frames.at(-1),'mosfet').threshold,'wafer concentration changes IV');

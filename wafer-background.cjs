@@ -41,7 +41,12 @@ function apply(raw,setting,target=raw.target||raw.example,view=raw.view||'gate')
   for(const kind of ['total','active'])if(fields['P_'+kind]||fields['B_'+kind])fields['net_'+kind]=Array.from({length:n},(_,k)=>(fields['P_'+kind]?.[k]||0)-(fields['B_'+kind]?.[k]||0));
   const background={...d,upperBodyType:target==='cfet'&&siliconDepositions>1?'n':undefined,model:'uniform fully active wafer/prepared Si body background; linear compensation; no background redistribution'};
   // Background is not an implant or activation operation: retain native evidence.
-  return {...frame,substrateDoping:d,concentration:{...grid,mask,fields,background,info:source?.info||{operation:'wafer'}}};
+  // Conductive poly gates use an in-situ doped film approximation. Keep this
+  // material-local value out of the Si transport grid and S/D grading evidence.
+  // SADP poly is a sacrificial mandrel, not a gate electrode.
+  const gateType=/pmos|pfet/i.test(target)||view==='sd-p'?'p':'n';
+  const materialDoping=target!=='sadp'&&frame.polygons.some(p=>p.material===11)?{11:{type:gateType,concentration:1e20,role:'gate',model:'uniform fully active in-situ doped Poly-Si'}}:{};
+  return {...frame,substrateDoping:d,materialDoping,concentration:{...grid,mask,fields,background,info:source?.info||{operation:'wafer'}}};
  });
  const result={...raw,waferBackgroundVersion:1,substrateDoping:d,frames};memo.set(raw,{key,result});return result;
 }

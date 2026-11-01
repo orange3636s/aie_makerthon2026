@@ -127,9 +127,9 @@ function draw(canvas,data,bounds,options={}){
  if(options.doping&&data.concentration){
   const silicon=[...(grouped.get(10)||[]),...(grouped.get(13)||[])];
   // The same concentration raster and material base colors feed both 2D and 3D.
-  for(const id of [10,13]){const polys=grouped.get(id)||[];if(!polys.length)continue;
+  for(const id of [10,11,13]){const polys=grouped.get(id)||[];if(!polys.length)continue;
    c.save();c.beginPath();for(const poly of polys){poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.closePath()}c.clip('evenodd');
-   const texture=DopantView.texture(data,bounds,materialStyle(id).color,options.dopingField);c.imageSmoothingEnabled=true;
+   const texture=DopantView.texture(data,bounds,materialStyle(id).color,options.dopingField,id);c.imageSmoothingEnabled=true;
    c.drawImage(texture,px(bounds[0]),py(bounds[3]),(bounds[1]-bounds[0])*scale,(bounds[3]-bounds[2])*scale);c.restore();
   }
   for(const poly of silicon){c.beginPath();poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.closePath();c.strokeStyle='#718096';c.lineWidth=mini?.4:.8;c.stroke()}
