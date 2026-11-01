@@ -6,6 +6,11 @@ for(const target of catalog.targets){
  const result=lookup(input);assert(result,target.id);assert(!result.failure);assert.equal(result.frames.length,input.steps.length+1);
  const params=Object.fromEntries(require('../catalog.json').examples.find(t=>t.id===target.id).fields.map(f=>[f.key,f.default]));
  const observation=lookup({example:target.id,params,stages:{}},false);assert(observation,target.id+' observation');
+ const referenceFlow=lookup({target:target.id,steps:observation.steps});assert(referenceFlow,target.id+' imported reference flow');
+ assert.equal(referenceFlow.frames.length,observation.steps.length+1);
+ const editedReference=structuredClone(observation.steps),numeric=editedReference.find(s=>Object.values(s.params).some(v=>typeof v==='number')).params;
+ numeric[Object.keys(numeric).find(k=>typeof numeric[k]==='number')]+=.000123;
+ assert.equal(lookup({target:target.id,steps:editedReference}),null,target.id+' edited reference must recalculate');
  const changedParams={...params},param=Object.keys(params).find(k=>typeof params[k]==='number');changedParams[param]+=Math.max(.0001,Math.abs(params[param])*.001);
  assert(lookup({example:target.id,params:changedParams},false)===null,target.id+' changed observation parameters');
  assert.equal(lookup({example:target.id,params,stages:{1:2}},false),null);
