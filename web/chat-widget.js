@@ -20,7 +20,7 @@
    const steps=structuredClone(c.steps||[]),index=c.selectedIndex??c.index??0;
    if(!Number.isInteger(index)||index<0||index>steps.length)return {label:'일반 질문',key:'general',payload:{}};
    return {label:`${c.title||c.id} · ${index?'STEP '+String(index).padStart(2,'0'):'Wafer'}${c.pending?' · 미계산':''}`,key:c.id,
-    payload:{target:c.id,view:c.view||'gate',steps,selectedStep:index,pending:!!c.pending,substrateThickness:c.substrateThickness,substrateRoughness:c.substrateRoughness||0}};
+    payload:{target:c.id,view:c.view||'gate',steps,selectedStep:index,pending:!!c.pending,designSpec:c.designSpec,substrateThickness:c.substrateThickness,substrateRoughness:c.substrateRoughness||0}};
   }catch{return {label:'일반 질문',key:'general',payload:{}};}
  }
  function updateContext(){const s=snapshot();$('#chat-context-label').textContent=s.label;$('#chat-context-label').title=s.label;}

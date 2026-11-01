@@ -20,6 +20,6 @@ function build(data,verified){
   dopantPeaks:Object.fromEntries(Object.entries(fields).filter(([k])=>!k.startsWith('net')).map(([k,a])=>[k,{value:a.reduce((v,n,i)=>mask[i]&&Number.isFinite(n)?Math.max(v,n):v,0),unit:'cm^-3'}])),
   diagnostics:require('./web/learning-lab-models.js').diagnostics(f,input.steps.slice(0,data.selectedStep),matching.bounds)
  }:{status:'unavailable'};
- return {...base,target:report.target,scope:report.scope,selectedStep:data.selectedStep,selectedLabel:data.selectedStep?(input.steps[data.selectedStep-1].label||input.steps[data.selectedStep-1].op):'Wafer',pending:!!data.pending,flow:report.actualFlow,selectedEvidence};
+ return {...base,target:report.target,designSpec:report.designSpec,finalEvidence:report.numericalEvidence,scope:report.scope,selectedStep:data.selectedStep,selectedLabel:data.selectedStep?(input.steps[data.selectedStep-1].label||input.steps[data.selectedStep-1].op):'Wafer',pending:!!data.pending,flow:report.actualFlow,selectedEvidence};
 }
 module.exports={validate,build};

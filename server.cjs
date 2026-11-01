@@ -53,7 +53,9 @@ function verifiedReport(data){
  const effectiveDepth=input.substrateThickness??(input.substrateRoughness>0?Math.abs(target.bounds[2]):undefined);
  const matches=r=>r.substrateThickness===effectiveDepth&&(r.substrateRoughness||0)===(input.substrateRoughness||0)&&RecipeState.equivalent(r.steps,input.steps,reverse.operations);
  const matching=[...cache.values()].find(r=>r.target===input.target&&(r.view||'gate')===input.view&&matches(r))||demoCache.find(input,true)||(matches(reference)?reference:null);
- report.numericalEvidence=Evidence.evidence(reference,matching,target);
+ const designSpec=require('./web/learning-score.js').validateSpec(reference.frames.at(-1),target.roi,target,data.designSpec);
+ report.designSpec=designSpec;
+ report.numericalEvidence=Evidence.evidence(reference,matching,{...target,designSpec});
  return {report,input,matching,target};
 }
 async function analyze(data,ip){
@@ -66,7 +68,7 @@ async function tutor(data,ip){
  const {report,input,matching}=verifiedReport(data);
  if(!Number.isInteger(data.selectedStep)||data.selectedStep<0||data.selectedStep>input.steps.length)throw httpError(400,'선택 단계를 확인하세요.');
  const f=matching?.frames.find(f=>f.stepIndex===data.selectedStep)||matching?.frames[data.selectedStep];
- const context={question:data.question.trim(),target:report.target,selectedStep:data.selectedStep,flow:report.actualFlow,findings:report.findings,finalEvidence:report.numericalEvidence,
+ const context={question:data.question.trim(),target:report.target,designSpec:report.designSpec,selectedStep:data.selectedStep,flow:report.actualFlow,findings:report.findings,finalEvidence:report.numericalEvidence,
   selectedEvidence:f?{status:'server-verified',layers:require('./web/learning-score.js').layers(f),dopantPeaks:Object.fromEntries(Object.entries(f.concentration?.fields||{}).filter(([k])=>!k.startsWith('net')).map(([k,a])=>[k,{value:a.reduce((max,v,i)=>f.concentration.mask[i]?Math.max(max,v):max,0),unit:'cm^-3'}])),diagnostics:require('./web/learning-lab-models.js').diagnostics(f,input.steps.slice(0,data.selectedStep),matching.bounds)}:{status:'unavailable'}};
  return aiMemo(JSON.stringify([ip,'tutor',process.env.GEMINI_MODEL,context]),async()=>{consumeAI(ip,'tutor');return Gemini.tutor(context)});
 }
