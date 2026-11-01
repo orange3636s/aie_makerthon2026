@@ -96,3 +96,9 @@ button:disabled{cursor:not-allowed}
 .advanced-options{border-top:1px solid #e1e5ee;margin:8px 0 18px;min-width:0;grid-column:1/-1}.advanced-options>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;font-weight:550;color:#52607b;cursor:pointer;list-style:none;padding:13px 0}.advanced-options>summary::-webkit-details-marker{display:none}.advanced-options[open]>summary>span{transform:rotate(180deg)}.advanced-fields{padding:8px 0 0}.advanced-fields>.field:last-child{margin-bottom:14px}
 
 .doping-scale{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:8px 10px;border:1px solid #dce2ec;border-radius:8px;font-size:11px;background:#fafbfe;margin:8px 0}.doping-scale span{display:flex;align-items:center;gap:6px}.doping-scale i{width:68px;height:9px;border-radius:3px}.n-density{background:linear-gradient(90deg,#bac8e7,#1255cd)}.p-density{background:linear-gradient(90deg,#ddbed0,#c2185b)}.doping-scale small{color:#526279}
+
+/* Shared concentration scale: fixed across frames, examples and 2D/3D. */
+.dopant-legend{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;width:100%;border-top:1px solid #e5eaf3;padding-top:9px;margin-top:3px;font-size:11px;color:#566680}
+.dopant-wafer{flex-basis:100%}.dopant-wafer b{color:#243d64;font-weight:600}
+.dopant-ramp{display:flex;align-items:center;gap:7px}.dopant-ramp b{font-size:11px;font-weight:500;white-space:nowrap}.dopant-ramp i{display:block;width:72px;height:9px;border-radius:6px;border:1px solid #e2e7f0}.dopant-scale{font-size:10px;color:#738098}
+.field>small{font-size:10px;color:#738098;line-height:1.4}

@@ -59,7 +59,7 @@
  // Editable assignments use fixed measurement cuts; the example shape is illustrative.
  function specification(frame,roi,options={}){
   const cuts=dimensionPlan(frame,roi).map((m,i)=>({...m,key:`${i}:${m.id}:${m.axis}`}));
-  const peaks=['B','P','As'].map(species=>({species,value:(frame.concentration?.fields?.[species+'_active']||[]).reduce((a,b)=>Math.max(a,b),0)})).filter(p=>p.value>0);
+  const peaks=['B','P','As'].filter(s=>!frame.concentration?.background||(options.assessment?.species||frame.processEvidence?.dopedSpecies||[]).includes(s)).map(species=>({species,value:(frame.concentration?.fields?.[species+'_active']||[]).reduce((a,b)=>Math.max(a,b),0)})).filter(p=>p.value>0);
   return {version:1,targetId:options.id,dimensions:cuts.map(m=>({key:m.key,value:m.target})),peaks,tolerance:5,cuts};
  }
  function validateSpec(frame,roi,options,input){
@@ -76,6 +76,7 @@
   const cd=measures.length?measures.reduce((sum,m)=>sum+m.score,0)/measures.length:core.components.geometry*100;
   let doping=core.doping===null?null:core.doping*100;
   const checks=[];
+  if(target.substrateDoping){const expected=target.substrateDoping,got=actual.substrateDoping;checks.push({kind:'substrate',name:'기판 도핑 극성',pass:got?.type===expected.type,detail:`목표 ${expected.type}형 · 현재 ${got?.type||'미확인'}`});}
   if(doping!==null){
    if(!spec)checks.push({name:'총·활성 농도 분포',pass:core.components.total>=.9&&core.components.active>=.9,detail:'예시 분포 유사도 각각 90% 이상'});
    checks.push({name:'주입·열처리 완료',pass:core.components.process===1,detail:'필수 도핑종과 최종 열처리 이력'});

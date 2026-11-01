@@ -6,7 +6,7 @@ function setup(){
  let resolve,reject,renders=0;
  const pending=new Promise((yes,no)=>{resolve=yes;reject=no});
  const nodes=[],host={children:[],prepend(n){this.children.unshift(n)}};
- const c={reviewGeneration:1,reviewReport:null,reviewAIState:'',reviewController:null,reviewSteps:[{}],steps:[{}],working:false,score:{},target:{id:'mosfet'},reference:{},info:{operations:[]},config:{processAnalysis:true},sectionView:'gate',substrateThickness:undefined,substrateRoughness:0,designSpec:null,reviewScope:'custom',reviewComplete:true,AbortController,AbortSignal,JSON,
+ const c={reviewGeneration:1,reviewReport:null,reviewAIState:'',reviewController:null,reviewSteps:[{}],steps:[{}],working:false,score:{},target:{id:'mosfet'},reference:{},info:{operations:[]},config:{processAnalysis:true},sectionView:'gate',substrateThickness:undefined,substrateRoughness:0,substrateDoping:undefined,designSpec:null,reviewScope:'custom',reviewComplete:true,AbortController,AbortSignal,JSON,
  el:()=>host,esc:s=>String(s).replaceAll('<','&lt;'),ProcessReview:{compare:()=>({findings:[]})},RecipeStudio:{diagnose(){renders++;host.draft='student input';}},document:{createElement(){const button={};const n={innerHTML:'',textContent:'',setAttribute(){},querySelector:()=>button};nodes.push(n);return n;}},request:()=>pending};
  vm.createContext(c);vm.runInContext(fn,c);return {c,host,nodes,resolve,reject,renders:()=>renders};
 }

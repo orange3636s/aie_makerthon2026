@@ -25,7 +25,7 @@
  function policyFor(target,options){
   if(options.assessment)return options.assessment;
   // Legacy callers must not silently fall back to geometry for a doped target.
-  const species=['B','P'].filter(s=>target.concentration?.fields?.[s+'_total']);
+  const species=['B','P'].filter(s=>target.concentration?.background?target.processEvidence?.dopedSpecies?.includes(s):target.concentration?.fields?.[s+'_total']);
   return species.length?{species,requireAnneal:true,weights:options.grading==='doping'?{geometry:.2,total:.35,active:.35,process:.1}:{geometry:.5,total:.2,active:.2,process:.1}}:null;
  }
  function assessDoping(target,actual,roi,policy){
