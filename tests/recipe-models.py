@@ -15,6 +15,12 @@ for op,kw in [('etch',dict(input_mode='Equipment',method='Isotropic',material='W
  try:result(op,**kw);raise AssertionError('unsupported chemistry accepted')
  except ValueError:pass
 cases=[]
+hot=result('etch',input_mode='Equipment',method='Isotropic',material='Si3N4',etchant='H3PO4',etch_temperature=165)[0]['rate']
+cold=result('etch',input_mode='Equipment',method='Isotropic',material='Si3N4',etchant='H3PO4',etch_temperature=25)[0]['rate']
+assert abs(hot*1000*60-4.5)<1e-10 and cold<hot/100,'hot phosphoric reference temperature'
+for temperature in [25,140,165,200]:
+ p=params('etch',input_mode='Equipment',method='Isotropic',material='Si3N4',etchant='H3PO4',etch_temperature=temperature)
+ q,_,_=resolve('etch',p,{});cases.append(dict(op='etch',params=p,nm=q['rate']*q['time']*1000))
 for op,variations in [('deposition',[dict(method='PVD',material='Cu',power=1000,time=20),dict(method='CVD',material='SiO2',depo_temperature=500,source_flow=150,time=20),dict(method='CVD',material='SiO2',cvd_type='Thermal CVD',time=20),dict(method='ALD',material='Al2O3',precursor='TMA/H2O',pulse=.2,cycles=300)]),('etch',[dict(material='SiO2',gas='CF4',time=20),dict(method='Isotropic',material='SiO2',etchant='HF',etch_temperature=40,time=10),dict(method='ALE',cycles=50,epc=.0002)])]:
  for values in variations:
   p=params(op,input_mode='Equipment',**values);q,m,_=resolve(op,p,{})

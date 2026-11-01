@@ -82,10 +82,12 @@ def resolve(op,params,state):
     if equipment and op=='etch' and p['method']!='ALE':
         material=p['material']
         if p['method']=='Isotropic':
-            table={'HF':{'SiO2':.003},'H3PO4':{'Si3N4':.002},'HNA':{'Si':.004,'PolySi':.004,'SiGe':.005}}
+            table={'HF':{'SiO2':.003},'H3PO4':{'Si3N4':.000075},'HNA':{'Si':.004,'PolySi':.004,'SiGe':.005}}
             base=table[p['etchant']].get(material)
             if base is None:raise ValueError('이 Etchant의 '+material+' 속도 모델은 없습니다. 재료·공정 조합을 변경하세요.')
-            p['rate']=min(.05,base*arrhenius(p['etch_temperature'],25,.25));p['isotropic']=1.
+            # Hot phosphoric acid: illustrative 4.5 nm/min at 165 C, not room temperature.
+            reference,activation=(165,.55) if p['etchant']=='H3PO4' else (25,.25)
+            p['rate']=min(.05,base*arrhenius(p['etch_temperature'],reference,activation));p['isotropic']=1.
         else:
             table={'CF4':{'SiO2':.003,'Si3N4':.002,'Si':.001},'Cl2':{'Si':.004,'PolySi':.004,'TiN':.002,'Al':.003},'HBr':{'Si':.002,'PolySi':.002}}
             base=table[p['gas']].get(material)

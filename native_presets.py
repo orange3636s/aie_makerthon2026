@@ -1,3 +1,4 @@
+from process_timing import retime
 """Observation presets and reverse-design answers share one native recipe."""
 import copy
 from reverse_catalog import BY_TARGET,SOURCE_RECIPES,dep,ald,photo,etch,strip,remove,step
@@ -6,14 +7,14 @@ def run(spec,p):
     from reverse_engine import run as simulate
     from longitudinal_devices import IDS,recipe as longitudinal_recipe
     if spec['id'] in IDS:
-        result=simulate(dict(target=spec['id'],steps=longitudinal_recipe(spec['id'],p)))
+        result=simulate(dict(target=spec['id'],steps=retime(longitudinal_recipe(spec['id'],p))))
         result.update(params=p,mode='physics',note=spec['note'],source=spec['source'],previewFrame=len(result['frames'])-1)
         return result
     if p.get('section','게이트 단면')!='게이트 단면':
         from contact_modules import sd_section
         section=sd_section(spec['id'],'B' if p['section']=='p형 S/D·콘택' else 'P',p)
         from reverse_engine import run as section_run
-        result=section_run(dict(target=spec['id'],view='sd-p' if p['section']=='p형 S/D·콘택' else 'sd',steps=section['recipe']))
+        result=section_run(dict(target=spec['id'],view='sd-p' if p['section']=='p형 S/D·콘택' else 'sd',steps=retime(section['recipe'])))
         result.update(params=p,mode='physics',note=section['assumptions'],source=spec['source'],previewFrame=len(result['frames'])-1)
         return result
     kind=spec['id'];recipe=copy.deepcopy(SOURCE_RECIPES[kind])
@@ -32,6 +33,6 @@ def run(spec,p):
         recipe.append(photo(p['width']))
         for _ in range(n):recipe.extend([etch('Si',p['thickness']+.005),etch('SiGe',p['gap']+.01)])
         recipe.extend([strip(),dep('SiO2',.25),step('cmp'),etch('SiO2',.27),remove('SiGe'),ald('HfO2',.015),ald('TiN',.04)])
-    result=simulate(dict(target=kind,steps=recipe))
+    result=simulate(dict(target=kind,steps=retime(recipe)))
     result.update(params=p,mode='physics',note=spec['note'],source=spec['source'],previewFrame=len(result['frames'])-1)
     return result

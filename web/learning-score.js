@@ -5,13 +5,16 @@
  const clamp=v=>Math.max(0,Math.min(100,v));
  function intervals(frame,id,axis,at){
   let spans=[];const other=1-axis;
-  for(const p of frame.polygons){
-   const xs=[];for(let i=0,j=p.points.length-1;i<p.points.length;j=i++){
+  // Native hulls carry exterior rings and holes as separate contours.
+  // Apply the same material-group even/odd rule as 2D/3D rendering and IoU.
+  const groups=new Map();for(const p of frame.polygons){if(!groups.has(p.material))groups.set(p.material,[]);groups.get(p.material).push(p);}
+  for(const [material,polys] of groups){
+   const xs=[];for(const p of polys)for(let i=0,j=p.points.length-1;i<p.points.length;j=i++){
     const a=p.points[i],b=p.points[j];if((a[other]>at)!==(b[other]>at))xs.push(a[axis]+(at-a[other])*(b[axis]-a[axis])/(b[other]-a[other]));
    }
    xs.sort((a,b)=>a-b);for(let i=0;i+1<xs.length;i+=2)if(xs[i+1]-xs[i]>1e-6){
     const a=xs[i],b=xs[i+1];
-    if(p.material===id)spans.push([a,b]);
+    if(material===id)spans.push([a,b]);
     else spans=spans.flatMap(([lo,hi])=>b<=lo||a>=hi?[[lo,hi]]:[...(lo<a?[[lo,a]]:[]),...(hi>b?[[b,hi]]:[])]);
    }
   }

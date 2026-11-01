@@ -1,0 +1,1808 @@
+{
+  "scope": "Fresh native recalculation; 300 K educational electrical approximation, not calibrated device measurements",
+  "bias": "FET |Vgs| = 3 V; PN V = 0.6 V",
+  "rows": [
+    {
+      "id": "pn-junction",
+      "variant": "baseline",
+      "key": "4798aa6457b8f21f3f9e013a21a8f968c82c9c179202c7e23319ed63d970cbd9",
+      "seconds": 34.841,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "Vbi",
+          0.9708706836627721,
+          "V"
+        ],
+        [
+          "Is",
+          1.0240258593444527e-21,
+          "A"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 0.6,
+      "currentMicroA": [
+        0.000012298926644603211
+      ]
+    },
+    {
+      "id": "pn-junction",
+      "variant": "dose",
+      "key": "caa9388dcf4bf38c13cbd0bce55d3c18e8f7658727eea3e5b59fc054ba41149f",
+      "seconds": 30.832,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "Vbi",
+          1.0065002432773065,
+          "V"
+        ],
+        [
+          "Is",
+          5.142200543137314e-22,
+          "A"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 0.6,
+      "currentMicroA": [
+        0.0000061759716998134224
+      ],
+      "changePercent": [
+        -49.78446592716732
+      ]
+    },
+    {
+      "id": "pn-junction",
+      "variant": "anneal",
+      "key": "4d347e8876ad931118f30e4ba89f90096fa0e3f03734d7ac6bb87cd901f04b55",
+      "seconds": 33.964,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "Vbi",
+          0.9769565274023405,
+          "V"
+        ],
+        [
+          "Is",
+          9.115161623717818e-22,
+          "A"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 0.6,
+      "currentMicroA": [
+        0.000010947643864733524
+      ],
+      "changePercent": [
+        -10.986997637412788
+      ]
+    },
+    {
+      "id": "pn-junction",
+      "variant": "oxide",
+      "key": "ec8f206098697830d8bc819f29999f5b1fa5d4c3aebcacbd175a7926a0c039b9",
+      "seconds": 29.849,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "Vbi",
+          0.9708706836627721,
+          "V"
+        ],
+        [
+          "Is",
+          1.0240258593444527e-21,
+          "A"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 0.6,
+      "currentMicroA": [
+        0.000012298926644603211
+      ],
+      "changePercent": [
+        0
+      ]
+    },
+    {
+      "id": "mosfet",
+      "variant": "baseline",
+      "key": "023b2e7a6ac848d040e1ae645681d9699632a253164c52f97d11126658d0c546",
+      "seconds": 41.121,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L",
+          300.00242688000003,
+          "nm"
+        ],
+        [
+          "SiO₂",
+          23.7612,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.24946053290564532,
+          "V"
+        ],
+        [
+          "Rsd",
+          991.1668647004885,
+          "Ω"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.03039293475572997,
+          "nm"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        28.247423157308276
+      ]
+    },
+    {
+      "id": "mosfet",
+      "variant": "dose",
+      "key": "40f576118390b9e98755121f15d0b6b8d3bcd672b76c4be596416d505ce07208",
+      "seconds": 36.294,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L",
+          300.00242688000003,
+          "nm"
+        ],
+        [
+          "SiO₂",
+          23.7612,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.24946053290564532,
+          "V"
+        ],
+        [
+          "Rsd",
+          488.4818759365272,
+          "Ω"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.03039293475572997,
+          "nm"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        32.92151945547404
+      ],
+      "changePercent": [
+        16.546982965971768
+      ]
+    },
+    {
+      "id": "mosfet",
+      "variant": "anneal",
+      "key": "ebd60443407ff7009ede17b7648a9815f56b1ca6a67b73847fcf05ee1ba50d9e",
+      "seconds": 40.63,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L",
+          300.00242688000003,
+          "nm"
+        ],
+        [
+          "SiO₂",
+          23.7612,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.24946053290564532,
+          "V"
+        ],
+        [
+          "Rsd",
+          984.6814479359946,
+          "Ω"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.03039293475572997,
+          "nm"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        28.29929218684814
+      ],
+      "changePercent": [
+        0.18362393359214746
+      ]
+    },
+    {
+      "id": "mosfet",
+      "variant": "oxide",
+      "key": "d4b3573407f08bea54018a3b23d1c2abd04c416f3e8bf30601f767d5ece7c92a",
+      "seconds": 38.702,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L",
+          299.999709327,
+          "nm"
+        ],
+        [
+          "SiO₂",
+          35.6412,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.4169880435706939,
+          "V"
+        ],
+        [
+          "Rsd",
+          1060.270322665089,
+          "Ω"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.03039293475572997,
+          "nm"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        19.474522462000404
+      ],
+      "changePercent": [
+        -31.057348652484485
+      ]
+    },
+    {
+      "id": "fdsoi",
+      "variant": "baseline",
+      "key": "8629155c47fec7c6136cc42e48c8efdee8eb16d04d09d22aa38735eeee43f292",
+      "seconds": 37.627,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320.00040731011006,
+          "nm"
+        ],
+        [
+          "EOT",
+          19.008899999999997,
+          "nm"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.004,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.2495972138350786,
+          "V"
+        ],
+        [
+          "Rsd",
+          742.0568263161858,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        34.28950124047389
+      ]
+    },
+    {
+      "id": "fdsoi",
+      "variant": "dose",
+      "key": "d2f3b82fbd508324c622c427acb32ded2d3b26ded1925a7e4b1da749cee9e761",
+      "seconds": 24.917,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320.00040731011006,
+          "nm"
+        ],
+        [
+          "EOT",
+          19.008899999999997,
+          "nm"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.004,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.2495972138350786,
+          "V"
+        ],
+        [
+          "Rsd",
+          371.39138477982067,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        39.28033192750339
+      ],
+      "changePercent": [
+        14.55498186464881
+      ]
+    },
+    {
+      "id": "fdsoi",
+      "variant": "anneal",
+      "key": "f3dd55f2710d1e8ef579fbee28ee04c15a15efcc692dc691d30cfc3d9267001b",
+      "seconds": 20.931,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320.00040731011006,
+          "nm"
+        ],
+        [
+          "EOT",
+          19.008899999999997,
+          "nm"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.004,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.2495972138350786,
+          "V"
+        ],
+        [
+          "Rsd",
+          742.3925198013451,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        34.28556412498116
+      ],
+      "changePercent": [
+        -0.011481985302497222
+      ]
+    },
+    {
+      "id": "fdsoi",
+      "variant": "oxide",
+      "key": "d35c9ab161fab52a36c6700d7422f135e4cbc8c72d1eef8ede18dd8075897645",
+      "seconds": 20.712,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320.0001947697846,
+          "nm"
+        ],
+        [
+          "EOT",
+          28.5135,
+          "nm"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.004,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.26723690155785207,
+          "V"
+        ],
+        [
+          "Rsd",
+          742.0568263161858,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        24.84478467822601
+      ],
+      "changePercent": [
+        -27.544047654737348
+      ]
+    },
+    {
+      "id": "pdsoi",
+      "variant": "baseline",
+      "key": "410d342ebaf0e4b7bd7d56aaed51bd6e547c5ce21ba46fb750e752e6006a9a76",
+      "seconds": 19.173,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320.00040731011006,
+          "nm"
+        ],
+        [
+          "EOT",
+          19.008899999999997,
+          "nm"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.016,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.35545222895802037,
+          "V"
+        ],
+        [
+          "Rsd",
+          668.3561322208141,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        34.10887985743323
+      ]
+    },
+    {
+      "id": "pdsoi",
+      "variant": "dose",
+      "key": "583a01447982db3cd373081471d418b86f1e35490a31d948ca043424c28d14cf",
+      "seconds": 24.492,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320.00040731011006,
+          "nm"
+        ],
+        [
+          "EOT",
+          19.008899999999997,
+          "nm"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.016,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.35545222895802037,
+          "V"
+        ],
+        [
+          "Rsd",
+          331.2436535142971,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        38.53819350249917
+      ],
+      "changePercent": [
+        12.98580798777147
+      ]
+    },
+    {
+      "id": "pdsoi",
+      "variant": "anneal",
+      "key": "4e4619bc1f733eb38e651921ad07f2269cdcd505d859de68220ea5d72995ff39",
+      "seconds": 26.943,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320.00040731011006,
+          "nm"
+        ],
+        [
+          "EOT",
+          19.008899999999997,
+          "nm"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.016,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.35545222895802037,
+          "V"
+        ],
+        [
+          "Rsd",
+          668.69332291237,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        34.10496878798844
+      ],
+      "changePercent": [
+        -0.011466425931128121
+      ]
+    },
+    {
+      "id": "pdsoi",
+      "variant": "oxide",
+      "key": "31ffa2e65124ef4990514d82df259aea30928c2bdeec2efe7cd6b4eef95bd4cc",
+      "seconds": 26.717,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320.0001947697846,
+          "nm"
+        ],
+        [
+          "EOT",
+          28.5135,
+          "nm"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.016,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.4260109798491142,
+          "V"
+        ],
+        [
+          "Rsd",
+          668.3561322208141,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        24.048572711865212
+      ],
+      "changePercent": [
+        -29.49468639139614
+      ]
+    },
+    {
+      "id": "rcat",
+      "variant": "baseline",
+      "key": "da9b9037fc8e5d1d2be919c42368d37139f2b5d74cbf5f92db9fdd4a6a1fdaf1",
+      "seconds": 39.391,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          860.6303738397604,
+          "nm"
+        ],
+        [
+          "EOT",
+          18.971400000000028,
+          "nm"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.03039293475572997,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.4819164865602375,
+          "V"
+        ],
+        [
+          "Rsd",
+          124895.28128126338,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        0.7621785020530294
+      ]
+    },
+    {
+      "id": "rcat",
+      "variant": "dose",
+      "key": "16f72cacd0179f8e3c5182a4b1ce78587598f684c9cf9847c756c316dfbbdde1",
+      "seconds": 45.786,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          860.6303738397604,
+          "nm"
+        ],
+        [
+          "EOT",
+          18.971400000000028,
+          "nm"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.03039293475572997,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.4819164865602375,
+          "V"
+        ],
+        [
+          "Rsd",
+          23849.646850540892,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        3.312529353936606
+      ],
+      "changePercent": [
+        334.61332811327884
+      ]
+    },
+    {
+      "id": "rcat",
+      "variant": "anneal",
+      "key": "0d1750fab1110c49884461577e5599246725e4c830a86455d8613d723df7b4b6",
+      "seconds": 44.581,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          860.6303738397604,
+          "nm"
+        ],
+        [
+          "EOT",
+          18.971400000000028,
+          "nm"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.03039293475572997,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.4819164865602375,
+          "V"
+        ],
+        [
+          "Rsd",
+          128058.02008097744,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        0.7442141947912673
+      ],
+      "changePercent": [
+        -2.356968507163726
+      ]
+    },
+    {
+      "id": "rcat",
+      "variant": "oxide",
+      "key": "86d803ce056ff93b2387513a2acd4a6acd4996eb1f81b93a52b815901cdae6d7",
+      "seconds": 51.731,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          842.1715437995,
+          "nm"
+        ],
+        [
+          "EOT",
+          28.45890000000001,
+          "nm"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.03039293475572997,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.6157058179941303,
+          "V"
+        ],
+        [
+          "Rsd",
+          211931.94169897935,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        0.4509894643420172
+      ],
+      "changePercent": [
+        -40.828892034186616
+      ]
+    },
+    {
+      "id": "bcat",
+      "variant": "baseline",
+      "key": "d01e1f496f023dc153334aa97fa3b5164641792996f9b1f53adf89b946c70444",
+      "seconds": 57.212,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          756.37933627,
+          "nm"
+        ],
+        [
+          "EOT",
+          18.971400000000028,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.4818450548444486,
+          "V"
+        ],
+        [
+          "Rsd",
+          896211.9261820886,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        0.11089068372388725
+      ]
+    },
+    {
+      "id": "bcat",
+      "variant": "dose",
+      "key": "10394eed3c83795c7f763ead9f4bd06feccec7ecc4ec533b5cf9215f76a4ef73",
+      "seconds": 53.284,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          756.37933627,
+          "nm"
+        ],
+        [
+          "EOT",
+          18.971400000000028,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.4818450548444486,
+          "V"
+        ],
+        [
+          "Rsd",
+          115575.81214899922,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        0.82534234461857
+      ],
+      "changePercent": [
+        644.2846566566718
+      ]
+    },
+    {
+      "id": "bcat",
+      "variant": "anneal",
+      "key": "fce517f337fd85754b4a47a3065aa7fc5a08f1dba927a51cc3bd6ec626bc7c8a",
+      "seconds": 56.908,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          756.37933627,
+          "nm"
+        ],
+        [
+          "EOT",
+          18.971400000000028,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.4818450548444486,
+          "V"
+        ],
+        [
+          "Rsd",
+          896880.3963129632,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        0.11080854357320911
+      ],
+      "changePercent": [
+        -0.07407308524010059
+      ]
+    },
+    {
+      "id": "bcat",
+      "variant": "oxide",
+      "key": "33311f0a52248f8719de831e7126d67cce08c4f447566882fa13aa9e098a25bc",
+      "seconds": 55.017,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          852.2915900455,
+          "nm"
+        ],
+        [
+          "EOT",
+          28.45890000000001,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.6156343862783413,
+          "V"
+        ],
+        [
+          "Rsd",
+          66864.31464154695,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        1.301126870247698
+      ],
+      "changePercent": [
+        1073.3419134536537
+      ]
+    },
+    {
+      "id": "finfet",
+      "variant": "baseline",
+      "key": "c312c5b71b0aeb6880570cfb9b4b8da63798476577148fab11b070b688afdf80",
+      "seconds": 22.236,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          290.53319013,
+          "nm"
+        ],
+        [
+          "EOT",
+          3.9071954999999994,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.2694150312725437,
+          "V"
+        ],
+        [
+          "Rsd",
+          863447.9933871013,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        0.11576086978732592
+      ]
+    },
+    {
+      "id": "finfet",
+      "variant": "dose",
+      "key": "fb4a2e4723b99eefdcae10f27017479276517383219383f7cd1b325f08293db0",
+      "seconds": 21.088,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          290.53319013,
+          "nm"
+        ],
+        [
+          "EOT",
+          3.9071954999999994,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.2694150312725437,
+          "V"
+        ],
+        [
+          "Rsd",
+          59185.94786896919,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        1.6781642958195997
+      ],
+      "changePercent": [
+        1349.6818302269992
+      ]
+    },
+    {
+      "id": "finfet",
+      "variant": "anneal",
+      "key": "e8fd05328f0044d31bad43620822d95a858145cae23ddb1389075db699a6ccab",
+      "seconds": 23.497,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          290.53319013,
+          "nm"
+        ],
+        [
+          "EOT",
+          3.9071954999999994,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.2694150312725437,
+          "V"
+        ],
+        [
+          "Rsd",
+          863448.3833850706,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        0.11576081750146502
+      ],
+      "changePercent": [
+        -0.000045167128570611226
+      ]
+    },
+    {
+      "id": "finfet",
+      "variant": "oxide",
+      "key": "ca4b0fa8d4b7e60b99b8ed1d6306e6be6f0c60d2c0f38ae3d1a31bbb072850a7",
+      "seconds": 27.83,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          290.6849517525,
+          "nm"
+        ],
+        [
+          "EOT",
+          5.8591455,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.2969407319832038,
+          "V"
+        ],
+        [
+          "Rsd",
+          403469.7840414119,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        0.24747630309669047
+      ],
+      "changePercent": [
+        113.7823459268664
+      ]
+    },
+    {
+      "id": "gaafet",
+      "variant": "baseline",
+      "key": "26711f2e96aed52641824c1d2acd6333ed7742ad9c12235460080cf44e6be744",
+      "seconds": 31.676,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320,
+          "nm"
+        ],
+        [
+          "EOT",
+          3.8991809999999996,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.2693020136602352,
+          "V"
+        ],
+        [
+          "Rsd",
+          154205.73511337955,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        0.646607199717121
+      ]
+    },
+    {
+      "id": "gaafet",
+      "variant": "dose",
+      "key": "50d74e2b5ddacc4ecd0397221178e533274fcf07eaa51af07e61f3f5643fec77",
+      "seconds": 27.483,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320,
+          "nm"
+        ],
+        [
+          "EOT",
+          3.8991809999999996,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.2693020136602352,
+          "V"
+        ],
+        [
+          "Rsd",
+          33975.34206280007,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        2.905017521142897
+      ],
+      "changePercent": [
+        349.27082816488735
+      ]
+    },
+    {
+      "id": "gaafet",
+      "variant": "anneal",
+      "key": "f2d45a96ca63508a096e6cd9cd28ef2a93ed639d3eb08706d0cb80b8b51c9884",
+      "seconds": 30.758,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320,
+          "nm"
+        ],
+        [
+          "EOT",
+          3.8991809999999996,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.2693020136602352,
+          "V"
+        ],
+        [
+          "Rsd",
+          154232.60467223715,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        0.6464948767933835
+      ],
+      "changePercent": [
+        -0.017371121723774863
+      ]
+    },
+    {
+      "id": "gaafet",
+      "variant": "oxide",
+      "key": "ce90cf200e477674f2494044bc174fea69ac2ab525a7e7cd57f2bef77ec75c36",
+      "seconds": 29.394,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320,
+          "nm"
+        ],
+        [
+          "EOT",
+          5.7803655,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.29582980460187447,
+          "V"
+        ],
+        [
+          "Rsd",
+          154205.73511337955,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        0.6456778893960584
+      ],
+      "changePercent": [
+        -0.1437209980756693
+      ]
+    },
+    {
+      "id": "mbcfet",
+      "variant": "baseline",
+      "key": "db90485b74d038eb05fc5dbeaaf138cc095da1c97543178188e8b6cb936fce31",
+      "seconds": 51.855,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320,
+          "nm"
+        ],
+        [
+          "EOT",
+          3.8872859999999947,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.2691342746249354,
+          "V"
+        ],
+        [
+          "Rsd",
+          5799596.816712165,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        0.017241270579250876
+      ]
+    },
+    {
+      "id": "mbcfet",
+      "variant": "dose",
+      "key": "27173e8a00b78b1f1189ae412ed69dbefaf178b1054ced3e084b7ca2e402c60e",
+      "seconds": 62.487,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320,
+          "nm"
+        ],
+        [
+          "EOT",
+          3.8872859999999947,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.2691342746249354,
+          "V"
+        ],
+        [
+          "Rsd",
+          82140.03883442705,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        1.2109328024704755
+      ],
+      "changePercent": [
+        6923.454547066738
+      ]
+    },
+    {
+      "id": "mbcfet",
+      "variant": "anneal",
+      "key": "9d0becb531d23737e3bb9529c18f99cee4638a4e6c76a3c33138cfa7d2a0d0f6",
+      "seconds": 58.882,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320,
+          "nm"
+        ],
+        [
+          "EOT",
+          3.8872859999999947,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.2691342746249354,
+          "V"
+        ],
+        [
+          "Rsd",
+          5782156.468839403,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        0.017293270362984385
+      ],
+      "changePercent": [
+        0.3016006476697086
+      ]
+    },
+    {
+      "id": "mbcfet",
+      "variant": "oxide",
+      "key": "43db5c5728eec5c9453959001dcbef6e4a5f20745c7fe5d7abd13a4655ac4417",
+      "seconds": 61.328,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320,
+          "nm"
+        ],
+        [
+          "EOT",
+          5.784109500000005,
+          "nm"
+        ],
+        [
+          "Vth",
+          0.2958826011506902,
+          "V"
+        ],
+        [
+          "Rsd",
+          5799596.816712165,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        0.017240613485341224
+      ],
+      "changePercent": [
+        -0.0038111687107544867
+      ]
+    },
+    {
+      "id": "charge-trap",
+      "variant": "baseline",
+      "key": "5fd8419dd798ce435b5d229e61a7c1b65803b1d6b825a52c0b281c1eab2a9765",
+      "seconds": 20.429,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          400.00504076,
+          "nm"
+        ],
+        [
+          "EOT",
+          64.820208,
+          "nm"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.03039293475572997,
+          "nm"
+        ],
+        [
+          "Vth",
+          1.1284599774019686,
+          "V"
+        ],
+        [
+          "Rsd",
+          620.8832434589365,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        6.962375884725823
+      ]
+    },
+    {
+      "id": "charge-trap",
+      "variant": "dose",
+      "key": "f4f6ea319122438519ef9e0c986e261c6c19edb21654ee5eb64c4505e76011ff",
+      "seconds": 23.747,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          400.00504076,
+          "nm"
+        ],
+        [
+          "EOT",
+          64.820208,
+          "nm"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.03039293475572997,
+          "nm"
+        ],
+        [
+          "Vth",
+          1.1284599774019686,
+          "V"
+        ],
+        [
+          "Rsd",
+          305.9011186785085,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        7.11833399726918
+      ],
+      "changePercent": [
+        2.2400128221387927
+      ]
+    },
+    {
+      "id": "charge-trap",
+      "variant": "anneal",
+      "key": "039dc4dd5fdc2dfd2b7eb453fd54289579d39ec67bf9d9b53e2dd739f5d303c7",
+      "seconds": 22.553,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          400.00504076,
+          "nm"
+        ],
+        [
+          "EOT",
+          64.820208,
+          "nm"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.03039293475572997,
+          "nm"
+        ],
+        [
+          "Vth",
+          1.1284599774019686,
+          "V"
+        ],
+        [
+          "Rsd",
+          620.4343094967589,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        6.962596273684156
+      ],
+      "changePercent": [
+        0.003165427463014403
+      ]
+    },
+    {
+      "id": "charge-trap",
+      "variant": "oxide",
+      "key": "314b5362d44fc3e9b4ee851ea7c5ccd114d9ccbe79bb128643516701ee0c8b4f",
+      "seconds": 23.206,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          400.008051468,
+          "nm"
+        ],
+        [
+          "EOT",
+          88.580804,
+          "nm"
+        ],
+        [
+          "게이트 일함수",
+          4.050000000000001,
+          "eV"
+        ],
+        [
+          "게이트 공핍",
+          0.03039293475572997,
+          "nm"
+        ],
+        [
+          "Vth",
+          1.463523403310884,
+          "V"
+        ],
+        [
+          "Rsd",
+          675.3704071181039,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        4.2220098362181835
+      ],
+      "changePercent": [
+        -39.3596394948957
+      ]
+    },
+    {
+      "id": "cfet",
+      "variant": "baseline",
+      "key": "ef011a88ee18b263ce6ade86352eaf0cde5c65c070d1ee50d71bee02e11a0570",
+      "seconds": 60.718,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320,
+          "nm"
+        ],
+        [
+          "EOT",
+          3.8991809999999996,
+          "nm"
+        ],
+        [
+          "nFET Vth",
+          0.07030644043815738,
+          "V"
+        ],
+        [
+          "nFET Rsd",
+          31446.76164256671,
+          "Ω"
+        ],
+        [
+          "pFET Vth",
+          -0.07027809045908706,
+          "V"
+        ],
+        [
+          "pFET Rsd",
+          73986341.37723346,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        3.138387804175482,
+        -0.0013515820446155246
+      ]
+    },
+    {
+      "id": "cfet",
+      "variant": "dose",
+      "key": "ab11c27b9c2f40256f45dc9f41ea109d035643945167a8eb43ba7d2cdfcd734c",
+      "seconds": 61.297,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320,
+          "nm"
+        ],
+        [
+          "EOT",
+          3.8991809999999996,
+          "nm"
+        ],
+        [
+          "nFET Vth",
+          0.07030644043815738,
+          "V"
+        ],
+        [
+          "nFET Rsd",
+          14752.597851804698,
+          "Ω"
+        ],
+        [
+          "pFET Vth",
+          -0.07027809045908706,
+          "V"
+        ],
+        [
+          "pFET Rsd",
+          15222829.943519378,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        6.592248010728234,
+        -0.0065686362266171245
+      ],
+      "changePercent": [
+        110.05205290300796,
+        385.9961149073758
+      ]
+    },
+    {
+      "id": "cfet",
+      "variant": "anneal",
+      "key": "e764fa8cba036e68c7592fef140486e39012203003d29e0545f18a26dc3bc358",
+      "seconds": 60.431,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320,
+          "nm"
+        ],
+        [
+          "EOT",
+          3.8991809999999996,
+          "nm"
+        ],
+        [
+          "nFET Vth",
+          0.07030644043815738,
+          "V"
+        ],
+        [
+          "nFET Rsd",
+          31449.908983138615,
+          "Ω"
+        ],
+        [
+          "pFET Vth",
+          -0.07027809045908706,
+          "V"
+        ],
+        [
+          "pFET Rsd",
+          75705834.06345944,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        3.138077850743504,
+        -0.0013208842277214058
+      ],
+      "changePercent": [
+        -0.009876199224501114,
+        -2.2712507181057773
+      ]
+    },
+    {
+      "id": "cfet",
+      "variant": "oxide",
+      "key": "e30e5b5a1960bd6aa525b8d06793a758dbae25f557d46eef7da5594bbd52b27b",
+      "seconds": 60.859,
+      "cached": false,
+      "available": true,
+      "facts": [
+        [
+          "L_eff",
+          320,
+          "nm"
+        ],
+        [
+          "EOT",
+          5.7803655,
+          "nm"
+        ],
+        [
+          "nFET Vth",
+          0.07555586621722435,
+          "V"
+        ],
+        [
+          "nFET Rsd",
+          31446.650538912203,
+          "Ω"
+        ],
+        [
+          "pFET Vth",
+          -0.0755195172997215,
+          "V"
+        ],
+        [
+          "pFET Rsd",
+          71991768.81192742,
+          "Ω"
+        ]
+      ],
+      "comparisonBiasMagnitudeV": 3,
+      "currentMicroA": [
+        3.118609198956184,
+        -0.0013890182172178647
+      ],
+      "changePercent": [
+        -0.630215462632866,
+        2.769803930991799
+      ]
+    }
+  ]
+}

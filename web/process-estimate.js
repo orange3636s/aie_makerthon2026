@@ -30,7 +30,7 @@
  function example(spec,params){
   if(!spec||!['pvd','cvd','ald'].includes(spec.id))return null;
   // These reference rates match the recipe adapter in process_presets.py.
-  return estimate({id:'deposition',fields:spec.fields},{...params,method:spec.id.toUpperCase(),material:'SiO2',rate:.08,gpc:.001,ald_sticking:params.sticking});
+  return estimate({id:'deposition',fields:spec.fields},{...params,method:spec.id.toUpperCase(),material:'SiO2',rate:.08,gpc:.0001,ald_sticking:params.sticking});
  }
  function render(element,data){
   element.hidden=!data; element.replaceChildren(); if(!data)return;

@@ -36,7 +36,7 @@ def _recipe(kind,p):
         return [L('Si₃N₄ film',dep('Si3N4',p['height'],'PVD')),L('Repeat pattern',photo(.18,'Negative','Repeat',.5)),L('Pillar etch',etch('Si3N4',p['height']+.02)),L('PR removal',strip()),L('SiO₂ overburden',dep('SiO2',p['film'])),L('Global planarization',step('cmp'))]
     if kind in ('pvd','cvd','ald'):
         r=[L('Trench PR',photo(p['width'],'Positive')),L('Trench etch',etch('Si',p['depth'])),L('PR removal',strip())]
-        if kind=='ald':return r+[L('ALD · SiO₂',step('deposition',method='ALD',material='SiO2',cycles=p['cycles'],gpc=.001,pulse=p['pulse'],ald_sticking=p['sticking']))]
+        if kind=='ald':return r+[L('ALD · SiO₂',step('deposition',method='ALD',material='SiO2',cycles=p['cycles'],gpc=.0001,pulse=p['pulse'],ald_sticking=p['sticking']))]
         return r+[L(kind.upper()+' · '+str(i+1)+'/3',step('deposition',method=kind.upper(),material='SiO2',rate=.08,time=round(p['time']/3,12),sticking=p['sticking'],exponent=p['exponent'])) for i in range(3)]
     if kind in ('pre-deposition','drive-in'):
         r=[L('SiO₂ diffusion mask',dep('SiO2',.08,'Conformal')),

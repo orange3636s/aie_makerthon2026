@@ -510,7 +510,7 @@
           "label": "용액 온도",
           "default": 25,
           "min": 10,
-          "max": 160,
+          "max": 200,
           "unit": "°C",
           "step": 1,
           "when": {
@@ -735,9 +735,9 @@
         {
           "key": "cycles",
           "label": "ALD 사이클",
-          "default": 30,
+          "default": 300,
           "min": 5,
-          "max": 1000,
+          "max": 10000,
           "unit": "cycle",
           "step": 1,
           "when": {
@@ -749,11 +749,11 @@
         {
           "key": "gpc",
           "label": "사이클당 성장량",
-          "default": 0.001,
-          "min": 0.0005,
+          "default": 0.0001,
+          "min": 1e-05,
           "max": 0.003,
           "unit": "µm/cycle",
-          "step": 0.0005,
+          "step": 1e-05,
           "when": {
             "method": [
               "ALD"
@@ -1406,8 +1406,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 25,
-            "gpc": 0.001,
+            "cycles": 250,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           }
@@ -1417,8 +1417,8 @@
           "params": {
             "method": "ALD",
             "material": "Si3N4",
-            "cycles": 70,
-            "gpc": 0.001,
+            "cycles": 700,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           }
@@ -1625,8 +1625,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 25,
-            "gpc": 0.001,
+            "cycles": 250,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           }
@@ -1636,8 +1636,8 @@
           "params": {
             "method": "ALD",
             "material": "Si3N4",
-            "cycles": 75,
-            "gpc": 0.001,
+            "cycles": 750,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           }
@@ -1946,8 +1946,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 25,
-            "gpc": 0.001,
+            "cycles": 250,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           }
@@ -2045,8 +2045,8 @@
           "params": {
             "method": "ALD",
             "material": "Si3N4",
-            "cycles": 40,
-            "gpc": 0.001,
+            "cycles": 400,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           }
@@ -2193,8 +2193,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 20,
-            "gpc": 0.001,
+            "cycles": 200,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -2277,8 +2277,8 @@
           "params": {
             "method": "ALD",
             "material": "Si3N4",
-            "cycles": 25,
-            "gpc": 0.001,
+            "cycles": 250,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -2459,8 +2459,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 20,
-            "gpc": 0.001,
+            "cycles": 200,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -2543,8 +2543,8 @@
           "params": {
             "method": "ALD",
             "material": "Si3N4",
-            "cycles": 25,
-            "gpc": 0.001,
+            "cycles": 250,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -2725,8 +2725,8 @@
           "params": {
             "method": "ALD",
             "material": "Si3N4",
-            "cycles": 60,
-            "gpc": 0.001,
+            "cycles": 600,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -2791,8 +2791,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 20,
-            "gpc": 0.001,
+            "cycles": 200,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -2896,8 +2896,8 @@
           "params": {
             "method": "ALD",
             "material": "Si3N4",
-            "cycles": 30,
-            "gpc": 0.001,
+            "cycles": 300,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -3126,8 +3126,8 @@
           "params": {
             "method": "ALD",
             "material": "Si3N4",
-            "cycles": 60,
-            "gpc": 0.001,
+            "cycles": 600,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -3192,8 +3192,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 20,
-            "gpc": 0.001,
+            "cycles": 200,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -3582,8 +3582,8 @@
           "params": {
             "method": "ALD",
             "material": "Si3N4",
-            "cycles": 35,
-            "gpc": 0.001,
+            "cycles": 350,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -4048,8 +4048,8 @@
           "params": {
             "method": "ALD",
             "material": "Mo",
-            "cycles": 100,
-            "gpc": 0.003,
+            "cycles": 3000,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -4532,8 +4532,8 @@
           "params": {
             "method": "ALD",
             "material": "Mo",
-            "cycles": 100,
-            "gpc": 0.003,
+            "cycles": 3000,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -4587,8 +4587,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 20,
-            "gpc": 0.001,
+            "cycles": 200,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -4599,8 +4599,8 @@
           "params": {
             "method": "ALD",
             "material": "Si3N4",
-            "cycles": 35,
-            "gpc": 0.001,
+            "cycles": 350,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -4611,8 +4611,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 30,
-            "gpc": 0.001,
+            "cycles": 300,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -5167,8 +5167,8 @@
           "params": {
             "method": "ALD",
             "material": "Mo",
-            "cycles": 100,
-            "gpc": 0.003,
+            "cycles": 3000,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -5502,8 +5502,8 @@
           "params": {
             "method": "ALD",
             "material": "Mo",
-            "cycles": 100,
-            "gpc": 0.003,
+            "cycles": 3000,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -5566,8 +5566,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 100,
-            "gpc": 0.001,
+            "cycles": 1000,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -5818,8 +5818,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 40,
-            "gpc": 0.001,
+            "cycles": 400,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -6295,8 +6295,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 10,
-            "gpc": 0.001,
+            "cycles": 100,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -6665,8 +6665,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 15,
-            "gpc": 0.001,
+            "cycles": 150,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -6698,8 +6698,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 15,
-            "gpc": 0.001,
+            "cycles": 150,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -6731,8 +6731,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 15,
-            "gpc": 0.001,
+            "cycles": 150,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -6764,8 +6764,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 15,
-            "gpc": 0.001,
+            "cycles": 150,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },
@@ -6797,8 +6797,8 @@
           "params": {
             "method": "ALD",
             "material": "SiO2",
-            "cycles": 15,
-            "gpc": 0.001,
+            "cycles": 150,
+            "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 5e-05
           },

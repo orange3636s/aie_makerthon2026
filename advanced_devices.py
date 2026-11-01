@@ -1,3 +1,4 @@
+from process_timing import retime
 """Manufacturer-informed teaching cross-sections, computed by native processes.
 
 Recipes are scaled process modules, not foundry recipes or electrical TCAD.
@@ -113,17 +114,17 @@ def simulate(spec,p):
     from reverse_engine import run
     from longitudinal_devices import IDS,recipe as longitudinal_recipe
     if spec['id'] in IDS:
-        result=run(dict(target=spec['id'],steps=longitudinal_recipe(spec['id'],p)))
+        result=run(dict(target=spec['id'],steps=retime(longitudinal_recipe(spec['id'],p))))
         result.update(params=p,mode='physics',note=spec['note'],source=spec['source'],previewFrame=len(result['frames'])-1)
         return result
     if p.get('section','게이트 단면')!='게이트 단면':
         from contact_modules import sd_section
         section=sd_section(spec['id'],'B' if p['section']=='p형 S/D·콘택' else 'P',p)
         from reverse_engine import run as section_run
-        result=section_run(dict(target=spec['id'],view='sd-p' if p['section']=='p형 S/D·콘택' else 'sd',steps=section['recipe']))
+        result=section_run(dict(target=spec['id'],view='sd-p' if p['section']=='p형 S/D·콘택' else 'sd',steps=retime(section['recipe'])))
         result.update(params=p,mode='physics',note=section['assumptions'],source=spec['source'],previewFrame=len(result['frames'])-1)
         return result
-    payload=dict(target=spec['id'],steps=recipe(spec['id'],p))
+    payload=dict(target=spec['id'],steps=retime(recipe(spec['id'],p)))
     if spec['id'] in ('fdsoi','pdsoi'):payload['wafer']=dict(body=p['body'],box=.15)
     result=run(payload)
     result.update(params=p,mode='physics',note=spec['note'],source=spec['source'],previewFrame=len(result['frames'])-1)

@@ -79,3 +79,12 @@ and blocking are shared with the preview, while native transport computes the
 actual geometry/concentration.
 
 Typography: SUIT Variable, locally hosted; SIL OFL at web/fonts/SUIT-LICENSE.txt.
+
+
+## Academic audit (2026-11-01)
+
+Equipment H3PO4/Si3N4 now uses an illustrative hot-acid reference of 4.5 nm/min
+at 165 C and 0.55 eV, distinct from the legacy user-specified wet reference rate.
+Bundled ALD recipes use 0.1 nm/cycle with proportionally more cycles, retaining
+nominal thickness. This is a teaching anchor, not a universal precursor GPC.
+See [the full audit](academic-ui-audit-2026-11-01.md) for sources and limitations.

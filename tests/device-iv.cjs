@@ -38,6 +38,14 @@ const noP=structuredClone(frames.cfet);noP.concentration.fields.net_active=noP.c
 const moreP=structuredClone(frames.cfet);moreP.concentration.fields.net_active=moreP.concentration.fields.net_active.map(v=>v<0?2*v:v);
 const pResponse=M.deviceIV(moreP,'cfet');assert.deepEqual(pResponse.series[0].points,cfet.series[0].points,'upper p dose cannot alter lower n curve');
 assert(Math.abs(pResponse.series[1].points.at(-1)[1])>Math.abs(cfet.series[1].points.at(-1)[1]),'upper p dose changes upper p curve');
-assert(M.deviceIV(frames['charge-trap'],'charge-trap').notes.length,'missing ONO never claimed as working memory');
+assert.equal(M.deviceIV(frames['charge-trap'],'charge-trap').notes.length,0,'native ONO nitride must survive measurement through enclosing oxide');
+for(const id of M.electricalDevices.filter(id=>id!=='pn-junction')){
+ const raw=JSON.parse(fs.readFileSync('references/'+id+'.json'));
+ const f=structuredClone(require('../wafer-background.cjs').apply(raw,undefined,id).frames.at(-1));
+ f.concentration.fields.net_active.fill(1e20);
+ const invalid=M.deviceIV(f,id);
+ if(['rcat','bcat'].includes(id)&&invalid.available)assert(invalid.assumptions.includes('채널 농도 격자'),id+' missing deep-channel sampling must be disclosed');
+ else assert(!invalid.available&&/채널 도핑 극성/.test(invalid.reason),id+' compensated channel must not claim a valid inversion FET');
+}
 assert(!M.deviceIV(frames.mosfet,'sti').available,'structure excluded');
 console.log('11 device I–V models: valid curves, geometry/doping prerequisites, invalid inputs, scaling, SOI depletion, recessed length, PN/CFET polarity and immutability passed.');

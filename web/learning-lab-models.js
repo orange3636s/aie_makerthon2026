@@ -187,6 +187,9 @@
   const branches=[];
   for(let index=0;index<sections.length;index++){
    const s=sections[index],polarity=target==='cfet'?(index===1?-1:1):frame.substrateDoping?.type==='n'?-1:1;
+   const spacing=frame.concentration?.dx;
+   const channel=spacing?[.5,1.5,2.5].map(k=>s.surface-k*spacing).filter(y=>y>s.bottom).map(y=>density(frame,0,y)).find(v=>v!==null):null;
+   if(frame.substrateDoping&&channel!==null&&polarity*channel>p.background)return fail('채널 도핑 극성이 S/D와 같아졌습니다. 주입 마스크와 열처리를 확인하세요.');
    const mid=target==='cfet'?(sections[0].surface+sections[1].bottom)/2:null;
    const peaks=activePeaks(frame,{left:s.span[0],right:s.span[1],y0:mid!==null&&index===1?mid:-Infinity,y1:mid!==null&&index===0?mid:Infinity});
    if(peaks[polarity===1?'n':'p'].some(v=>v<1e16))return fail(`${polarity===1?'n형':'p형'} 양쪽 S/D 활성 도핑이 필요합니다. 주입·열처리를 확인하세요.`);
@@ -205,7 +208,7 @@
    const beta=p.mobility*(polarity===-1?.4:1)*1e-4*poly.cox*p.widthNm/lengthNm;
    const access=accessResistance(frame,s.span,polarity,p,mid!==null&&index===1?mid:-Infinity,mid!==null&&index===0?mid:Infinity);
    if(!access)return fail('게이트 옆 S/D 활성 농도가 부족합니다. 주입 마스크 개구를 게이트 가까이 조절하거나 주입량·에너지·열처리를 확인하세요.');
-   branches.push({polarity,lengthNm,eot:s.eot,threshold,beta,access,poly});
+   branches.push({polarity,lengthNm,eot:s.eot,threshold,beta,access,poly,channelObserved:finite(channel)});
   }
   // Common voltage window for both CFET branches. Negative values use conventional PMOS signs.
   const vmax=Math.max(3,...branches.map(b=>Math.ceil(b.threshold+1)));
@@ -220,6 +223,7 @@
   if(branches.some(b=>b.poly.workFunction))assumptions+=' Poly-Si 게이트 도핑의 일함수 차이와 문턱점 공핍 직렬용량을 보정합니다. Vfb는 기본 고농도 게이트의 기준값입니다. 축퇴·입계 트랩·바이어스별 공핍 변화는 생략합니다.';
   assumptions+=' S/D 접근 저항은 게이트 양옆 100 nm 영역의 Si 순 활성 농도 깊이 적분과 입력 이동도로 계산합니다. 내부 Vgs·Vds의 저항 전압강하를 반복 계산하며, 금속 접촉저항이나 실제 2D 전류 경로를 추출하는 모델은 아닙니다.';
   if(['fdsoi','pdsoi'].includes(target))assumptions+=' 공핍 전하는 min(공핍 폭, 계산된 Si 몸체 두께)로 제한합니다. 완전/부분 공핍은 농도와 몸체 두께에 따라 달라지며, 후면 게이트·부유 몸체 효과는 제외합니다.';
+  if(branches.some(b=>!b.channelObserved))assumptions+=' 채널 농도 격자가 닿지 않는 깊이에서는 채널 극성 검사를 생략하고 입력 기판 농도를 가정합니다.';
   if(['rcat','bcat'].includes(target))assumptions+=' L_eff = 게이트 폭 + 2 × 리세스 깊이로 U자 채널을 근사합니다.';
   if(['finfet','gaafet','mbcfet','cfet'].includes(target))assumptions+=' W_eff는 핀/시트의 전체 유효 채널 둘레를 포함하는 사용자 가정입니다. 단면에서 시트 수나 3D 게이트 둘레를 복원하지 않으며 BSIM-CMG 모델이 아닙니다.';
   if(target==='cfet')assumptions+=' 상부 pFET는 Vfb의 부호를 반전한 대칭 임계전압 가정, 이동도는 nFET의 0.4배입니다. 두 독립 소자의 곡선이며 인버터 전달 특성이 아닙니다.';

@@ -37,8 +37,8 @@ OPS=[
   n('time','증착 시간',1.,.1,8.,'s',.1,{'method':['PVD','CVD','Conformal']}),
   n('sticking','부착 확률',.2,.01,1.,'',.01,{'method':['PVD','CVD']}),
   n('exponent','입사 방향성 지수',1.,0,40,'',1,{'method':['PVD','CVD']}),
-  n('cycles','ALD 사이클',30,5,120,'cycle',1,{'method':['ALD']}),
-  n('gpc','사이클당 성장량',.001,.0005,.003,'µm/cycle',.0005,{'method':['ALD']}),
+  n('cycles','ALD 사이클',300,5,10000,'cycle',1,{'method':['ALD']}),
+  n('gpc','사이클당 성장량',.0001,.00001,.003,'µm/cycle',.00001,{'method':['ALD']}),
   n('pulse','전구체 펄스 시간',.1,.05,.5,'s',.05,{'method':['ALD']}),
   n('ald_sticking','초기 부착 확률',.00005,.00001,.001,'',.00001,{'method':['ALD']})],
   presets={'PVD':dict(sticking=1.,exponent=20.),'CVD':dict(sticking=.2,exponent=1.)},
@@ -75,7 +75,7 @@ def dep(material,thickness,method='CVD'):
             cvd_type='LPCVD',source_gas='SiH4',source_flow=60,cvd_pressure=.2,
             depo_temperature=630,rate=rate,time=thickness/rate,sticking=.05,exponent=1.),label='LPCVD · Poly Si')
     return step('deposition',material=material,method=method,rate=.08,time=round(thickness/.08,12),sticking=1. if method=='PVD' else .15,exponent=30 if method=='PVD' else 1.)
-def ald(material,thickness):return step('deposition',method='ALD',material=material,cycles=round(thickness/.001),gpc=.001,pulse=.1,ald_sticking=.00005)
+def ald(material,thickness):return step('deposition',method='ALD',material=material,cycles=round(thickness/.0001),gpc=.0001,pulse=.1,ald_sticking=.00005)
 def photo(width,tone='Negative',pattern='Central',pitch=.6):return step('photo',action='Pattern',width=width,tone=tone,pattern=pattern,pitch=pitch)
 def etch(material,depth,ratio=0):return step('etch',material=material,rate=.1,time=round(depth/.1,4),isotropic=ratio)
 strip=lambda:step('photo',action='Strip')

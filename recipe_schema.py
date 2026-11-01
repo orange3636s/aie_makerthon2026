@@ -28,7 +28,7 @@ def extend(ops,n,choice):
             if f['key']=='rate' and key!='cmp':f.update(min=.000001,step=.000001)
     by['etch']['fields'].extend([
       choice('etchant','Etchant',['HF','H3PO4','HNA'],'HF',{'input_mode':['Equipment'],'method':['Isotropic']}),
-      n('etch_temperature','용액 온도',25,10,160,'°C',1,{'input_mode':['Equipment'],'method':['Isotropic']}),
+      n('etch_temperature','용액 온도',25,10,200,'°C',1,{'input_mode':['Equipment'],'method':['Isotropic']}),
       choice('gas','반응 가스',['CF4','Cl2','HBr'],'CF4',{'input_mode':['Equipment'],'method':['Directional']}),
       n('rf_power','RF power',300,50,1500,'W',10,{'input_mode':['Equipment'],'method':['Directional']}),
       n('gas_flow','가스 유량',50,5,300,'sccm',5,{'input_mode':['Equipment'],'method':['Directional']}),
@@ -47,7 +47,7 @@ def extend(ops,n,choice):
       choice('precursor','전구체',['TMA/H2O','TDMAH/H2O','BDEAS/O2','TiCl4/NH3'],'BDEAS/O2',{'input_mode':['Equipment'],'method':['ALD']}),
       n('purge_time','Purge 시간',2,.1,20,'s',.1,{'method':['ALD']})])
     for f in by['deposition']['fields']:
-        if f['key']=='cycles':f['max']=1000
+        if f['key']=='cycles':f['max']=10000
     by['diffusion']['fields'].extend([
       n('tilt','Tilt',7,0,45,'°',1,{'method':['Ion implantation']}),
       n('twist','Twist',0,0,360,'°',1,{'method':['Ion implantation']})])

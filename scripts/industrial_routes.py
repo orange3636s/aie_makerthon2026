@@ -24,7 +24,7 @@ def thick(s):
  p=s['params'];return p['cycles']*p['gpc'] if p['method']=='ALD' else p['rate']*p['time']
 def film(m,h,method='CVD'):
  if method=='ALD':
-  n=max(5,min(120,round(h/.001)));return step('deposition',method=method,material=m,cycles=n,gpc=h/n,pulse=.1,ald_sticking=.00005)
+  n=max(5,min(10000,round(h/.0001)));return step('deposition',method=method,material=m,cycles=n,gpc=h/n,pulse=.1,ald_sticking=.00005)
  return step('deposition',method=method,material=m,rate=.08,time=h/.08,sticking=.15 if method=='CVD' else 1.,exponent=1. if method=='CVD' else 30.)
 def cut(m,h,iso=0):return step('etch',method='Directional',material=m,rate=.1,time=h/.1,isotropic=iso)
 def hardmask(base):
@@ -63,6 +63,9 @@ def furnace(base):
  return a
 def generate(t):
  tid=t['id'];path=ROOT/'references'/(tid+'.json');base=json.loads(path.read_text(encoding='utf8'))['steps'];rows=[]
+ _,wanted=validate(dict(target=tid,steps=t['recipe']));_,actual=validate(dict(target=tid,steps=base))
+ signature=lambda rows:[(s['op'],s['params']) for s in rows]
+ if signature(wanted)!=signature(actual):raise ValueError('Regenerate observation reference before candidate generation: '+tid)
  def add(cid,name,steps,why,benefit,tradeoff,observe,refs,scope='공개 공정 모듈의 단면 근사이며 제조사 양산 레시피가 아닙니다.'):
   _,steps=validate(dict(target=tid,steps=steps));sig=lambda seq:[json.dumps([s['op'],s['params']],sort_keys=True) for s in seq]
   changes=[dict(kind=k,before=[i+1,j],after=[a+1,b]) for k,i,j,a,b in SequenceMatcher(a=sig(base),b=sig(steps),autojunk=False).get_opcodes() if k!='equal']

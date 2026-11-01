@@ -16,3 +16,12 @@ console.log('Target document: tiled film union and separated multilayer measurem
 
 const hidden={polygons:[rect(0,0,1,1),{...rect(.4,0,.6,1),material:70}]};
 assert.deepEqual(L.intervals(hidden,30,0,.5),[[0,.4],[.6,1]],'later materials occlude underlying polygons');
+const enclosed={polygons:[{...rect(.3,.3,.7,.7),material:16},rect(0,0,1,1),rect(.3,.3,.7,.7)]};
+for(const axis of [0,1]){
+ assert.deepEqual(L.intervals(enclosed,16,axis,.5),[[.3,.7]],'oxide hole preserves buried nitride');
+ assert.deepEqual(L.intervals(enclosed,30,axis,.5),[[0,.3],[.7,1]],'oxide cannot fill its own cavity');
+}
+const sonos=JSON.parse(fs.readFileSync('references/charge-trap.json'));
+const before=sonos.frames.find(f=>f.label==='Activation anneal'),after=sonos.frames.at(-1);
+assert(L.intervals(after,16,1,0).length,'SONOS retains nitride after ILD and contact processing');
+assert(Math.abs(L.intervals(before,16,1,0)[0][1]-L.intervals(after,16,1,0)[0][1])<.001,'buried nitride interface unchanged');

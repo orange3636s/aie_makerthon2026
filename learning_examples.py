@@ -17,7 +17,7 @@ def run(spec, p):
         if kind == 'ald':
             # One native ALD process preserves cycle kinetics and pulse semantics.
             recipe.append(step('deposition', method='ALD', material='SiO2',
-                               cycles=p['cycles'], gpc=.001, pulse=p['pulse'],
+                               cycles=p['cycles'], gpc=.0001, pulse=p['pulse'],
                                ald_sticking=p['sticking']))
         else:
             # Three snapshots, without rebuilding the geometry between stages.

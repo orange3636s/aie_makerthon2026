@@ -13,7 +13,7 @@ def contacts(gate=True,cap=False,metal='W',pitch=.50):
     if cap:flow.extend([L('Buried-gate cap opening',etch('Si3N4',.30)),L('Contact bottom oxide clear',etch('SiO2',.10)),L('S/D hardmask clear',etch('Si3N4',.10))])
     # Effective particle transport: reduce entrance capture and extend the
     # overburden before CMP. This is not a material-specific chemistry model.
-    fill=step('deposition',method='ALD',material=metal,cycles=100,gpc=.003,pulse=.1,ald_sticking=.00005) if metal=='Mo' else step('deposition',method='CVD',material=metal,rate=.08,time=6.875,sticking=.03,exponent=10.)
+    fill=step('deposition',method='ALD',material=metal,cycles=3000,gpc=.0001,pulse=.1,ald_sticking=.00005) if metal=='Mo' else step('deposition',method='CVD',material=metal,rate=.08,time=6.875,sticking=.03,exponent=10.)
     return flow+[L('Contact PR strip',strip()),L(metal+' contact fill',fill),L('Contact metal CMP',step('cmp'))]
 
 def sd_section(kind,species='P',p=None):

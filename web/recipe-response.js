@@ -34,8 +34,8 @@
    if(p.method==='ALE')return {nm:p.epc*p.cycles*1000};
    let base;
    if(p.method==='Isotropic'){
-    base={HF:{SiO2:.003},H3PO4:{Si3N4:.002},HNA:{Si:.004,PolySi:.004,SiGe:.005}}[p.etchant]?.[p.material];
-    if(base===undefined)throw Error('Etchant와 재료를 확인하세요.');rate=Math.min(.05,base*arr(p.etch_temperature,25,.25));
+    base={HF:{SiO2:.003},H3PO4:{Si3N4:.000075},HNA:{Si:.004,PolySi:.004,SiGe:.005}}[p.etchant]?.[p.material];
+    if(base===undefined)throw Error('Etchant와 재료를 확인하세요.');rate=Math.min(.05,base*arr(p.etch_temperature,p.etchant==='H3PO4'?165:25,p.etchant==='H3PO4'?.55:.25));
    }else{
     base={CF4:{SiO2:.003,Si3N4:.002,Si:.001},Cl2:{Si:.004,PolySi:.004,TiN:.002,Al:.003},HBr:{Si:.002,PolySi:.002}}[p.gas]?.[p.material];
     if(base===undefined)throw Error('반응 가스와 재료를 확인하세요.');rate=Math.min(.05,base*(p.rf_power/300)**.5*(p.gas_flow/50)**.3);

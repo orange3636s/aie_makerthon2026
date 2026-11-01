@@ -1,5 +1,5 @@
 """Native, sequential reverse-design simulator. No arbitrary user code is executed."""
-import os,sys,json,math,time,subprocess
+import os,sys,json,math,time,subprocess,tempfile
 from pathlib import Path
 import native_runtime
 import viennaps as ps
@@ -108,19 +108,20 @@ def run(data):
         nonlocal doping_state,concentration
         if periodic:raise ValueError('LOCOS 대칭 단면은 주입·확산을 지원하지 않습니다. MOSFET 등 전체 단면에서 실험하세요.')
         if oxidized:raise ValueError('열산화 후 주입·확산 연결은 지원하지 않습니다. 산화와 도핑 실험을 분리하세요.')
-        prefix=Path.cwd()/('transport-'+str(len(frames)));prefix.mkdir(exist_ok=True)
-        levels=[]
-        for i,v in enumerate(d.getLevelSets()):
-            name=prefix/f'level-{i}.lvst';ls.Writer(v,str(name)).apply()
-            levels.append(dict(file=str(name),material=int(d.getMaterialMap().getMaterialAtIdx(i))))
-        payload=dict(width=target['width'],levels=levels,state=doping_state,operation=op,params=params)
-        src=prefix/'input.json';out=prefix/'output.json';src.write_text(json.dumps(payload),encoding='utf-8')
-        env={**os.environ,'SIMULATION_DOPING_ENGINE':'1','PYTHONIOENCODING':'utf-8'}
-        r=subprocess.run([sys.executable,str(ROOT/'reverse_transport.py'),str(src),str(out)],env=env,capture_output=True,timeout=60)
-        if r.returncode:raise ValueError('주입·확산 계산 실패: '+r.stderr.decode('utf-8',errors='replace')[-240:])
-        result=json.loads(out.read_text(encoding='utf-8'))
-        if result.get('error'):raise ValueError(result['error'])
-        doping_state=result['state'];concentration=result['concentration']
+        with tempfile.TemporaryDirectory(prefix='transport-',dir=Path.cwd()) as folder:
+            prefix=Path(folder)
+            levels=[]
+            for i,v in enumerate(d.getLevelSets()):
+                name=prefix/f'level-{i}.lvst';ls.Writer(v,str(name)).apply()
+                levels.append(dict(file=str(name),material=int(d.getMaterialMap().getMaterialAtIdx(i))))
+            payload=dict(width=target['width'],levels=levels,state=doping_state,operation=op,params=params)
+            src=prefix/'input.json';out=prefix/'output.json';src.write_text(json.dumps(payload),encoding='utf-8')
+            env={**os.environ,'SIMULATION_DOPING_ENGINE':'1','PYTHONIOENCODING':'utf-8'}
+            r=subprocess.run([sys.executable,str(ROOT/'reverse_transport.py'),str(src),str(out)],env=env,capture_output=True,timeout=60)
+            if r.returncode:raise ValueError('주입·확산 계산 실패: '+r.stderr.decode('utf-8',errors='replace')[-240:])
+            result=json.loads(out.read_text(encoding='utf-8'))
+            if result.get('error'):raise ValueError(result['error'])
+            doping_state=result['state'];concentration=result['concentration']
     roughness=target.get('substrateRoughness',0.)
     if roughness:
         from wafer_model import levelset
