@@ -24,15 +24,15 @@
   const base=specBase(),spec=designSpec||base;
   const rows=base.cuts.map((m,i)=>`<li><span>${esc(materialStyle(m.id).name)} ${esc(m.kind)}</span><b>${specFormat(spec.dimensions[i].value,'nm')} nm</b></li>`);
   const doping=spec.peaks.map(p=>`<li><span>${p.species==='B'?'p':'n'}형 · ${p.species} 활성 농도 최고값</span><b>${specFormat(p.value,'cm⁻³')} cm⁻³</b></li>`);
-  el('r-brief').innerHTML=`<b>${esc(target.title)}를 완성하세요</b>${designSpec?'<span class="custom-spec-badge">내 설계 목표</span>':''}<ul>${rows.slice(0,3).join('')}${doping.join('')}</ul><small>허용오차 ±${spec.tolerance}%${designSpec?' · 이미지는 예제 참고':''}</small>`;
+  el('r-brief').innerHTML=`<b>${esc(target.title)} 설계 목표</b>${designSpec?'<span class="custom-spec-badge">내 설계 목표</span>':''}<ul>${rows.filter((_,i)=>i<2||i===(rows.length>3?3:2)).join('')}${doping.join('')}</ul>${rows.length>3?`<details class="brief-more"><summary>추가 목표 ${rows.length-3}개</summary><ul>${rows.filter((_,i)=>i>=2&&i!==3).join('')}</ul></details>`:''}<small>허용오차 ±${spec.tolerance}%${designSpec?' · 이미지는 예제 참고':''}</small>`;
   el('r-overlay').parentElement.title=designSpec?'원본 예제의 참고선입니다. 수정한 목표는 수치로 평가합니다.':'예제의 설계 목표선';
   el('r-overlay').parentElement.lastChild.textContent=designSpec?'예제 참고선':'설계 목표선';
  }
  function editSpec(){
   if(!reference)return;
   const base=specBase(),spec=designSpec||base;
-  const field=(id,label,value,unit,min,max)=>`<label class="spec-input" for="${id}"><span>${label}</span><div><input id="${id}" type="number" required min="${min}" max="${max}" step="any" value="${Number(value.toPrecision(8))}"><span>${unit}</span></div></label>`;
-  el('spec-content').innerHTML=`<form id="spec-form"><p class="spec-intro">목표 수치와 허용오차를 정하고 레시피를 설계하세요. 단면 이미지는 예제 참고용입니다.</p><h3>목표 치수</h3><div class="spec-input-grid">${base.cuts.map((m,i)=>field('spec-dim-'+i,esc(materialStyle(m.id).name)+' '+esc(m.kind),spec.dimensions[i].value,'nm',1,100000)).join('')}</div>${spec.peaks.length?`<h3>활성 도핑 농도</h3><div class="spec-input-grid">${spec.peaks.map((p,i)=>field('spec-peak-'+i,`${p.species==='B'?'p':'n'}형 · ${p.species} 최고값`,p.value,'cm⁻³',1e10,1e22)).join('')}</div>`:''}<h3>평가 기준</h3>${field('spec-tolerance','허용오차',spec.tolerance,'%',1,20)}<details class="spec-cuts"><summary>측정 위치</summary>${base.cuts.map(m=>`<p>${esc(materialStyle(m.id).name)} ${esc(m.kind)} · ${m.axis===0?'y':'x'} = ${(m.at*1000).toFixed(1)} nm</p>`).join('')}<p>수정 과제는 지정 치수·활성 농도 최고값·필수 재료·주입/열처리 이력으로 평가합니다. 원본 형상 IoU와 농도 분포 일치도는 채점에서 제외합니다.</p></details><p id="spec-error" role="alert"></p><footer class="spec-actions"><button type="button" id="spec-reset">예제 목표 복원</button><button type="button" id="spec-cancel">취소</button><button class="primary" type="submit">목표 적용</button></footer></form>`;
+  const field=(id,label,value,unit,min,max)=>`<label class="spec-input" for="${id}"><span>${label}</span><div><input id="${id}" type="number" required min="${min}" max="${max}" step="any" value="${specFormat(value,unit)}"><span>${unit}</span></div></label>`;
+  el('spec-content').innerHTML=`<form id="spec-form"><div class="spec-scroll"><p class="spec-intro">목표를 정하고, 레시피를 설계한 뒤 평가하세요.</p><section class="spec-block"><h3>목표 치수 <span>nm</span></h3><div class="spec-input-grid">${base.cuts.map((m,i)=>field('spec-dim-'+i,esc(materialStyle(m.id).name)+' '+esc(m.kind),spec.dimensions[i].value,'nm',1,100000)).join('')}</div></section><div class="spec-secondary">${spec.peaks.length?`<section class="spec-block"><h3>활성 도핑 농도</h3>${spec.peaks.map((p,i)=>field('spec-peak-'+i,`${p.species==='B'?'p':'n'}형 · ${p.species} 최고값`,p.value,'cm⁻³',1e10,1e22)).join('')}</section>`:''}<section class="spec-block"><h3>평가 기준</h3>${field('spec-tolerance','허용오차',spec.tolerance,'%',1,20)}</section></div><details class="spec-cuts"><summary>측정 위치와 평가 범위</summary>${base.cuts.map(m=>`<p>${esc(materialStyle(m.id).name)} ${esc(m.kind)} · ${m.axis===0?'y':'x'} = ${(m.at*1000).toFixed(1)} nm</p>`).join('')}<p>지정 치수·활성 농도·필수 재료·주입/열처리 이력으로 평가합니다. 예제 이미지와 형상 일치도는 참고용입니다.</p></details><p id="spec-error" role="alert"></p></div><footer class="spec-actions"><button type="button" id="spec-reset">예제 목표 복원</button><button type="button" id="spec-cancel">취소</button><button class="primary" type="submit">목표 적용</button></footer></form>`;
   el('spec-cancel').onclick=()=>el('spec-dialog').close();el('spec-reset').onclick=()=>applySpec(null);
   el('spec-form').onsubmit=e=>{e.preventDefault();if(!e.currentTarget.reportValidity())return;try{
    const input={version:1,targetId:target.id,tolerance:Number(el('spec-tolerance').value),dimensions:spec.dimensions.map((m,i)=>({key:m.key,value:Number(el('spec-dim-'+i).value)})),peaks:spec.peaks.map((p,i)=>({species:p.species,value:Number(el('spec-peak-'+i).value)}))};
@@ -71,20 +71,31 @@
  }
  async function prepareDiagnosis(mine){
   reviewReport=ProcessReview.compare({...target,recipe:reference.steps||target.recipe},reviewSteps,info.operations);
-  reviewAIState='수치 기반 문제';
+  reviewAIState='수치 평가 완료';
   const host=el('review-content');
-  const present=()=>{if(mine!==reviewGeneration)return;RecipeStudio.diagnose(host,score,target,reviewSteps,feedback=>{if(mine===reviewGeneration)showReview(feedback)},{scope:reviewScope,complete:reviewComplete,operations:info.operations,report:reviewReport,aiState:reviewAIState});
-   if(reviewSteps.length<steps.length&&!working){const action=document.createElement('button');action.textContent='남은 단계 계산 후 다시 평가';action.className='primary';action.onclick=async()=>{cancelReview();await calculate();evaluate();};host.prepend(action);}
+  RecipeStudio.diagnose(host,score,target,reviewSteps,feedback=>{if(mine===reviewGeneration)showReview(feedback)},{scope:reviewScope,complete:reviewComplete,operations:info.operations,report:reviewReport,aiState:reviewAIState});
+  if(reviewSteps.length<steps.length&&!working){const action=document.createElement('button');action.textContent='남은 단계 계산 후 다시 평가';action.className='primary';action.onclick=async()=>{cancelReview();await calculate();evaluate();};host.prepend(action);}
+  if(!config.processAnalysis)return;
+  const status=document.createElement('div');status.className='review-ai-banner';status.setAttribute('aria-live','polite');host.prepend(status);
+  const explain=async()=>{
+   if(mine!==reviewGeneration)return;
+   reviewController?.abort();reviewController=new AbortController();const controller=reviewController;
+   reviewAIState='수치 평가 완료 · AI 해설 준비 중';
+   status.innerHTML='<span><i class="ai-pulse" aria-hidden="true"></i>수치 평가 완료 · AI 해설 준비 중</span><button type="button">해설 취소</button>';
+   status.querySelector('button').onclick=()=>{controller.abort();reviewAIState='수치 평가 완료 · AI 해설 생략';status.textContent=reviewAIState;};
+   try{
+    const response=await request('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},signal:AbortSignal.any([controller.signal,AbortSignal.timeout(65000)]),body:JSON.stringify({target:target.id,view:sectionView,steps:reviewSteps,substrateThickness,substrateRoughness,designSpec})});
+    if(mine!==reviewGeneration||controller.signal.aborted)return;
+    reviewReport=response;reviewAIState='AI 분석 완료';
+    status.innerHTML=`<details><summary>AI 해설 보기</summary><p>${esc(response.ai?.summary||'수치 평가를 기준으로 다음 실험을 비교하세요.')}</p></details>`;
+   }catch(e){
+    if(mine!==reviewGeneration||controller.signal.aborted)return;
+    reviewAIState='AI 연결 지연 · 수치 평가 완료';
+    status.innerHTML='<span>AI 해설을 불러오지 못했습니다. 수치 평가는 완료됐습니다.</span><button type="button">재시도</button>';
+    status.querySelector('button').onclick=explain;
+   }
   };
-  if(!config.processAnalysis){present();return;}
-  host.innerHTML='<div class="rs-diagnosis" role="status"><h3>공정설계 평가</h3><p>공정 누락·순서 차이와 계산 근거를 검토하고 있습니다…</p><button id="review-offline">AI 기다리지 않고 문제 풀기</button></div>';
-  reviewController=new AbortController();const controller=reviewController;
-  el('review-offline').onclick=()=>{controller.abort();reviewAIState='수치 기반 문제 · AI 분석 생략';present()};
-  try{
-   const response=await request('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},signal:AbortSignal.any([controller.signal,AbortSignal.timeout(65000)]),body:JSON.stringify({target:target.id,view:sectionView,steps:reviewSteps,substrateThickness,substrateRoughness,designSpec})});
-   if(mine!==reviewGeneration||controller.signal.aborted)return;
-   reviewReport=response;reviewAIState='AI 분석 완료';present();
-  }catch(e){if(mine!==reviewGeneration||controller.signal.aborted)return;reviewAIState='AI 연결 불가 · 수치 기반 문제';present();}
+  await explain();
  }
  const opFor=s=>info.operations.find(o=>o.id===s.op);
  function title(s){if(!s)return 'Wafer';if(s.label)return ProcessUI.text(s.label);const p=s.params;if(s.op==='photo')return ['Pattern','Patterning'].includes(p.action)?label(p.action)+' · '+label(p.pattern):label(p.action);if(s.op==='deposition')return p.method+' · '+label(p.material);if(s.op==='etch')return'Etch · '+label(p.material);if(s.op==='diffusion')return label(p.method)+(['Ion implantation','Pre-deposition'].includes(p.method)?' · '+p.species:'');return'C&C'}

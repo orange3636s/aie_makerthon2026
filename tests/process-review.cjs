@@ -14,7 +14,7 @@ console.log('Canonical, omissions, numeric changes, reordering and extra operati
 const response=o=>({ok:true,json:async()=>({modelVersion:'gemini-test',candidates:[{content:{parts:[{text:JSON.stringify(o)}]}}]})});
 const fetchImpl=async(url,options)=>{sent={url,...JSON.parse(options.body)};return response({summary:'두 공정 누락',suggestions:[{id:report.findings[0].id,analysis:'주입 누락',action:'순서 확인'}]})};
 const env={GEMINI_API_KEY:'unit-test'};
-const result=await explain(report,{fetchImpl,env});assert(sent.url.startsWith('https://generativelanguage.googleapis.com/v1beta/models/gemini-'));assert.equal(sent.generationConfig.responseMimeType,'application/json');assert.equal(result.suggestions.length,1);
+const result=await explain(report,{fetchImpl,env});assert(sent.url.startsWith('https://generativelanguage.googleapis.com/v1beta/models/gemini-'));assert.equal(sent.generationConfig.responseMimeType,'application/json');assert.equal(result.suggestions.length,1);assert.deepEqual(sent.generationConfig.responseJsonSchema.properties.suggestions.items.properties.id.enum,report.findings.map(f=>f.id));
 await assert.rejects(explain(report,{env:{}}),/키/);
 await assert.rejects(explain(report,{env,fetchImpl:async()=>({ok:false,status:401})}),/인증/);
 await assert.rejects(explain(report,{env,fetchImpl:async()=>response({summary:'test',suggestions:[{id:'invented',analysis:'bad',action:'bad'}]})}),/근거/);
