@@ -14,7 +14,7 @@
  const equal=(a,b)=>a?.type===b?.type&&(a?.type==='intrinsic'||a?.concentration===b?.concentration);
  function controls(prefix,value,disabled=false){
   const d=value&&['p','n','intrinsic'].includes(value.type)?value:defaults(),off=disabled?'disabled':'';
-  return `<div class="field"><label for="${prefix}-type">기판 도핑</label><select id="${prefix}-type" ${off}>${[['p','p형 · B (붕소)'],['n','n형 · P (인)'],['intrinsic','진성 · 도핑 없음']].map(([v,label])=>`<option value="${v}" ${d.type===v?'selected':''}>${label}</option>`).join('')}</select></div><div class="field"><label for="${prefix}-density">기판 농도 · cm⁻³</label><input id="${prefix}-density" type="number" min="1e14" max="1e19" step="any" value="${typeof d.concentration==='number'&&Number.isFinite(d.concentration)?d.concentration.toExponential(2):''}" required ${off||d.type==='intrinsic'?'disabled':''}><small>저농도 기판 10¹⁶ · 고농도 S/D는 더 진하게 표시</small></div>`;
+  return `<div class="field"><label for="${prefix}-type">기판 도핑</label><select id="${prefix}-type" ${off}>${[['p','p형 · B (붕소)'],['n','n형 · P (인)'],['intrinsic','진성 · 도핑 없음']].map(([v,label])=>`<option value="${v}" ${d.type===v?'selected':''}>${label}</option>`).join('')}</select></div><div class="field"><label for="${prefix}-density">기판 농도 · cm⁻³</label><input id="${prefix}-density" type="number" min="1e14" max="1e19" step="any" value="${typeof d.concentration==='number'&&Number.isFinite(d.concentration)?d.concentration.toExponential(2):''}" required ${off||d.type==='intrinsic'?'disabled':''}><small>기판 극성 변경 시 게이트 권장값도 변경 · S/D는 별도 설정</small></div>`;
  }
  function bind(prefix,value,change){
   const type=document.getElementById(prefix+'-type'),density=document.getElementById(prefix+'-density');

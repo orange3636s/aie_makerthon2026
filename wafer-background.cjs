@@ -5,7 +5,7 @@ const W=require('./web/wafer-doping.js'),L=require('./web/learning-score.js');
 // changed instantly without re-running unchanged geometry/implant trajectories.
 const memo=new WeakMap();
 function apply(raw,setting,target=raw.target||raw.example,view=raw.view||'gate',gateSetting=raw.polyGateDoping){
- const d=W.validate(setting,target,view),gateDoping=G.validate(gateSetting,target,view);if(raw.waferBackgroundVersion===1){if(W.equal(raw.substrateDoping,d)&&G.equal(raw.polyGateDoping,gateDoping))return raw;throw Error('Background already applied');}const key=JSON.stringify([d,gateDoping,target,view]);
+ const d=W.validate(setting,target,view),gateDoping=G.validate(gateSetting===undefined?G.defaults(target,view,d):gateSetting,target,view);if(raw.waferBackgroundVersion===1){if(W.equal(raw.substrateDoping,d)&&G.equal(raw.polyGateDoping,gateDoping))return raw;throw Error('Background already applied');}const key=JSON.stringify([d,gateDoping,target,view]);
  let saved=memo.get(raw);if(saved?.key===key)return saved.result;
  const initial=raw.frames[0],initialPoints=initial.polygons.filter(p=>p.material===10).flatMap(p=>p.points);
  if(!initialPoints.length)return raw;

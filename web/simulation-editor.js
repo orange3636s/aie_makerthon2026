@@ -11,7 +11,7 @@
  function at(){return current?.frames[frame]?.stepIndex ?? (current?.frames.length===current?.steps?.length+1?frame:null)}
  function cyclic(){return !!current?.stageControls?.length}
  function runnable(){return !!current?.steps?.length&&operations.length&&current.steps.every(s=>operations.some(o=>o.id===s.op))}
- function sync(){if(source!==current){source=current;unsolved=false;substrateThickness=current?.substrateThickness;substrateRoughness=current?.substrateRoughness||0;substrateDoping=current?.substrateDoping||WaferDoping.defaults(current?.target||selected?.id,current?.view);polyGateDoping=current?.polyGateDoping||PolyGateDoping.defaults(current?.target||selected?.id,current?.view);draft=current?.steps?structuredClone(current.steps).map(s=>{const o=operations.find(o=>o.id===s.op);return o?{...s,params:{...RecipeState.defaults(o,s.params?.method),...(s.op==='photo'&&!s.params?.action?{action:'Pattern'}:{}),...s.params}}:s}):[];stageDraft={...(current?.stages||{})}}}
+ function sync(){if(source!==current){source=current;unsolved=false;substrateThickness=current?.substrateThickness;substrateRoughness=current?.substrateRoughness||0;substrateDoping=current?.substrateDoping||WaferDoping.defaults(current?.target||selected?.id,current?.view);polyGateDoping=current?.polyGateDoping||PolyGateDoping.defaults(current?.target||selected?.id,current?.view,substrateDoping);draft=current?.steps?structuredClone(current.steps).map(s=>{const o=operations.find(o=>o.id===s.op);return o?{...s,params:{...RecipeState.defaults(o,s.params?.method),...(s.op==='photo'&&!s.params?.action?{action:'Pattern'}:{}),...s.params}}:s}):[];stageDraft={...(current?.stages||{})}}}
  function paint(){
   const advancedOpen=!!$('obs-step-fields').querySelector('.advanced-options[open]');
   if(!selected)return;sync();const index=at(),row=draft[(index||0)-1],op=row&&operations.find(o=>o.id===row.op),sequential=runnable()||cyclic();
@@ -32,13 +32,13 @@
    $('obs-step-fields').innerHTML=`<div class="field"><label for="obs-substrate-thickness">기판 두께 · nm</label><input id="obs-substrate-thickness" type="number" min="${minDepth}" max="1200" step="any" value="${Math.round(depth*1000)}" required ${busy?'disabled':''}></div>`;
    $('obs-step-fields').insertAdjacentHTML('beforeend',`<div class="field"><label for="obs-substrate-roughness">표면 거칠기 Rq · nm</label><input id="obs-substrate-roughness" type="number" min="0" max="${Math.min(20,(wafer?.body||.08)*250)}" step="1" value="${substrateRoughness*1000}" required ${busy?'disabled':''}></div>`);
    $('obs-step-fields').insertAdjacentHTML('beforeend',WaferDoping.controls('obs-wafer-doping',substrateDoping,busy));
-   WaferDoping.bind('obs-wafer-doping',substrateDoping,value=>{substrateDoping=value;unsolved=true;ParameterPreview.cancelAll();status('조건 변경 · 계산 필요')});
+   WaferDoping.bind('obs-wafer-doping',substrateDoping,value=>{polyGateDoping=PolyGateDoping.forWafer(polyGateDoping,substrateDoping,value);substrateDoping=value;unsolved=true;ParameterPreview.cancelAll();status('조건 변경 · 계산 필요')});
    $('obs-substrate-roughness').oninput=e=>{substrateRoughness=e.target.value===''?'':Number(e.target.value)/1000;unsolved=true;ParameterPreview.cancelAll();status('')};
    $('obs-step-run').disabled=busy;ProcessEstimate.render($('obs-step-estimate'),null);$('obs-preview').hidden=true;
    const input=$('obs-substrate-thickness');input.oninput=()=>{substrateThickness=input.value===''?'':Number(input.value)/1000;unsolved=true;ParameterPreview.cancelAll();status('')};
    window.RecipeSliders?.sliders($('obs-step-fields'));return;
   }
-  $('obs-step-fields').innerHTML=op?ProcessUI.groupControls(ProcessUI.recipeFields(op,row.params),raw=>{const f=ProcessUI.displayField(raw);return `<div class="field"><label for="obs-p-${f.key}">${esc(ProcessUI.text(f.label))}${f.unit?' · '+esc(f.unit):''}</label>${f.options?`<select id="obs-p-${f.key}">${ProcessUI.optionsFor(f,row.params[f.key]).map(v=>`<option value="${esc(v)}" ${v===row.params[f.key]?'selected':''} ${ProcessUI.legacy(v)?'disabled':''}>${esc(ProcessUI.label(v))}</option>`).join('')}</select>`:`<input id="obs-p-${f.key}" type="number" min="${f.min}" max="${f.max}" step="${ProcessUI.integer(f)?1:'any'}" value="${esc(row.params[f.key]===''?'':shortNumber(ProcessUI.displayValue(raw,row.params[f.key])))}" required>`}${ProcessUI.hint(raw)?`<p class="field-help">${esc(ProcessUI.hint(raw))}</p>`:''}</div>`},advancedOpen):'<p class="caption">공정 단계를 선택하세요.</p>';
+  $('obs-step-fields').innerHTML=op?ProcessUI.groupControls(ImplantControls.fields(row,ProcessUI.recipeFields(op,row.params),current.target||selected.id),raw=>{const f=ProcessUI.displayField(raw);return `<div class="field"><label for="obs-p-${f.key}">${esc(ProcessUI.text(f.label))}${f.unit?' · '+esc(f.unit):''}</label>${f.options?`<select id="obs-p-${f.key}">${ProcessUI.optionsFor(f,row.params[f.key]).map(v=>`<option value="${esc(v)}" ${v===row.params[f.key]?'selected':''} ${ProcessUI.legacy(v)?'disabled':''}>${esc(ImplantControls.label(row,f,v)||ProcessUI.label(v))}</option>`).join('')}</select>`:`<input id="obs-p-${f.key}" type="number" min="${f.min}" max="${f.max}" step="${ProcessUI.integer(f)?1:'any'}" value="${esc(row.params[f.key]===''?'':shortNumber(ProcessUI.displayValue(raw,row.params[f.key])))}" required>`}${ProcessUI.hint(raw)?`<p class="field-help">${esc(ProcessUI.hint(raw))}</p>`:''}</div>`},advancedOpen):'<p class="caption">공정 단계를 선택하세요.</p>';
   if(PolyGateDoping.applicable(current.target||selected.id,row)){$('obs-step-fields').insertAdjacentHTML('afterbegin',PolyGateDoping.controls('obs-poly-gate',polyGateDoping,busy));PolyGateDoping.bind('obs-poly-gate',value=>{polyGateDoping=value;unsolved=true;ParameterPreview.cancelAll();status('게이트 도핑 변경 · 계산 필요')});}
   window.RecipeSliders?.sliders($('obs-step-fields'));
   $('obs-step-run').disabled=busy||!op;
@@ -51,7 +51,7 @@
    row.params=ProcessUI.normalizeInactive(op.fields,row.params);delete row.label;
    ParameterPreview.cancelAll();status('');if(f.options)paint();else {preview();mountPreview()}drawMain();
   })}
-
+  ImplantControls.mount($('obs-step-fields'),'obs-p-',row);window.RecipeSliders?.sliders($('obs-step-fields'));
  }
  form.onsubmit=async e=>{
   e.preventDefault();await ParameterPreview.cancelAll();if(busy||(!runnable()&&!cyclic()))return;

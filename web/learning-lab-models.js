@@ -56,7 +56,7 @@
  }
  function mosfet(frame,target,options={}){
   const fail=reason=>({available:false,reason});
-  if(target!=='mosfet')return fail('현재 I–V 근사는 평면 NMOS / SiO₂ 게이트에만 적용됩니다.');
+  if(target!=='mosfet')return fail('현재 I–V 근사는 평면 NMOS·PMOS / SiO₂ 게이트에만 적용됩니다.');
   const p={widthNm:1000,mobility:300,background:1e16,vfb:-.8,vds:.1,...options,...(frame.substrateDoping?.type!=='intrinsic'&&frame.substrateDoping?{background:frame.substrateDoping.concentration}:{})};
   if(!Object.values(p).every(finite)||p.widthNm<100||p.widthNm>10000||p.mobility<10||p.mobility>1000||p.background<1e14||p.background>1e18||p.vds<.01||p.vds>3||p.vfb<-2||p.vfb>2)return fail('모델 입력 범위를 확인하세요.');
   const gate=spans(frame,11,0).find(([a,b])=>b>a&&a>=0),si=spans(frame,10,0).find(([a,b])=>a<0&&b>=-.1);
@@ -70,19 +70,20 @@
   }
   const lengthNm=(g[1]-g[0])*1000,toxNm=(oxide[1]-oxide[0])*1000;
   if(lengthNm<100||toxNm<2||toxNm>200)return fail('현재 근사 범위: L ≥ 100 nm, SiO₂ 2–200 nm.');
+  const polarity=frame.substrateDoping?.type==='n'?-1:1;
   const d=frame.concentration;
   if(!d?.fields?.net_active)return fail('주입과 활성화 후 농도 계산이 필요합니다.');
-  const peakAt=x=>{const surface=spans(frame,10,x).at(-1)?.[1];if(!finite(surface))return 0;let peak=0;for(let i=0;i<40;i++)peak=Math.max(peak,density(frame,x,surface-(i+.5)*d.dx)||0);return peak;};
-  if(peakAt(g[0]-.10)<1e17||peakAt(g[1]+.10)<1e17)return fail('양쪽 S/D의 활성 n형 농도가 부족하거나 확인되지 않습니다.');
-  if((density(frame,0,si[1]-d.dx/2)||0)>p.background)return fail('채널의 순 donor 농도가 가정한 p형 배경 농도를 넘습니다. 이 NMOS 근사를 적용할 수 없습니다.');
+  const peakAt=x=>{const surface=spans(frame,10,x).at(-1)?.[1];if(!finite(surface))return 0;let peak=0;for(let i=0;i<40;i++)peak=Math.max(peak,polarity*(density(frame,x,surface-(i+.5)*d.dx)||0));return peak;};
+  if(peakAt(g[0]-.10)<1e17||peakAt(g[1]+.10)<1e17)return fail('기판과 반대 극성의 양쪽 S/D 활성 농도가 부족합니다. 주입 종류·농도와 열처리를 확인하세요.');
+  if(polarity*(density(frame,0,si[1]-d.dx/2)||0)>p.background)return fail('채널 도핑 극성이 S/D와 같아졌습니다. 주입 마스크와 열처리를 확인하세요.');
   const q=1.602176634e-19,eps0=8.8541878128e-12,vt=.025852,na=p.background*1e6,phi=vt*Math.log(p.background/1e10),cox=3.9*eps0/(toxNm*1e-9);
-  const charge=Math.sqrt(4*q*11.7*eps0*na*phi),poly=polyGate(frame,11,gate[1]-gate[0],1,cox,charge);
+  const charge=Math.sqrt(4*q*11.7*eps0*na*phi),poly=polyGate(frame,11,gate[1]-gate[0],polarity,cox,charge);
   if(!poly.available)return fail(poly.reason);
-  const threshold=p.vfb+2*phi+charge/cox+poly.shift,beta=p.mobility*1e-4*poly.cox*p.widthNm/lengthNm;
-  const access=accessResistance(frame,g,1,p);
-  if(!access)return fail('S/D 접근 영역의 활성 농도를 확인하세요.');
-  const points=Array.from({length:101},(_,i)=>{const vg=i*Math.max(3,Math.ceil(threshold+1))/100;return [vg,terminalCurrent(vg,p.vds,threshold,beta,access)*1e6];});
-  return {available:true,version,lengthNm,toxNm,threshold,cox:poly.cox,poly,access,options:p,points,scope:'장채널 square-law · S/D 접근 저항 · 300 K',assumptions:'L·산화막 두께·S/D 활성 농도는 계산 단면에서 추출합니다. 접근 영역은 게이트 양옆 100 nm, 이동도는 입력값으로 가정합니다. 배경 농도는 Wafer와 연동합니다. Poly-Si 도핑은 일함수와 문턱점 공핍 직렬용량을 보정합니다. W·기준 Vfb는 입력 가정입니다. 누설·단채널·금속 접촉저항은 제외합니다.'};
+  const threshold=p.vfb+2*phi+charge/cox+poly.shift,beta=p.mobility*(polarity===-1?.4:1)*1e-4*poly.cox*p.widthNm/lengthNm;
+  const access=accessResistance(frame,g,polarity,p);
+  if(!access)return fail('게이트 옆 S/D 활성 농도가 부족합니다. 주입 마스크 개구를 게이트 가까이 조절하거나 주입량·에너지·열처리를 확인하세요.');
+  const points=Array.from({length:101},(_,i)=>{const vg=i*Math.max(3,Math.ceil(threshold+1))/100;return [polarity*vg,polarity*terminalCurrent(vg,p.vds,threshold,beta,access)*1e6];});
+  return {available:true,version,polarity,lengthNm,toxNm,threshold:polarity*threshold,cox:poly.cox,poly,access,options:p,points,scope:'장채널 square-law · S/D 접근 저항 · 300 K',assumptions:'L·산화막 두께·S/D 활성 농도는 계산 단면에서 추출합니다. 접근 영역은 게이트 양옆 100 nm, 이동도는 입력값으로 가정합니다. 배경 농도는 Wafer와 연동합니다. Poly-Si 도핑은 일함수와 문턱점 공핍 직렬용량을 보정합니다. n형 기판은 PMOS 부호와 정공 이동도(전자 이동도의 0.4배)를 사용합니다. W·기준 Vfb는 입력 가정입니다. 누설·단채널·금속 접촉저항은 제외합니다.'};
  }
  const electricalDevices=Object.freeze(['pn-junction','mosfet','fdsoi','pdsoi','rcat','bcat','finfet','gaafet','mbcfet','charge-trap','cfet']);
  const dielectricK=Object.freeze({16:7.5,30:3.9,31:9,32:20,201:25});
@@ -161,11 +162,11 @@
   if(!electricalDevices.includes(target))return fail('구조 예제에는 전기 단자가 정의되어 있지 않습니다. 소자 예제를 선택하세요.');
   if(!frame?.polygons?.length)return fail('계산된 소자 단면이 필요합니다.');
   const p={...electricalDefaults(target),...options,...(frame.substrateDoping?.type!=='intrinsic'&&frame.substrateDoping&&target!=='pn-junction'?{background:frame.substrateDoping.concentration}:{})};
-  if(frame.substrateDoping){if(!frame.processEvidence?.annealedSpecies?.length)return fail('기판 도핑만으로 S/D가 만들어지지 않습니다. 주입과 활성화 열처리를 완료하세요.');if(target!=='pn-junction'&&frame.substrateDoping.type!=='p')return fail('이 예제의 nFET에는 저농도 p형 기판이 필요합니다. Wafer 도핑 설정을 확인하세요.');}
+  if(frame.substrateDoping){if(!frame.processEvidence?.annealedSpecies?.length)return fail('기판 도핑만으로 S/D가 만들어지지 않습니다. 주입과 활성화 열처리를 완료하세요.');if(target!=='pn-junction'&&frame.substrateDoping.type==='intrinsic')return fail('반전형 FET에는 p형 또는 n형 기판이 필요합니다. Wafer 도핑을 선택하세요.');if(target==='cfet'&&frame.substrateDoping.type!=='p')return fail('CFET는 하부 p형 몸체·상부 n형 몸체 구조입니다. 하부 기판은 p형으로 설정하세요.');}
   if(!Object.values(p).every(finite))return fail('모델 입력 범위를 확인하세요.');
   if(target==='mosfet'){
    const r=mosfet(frame,target,p);
-   return {...r,series:r.available?[{name:'NMOS',points:r.points}]:[],xLabel:'Vgs (V)',yLabel:'Id (µA)',facts:r.available?[['L',r.lengthNm,'nm'],['SiO₂',r.toxNm,'nm'],['Vth',r.threshold,'V'],['Rsd',r.access.source+r.access.drain,'Ω'],...(r.poly?.workFunction?[['게이트 일함수',r.poly.workFunction,'eV'],['게이트 공핍',r.poly.depletionNm,'nm']]:[])]:[]};
+   return {...r,series:r.available?[{name:r.polarity===-1?'PMOS':'NMOS',points:r.points}]:[],xLabel:'Vgs (V)',yLabel:'Id (µA)',facts:r.available?[['L',r.lengthNm,'nm'],['SiO₂',r.toxNm,'nm'],['Vth',r.threshold,'V'],['Rsd',r.access.source+r.access.drain,'Ω'],...(r.poly?.workFunction?[['게이트 일함수',r.poly.workFunction,'eV'],['게이트 공핍',r.poly.depletionNm,'nm']]:[])]:[]};
   }
   if(target==='pn-junction'){
    if(p.areaUm2<.01||p.areaUm2>100||p.ideality<1||p.ideality>2||p.lifetimeUs<.01||p.lifetimeUs>100)return fail('모델 입력 범위를 확인하세요.');
@@ -185,7 +186,7 @@
   sections=target==='cfet'?[sections[0],sections.at(-1)]:[sections.at(-1)];
   const branches=[];
   for(let index=0;index<sections.length;index++){
-   const s=sections[index],polarity=target==='cfet'&&index===1?-1:1;
+   const s=sections[index],polarity=target==='cfet'?(index===1?-1:1):frame.substrateDoping?.type==='n'?-1:1;
    const mid=target==='cfet'?(sections[0].surface+sections[1].bottom)/2:null;
    const peaks=activePeaks(frame,{left:s.span[0],right:s.span[1],y0:mid!==null&&index===1?mid:-Infinity,y1:mid!==null&&index===0?mid:Infinity});
    if(peaks[polarity===1?'n':'p'].some(v=>v<1e16))return fail(`${polarity===1?'n형':'p형'} 양쪽 S/D 활성 도핑이 필요합니다. 주입·열처리를 확인하세요.`);
@@ -203,19 +204,19 @@
    const threshold=p.vfb+2*phi+q*na*body/cox+poly.shift;
    const beta=p.mobility*(polarity===-1?.4:1)*1e-4*poly.cox*p.widthNm/lengthNm;
    const access=accessResistance(frame,s.span,polarity,p,mid!==null&&index===1?mid:-Infinity,mid!==null&&index===0?mid:Infinity);
-   if(!access)return fail('S/D 접근 영역의 활성 농도를 확인하세요.');
+   if(!access)return fail('게이트 옆 S/D 활성 농도가 부족합니다. 주입 마스크 개구를 게이트 가까이 조절하거나 주입량·에너지·열처리를 확인하세요.');
    branches.push({polarity,lengthNm,eot:s.eot,threshold,beta,access,poly});
   }
   // Common voltage window for both CFET branches. Negative values use conventional PMOS signs.
   const vmax=Math.max(3,...branches.map(b=>Math.ceil(b.threshold+1)));
-  const series=branches.map(b=>({name:target==='cfet'?(b.polarity===1?'하부 nFET':'상부 pFET'):'등가 nFET',points:Array.from({length:121},(_,i)=>{
+  const series=branches.map(b=>({name:target==='cfet'?(b.polarity===1?'하부 nFET':'상부 pFET'):b.polarity===1?'등가 nFET':'등가 pFET',points:Array.from({length:121},(_,i)=>{
    const v=i*vmax/120,id=terminalCurrent(v,p.vds,b.threshold,b.beta,b.access);
    return [v*b.polarity,id*1e6*b.polarity];
   })}));
   const s=sections[0],b=branches[0];
   const notes=[];
   if(target==='charge-trap'&&!s.materials.includes(16))notes.push('현재 게이트 아래 Si₃N₄가 검출되지 않아 ONO 저장층이 없는 등가 FET 곡선입니다.');
-  let assumptions='300 K 장채널 square-law 등가 모델. L과 EOT는 중앙 단면에서 추출합니다. 배경 농도는 Wafer 설정과 연동하며 W_eff·이동도·Vfb는 입력 가정입니다. 유전율 가정: SiO₂ 3.9, Si₃N₄ 7.5, HfO₂ 20, Al₂O₃ 9, HZO 25. 누설·단채널·접촉저항·양자효과는 제외합니다.';
+  let assumptions='300 K 장채널 square-law 등가 모델. L과 EOT는 중앙 단면에서 추출합니다. 배경 농도는 Wafer 설정과 연동하며 W_eff·이동도·Vfb는 입력 가정입니다. 유전율 가정: SiO₂ 3.9, Si₃N₄ 7.5, HfO₂ 20, Al₂O₃ 9, HZO 25. n형 기판은 등가 pFET로 계산하며 정공 이동도는 전자 이동도의 0.4배입니다. 누설·단채널·접촉저항·양자효과는 제외합니다.';
   if(branches.some(b=>b.poly.workFunction))assumptions+=' Poly-Si 게이트 도핑의 일함수 차이와 문턱점 공핍 직렬용량을 보정합니다. Vfb는 기본 고농도 게이트의 기준값입니다. 축퇴·입계 트랩·바이어스별 공핍 변화는 생략합니다.';
   assumptions+=' S/D 접근 저항은 게이트 양옆 100 nm 영역의 Si 순 활성 농도 깊이 적분과 입력 이동도로 계산합니다. 내부 Vgs·Vds의 저항 전압강하를 반복 계산하며, 금속 접촉저항이나 실제 2D 전류 경로를 추출하는 모델은 아닙니다.';
   if(['fdsoi','pdsoi'].includes(target))assumptions+=' 공핍 전하는 min(공핍 폭, 계산된 Si 몸체 두께)로 제한합니다. 완전/부분 공핍은 농도와 몸체 두께에 따라 달라지며, 후면 게이트·부유 몸체 효과는 제외합니다.';
