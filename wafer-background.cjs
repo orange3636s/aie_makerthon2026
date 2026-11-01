@@ -1,10 +1,11 @@
 'use strict';
+const G=require('./web/poly-gate-doping.js');
 const W=require('./web/wafer-doping.js'),L=require('./web/learning-score.js');
 // Keep cached native results immutable. A separate analytical background can be
 // changed instantly without re-running unchanged geometry/implant trajectories.
 const memo=new WeakMap();
-function apply(raw,setting,target=raw.target||raw.example,view=raw.view||'gate'){
- const d=W.validate(setting,target,view);if(raw.waferBackgroundVersion===1){if(W.equal(raw.substrateDoping,d))return raw;throw Error('Background already applied');}const key=JSON.stringify([d,target,view]);
+function apply(raw,setting,target=raw.target||raw.example,view=raw.view||'gate',gateSetting=raw.polyGateDoping){
+ const d=W.validate(setting,target,view),gateDoping=G.validate(gateSetting,target,view);if(raw.waferBackgroundVersion===1){if(W.equal(raw.substrateDoping,d)&&G.equal(raw.polyGateDoping,gateDoping))return raw;throw Error('Background already applied');}const key=JSON.stringify([d,gateDoping,target,view]);
  let saved=memo.get(raw);if(saved?.key===key)return saved.result;
  const initial=raw.frames[0],initialPoints=initial.polygons.filter(p=>p.material===10).flatMap(p=>p.points);
  if(!initialPoints.length)return raw;
@@ -44,10 +45,9 @@ function apply(raw,setting,target=raw.target||raw.example,view=raw.view||'gate')
   // Conductive poly gates use an in-situ doped film approximation. Keep this
   // material-local value out of the Si transport grid and S/D grading evidence.
   // SADP poly is a sacrificial mandrel, not a gate electrode.
-  const gateType=/pmos|pfet/i.test(target)||view==='sd-p'?'p':'n';
-  const materialDoping=target!=='sadp'&&frame.polygons.some(p=>p.material===11)?{11:{type:gateType,concentration:1e20,role:'gate',model:'uniform fully active in-situ doped Poly-Si'}}:{};
+  const materialDoping=target!=='sadp'&&frame.polygons.some(p=>p.material===11)?{11:{...gateDoping,role:'gate',model:'uniform fully active in-situ doped Poly-Si'}}:{};
   return {...frame,substrateDoping:d,materialDoping,concentration:{...grid,mask,fields,background,info:source?.info||{operation:'wafer'}}};
  });
- const result={...raw,waferBackgroundVersion:1,substrateDoping:d,frames};memo.set(raw,{key,result});return result;
+ const result={...raw,waferBackgroundVersion:1,substrateDoping:d,polyGateDoping:gateDoping,frames};memo.set(raw,{key,result});return result;
 }
 module.exports={apply};

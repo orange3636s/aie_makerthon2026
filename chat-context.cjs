@@ -16,7 +16,7 @@ function build(data,verified){
  const f=!data.pending&&(matching?.frames.find(f=>f.stepIndex===data.selectedStep)||matching?.frames[data.selectedStep]);
  const fields=f?.concentration?.fields||{},mask=f?.concentration?.mask||[];
  const selectedEvidence=f?{
-  status:'server-verified',layers:require('./web/learning-score.js').layers(f),
+  status:'server-verified',materialDoping:f.materialDoping,layers:require('./web/learning-score.js').layers(f),
   dopantPeaks:Object.fromEntries(Object.entries(fields).filter(([k])=>!k.startsWith('net')).map(([k,a])=>[k,{value:a.reduce((v,n,i)=>mask[i]&&Number.isFinite(n)?Math.max(v,n):v,0),unit:'cm^-3'}])),
   diagnostics:require('./web/learning-lab-models.js').diagnostics(f,input.steps.slice(0,data.selectedStep),matching.bounds)
  }:{status:'unavailable'};
