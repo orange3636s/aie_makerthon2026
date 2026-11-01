@@ -68,6 +68,12 @@ extend(OPS,n,choice)
 BY_OP={o['id']:o for o in OPS}
 def step(op,**params):return dict(op=op,params=params)
 def dep(material,thickness,method='CVD'):
+    if material=='PolySi':
+        # Thermal LPCVD anchor: Utah Nanofab poly furnace, 11.02 nm/min.
+        rate=11.02/60/1000
+        return dict(step('deposition',material=material,method='CVD',input_mode='Equipment',
+            cvd_type='LPCVD',source_gas='SiH4',source_flow=60,cvd_pressure=.2,
+            depo_temperature=630,rate=rate,time=thickness/rate,sticking=.05,exponent=1.),label='LPCVD · Poly Si')
     return step('deposition',material=material,method=method,rate=.08,time=round(thickness/.08,12),sticking=1. if method=='PVD' else .15,exponent=30 if method=='PVD' else 1.)
 def ald(material,thickness):return step('deposition',method='ALD',material=material,cycles=round(thickness/.001),gpc=.001,pulse=.1,ald_sticking=.00005)
 def photo(width,tone='Negative',pattern='Central',pitch=.6):return step('photo',action='Pattern',width=width,tone=tone,pattern=pattern,pitch=pitch)
@@ -77,7 +83,7 @@ remove=lambda m:step('etch',material=m,method='Selective removal')
 fin_base=[photo(.14),etch('Si',.35),strip(),dep('SiO2',.4),step('cmp'),etch('SiO2',.22)]
 TARGETS=[
 dict(id='mosfet',title='MOSFET',width=1.6,bounds=[-.8,.8,-.45,.48],roi=[-.72,.72,-.18,.42],section='채널 길이 방향 단면',recipe=[
- ald('SiO2',.025),dep('PolySi',.15,'PVD'),photo(.30),etch('PolySi',.18),strip(),etch('SiO2',.035),
+ ald('SiO2',.025),dep('PolySi',.15),photo(.30),etch('PolySi',.18),strip(),etch('SiO2',.035),
  step('diffusion',method='Ion implantation',species='P',energy=30,dose=1e13),step('diffusion',method='Anneal',temperature=1000,time=30),
  ald('Si3N4',.04),etch('Si3N4',.045),dep('Dielectric',.23),step('cmp'),photo(.38,'Positive','Double',1.),etch('Dielectric',.3),strip(),dep('Metal',.3),step('cmp')]),
 dict(id='finfet',title='FINFET',width=1.2,bounds=[-.6,.6,-.48,.2],roi=[-.36,.36,-.30,.16],section='게이트 중심 횡단면',recipe=fin_base+[ald('HfO2',.02),ald('TiN',.08)]),

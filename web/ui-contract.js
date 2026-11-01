@@ -14,11 +14,11 @@
  const optionsFor=(f,value)=>(f.options||[]).filter(v=>!legacy(v)||v===value);
  // Separate process pickers, while retaining the validated native thermal adapter.
  function processKind(row){return row?.op==='diffusion'?(row.params.method==='Ion implantation'?'implant':/oxidation$/.test(row.params.method)?'oxidation':'diffusion'):row?.op;}
- function recipeFields(op,p){const kind=processKind({op:op.id,params:p});return op.fields.filter(f=>f.key!=='input_mode'&&!(p.input_mode==='Equipment'&&f.when?.input_mode?.includes('Effective'))&&active(f,p)&&!(op.id==='deposition'&&f.key==='power'&&p.method==='CVD'&&p.cvd_type==='Thermal CVD')&&!(kind==='implant'&&f.key==='method')).map(f=>f.key==='na'&&op.id==='photo'?{...f,max:lightSource(p.wavelength)?.max||1.35}:f.key==='wavelength'?{...f,label:'노광 방식'}:f.key==='method'&&op.id==='diffusion'?{...f,options:kind==='oxidation'?['Wet oxidation','Dry oxidation']:['Pre-deposition','Drive-in','Anneal']}:f);}
+ function recipeFields(op,p){const kind=processKind({op:op.id,params:p});return op.fields.filter(f=>f.key!=='input_mode'&&!(p.input_mode==='Equipment'&&f.when?.input_mode?.includes('Effective'))&&active(f,p)&&!(op.id==='deposition'&&f.key==='power'&&p.method==='CVD'&&p.cvd_type!=='PECVD')&&!(kind==='implant'&&f.key==='method')).map(f=>f.key==='na'&&op.id==='photo'?{...f,max:lightSource(p.wavelength)?.max||1.35}:f.key==='wavelength'?{...f,label:'노광 방식'}:f.key==='method'&&op.id==='diffusion'?{...f,options:kind==='oxidation'?['Wet oxidation','Dry oxidation']:['Pre-deposition','Drive-in','Anneal']}:f);}
  const processTitle=row=>({implant:'Ion implantation',oxidation:'Oxidation',diffusion:'Diffusion',photo:'Photo',etch:'Etch',deposition:'Deposition',cmp:'C&C'}[processKind(row)]||'Process');
  const text=x=>String(x).replace(/\b(SiO2|Si3N4|HfO2|PolySi|Al2O3|HfZrO2)\b/g,x=>label(x)).replace(/\bCMP\b/g,'C&C');
  const integer=f=>['cycles','layers','sheets'].includes(f.key);
- const active=(f,p)=>!f.when||Object.entries(f.when).every(([k,v])=>k==='input_mode'&&!['etchant','gas','source_gas','precursor','selectivity'].includes(f.key)?true:v.includes(p[k]));
+ const active=(f,p)=>!f.when||Object.entries(f.when).every(([k,v])=>k==='input_mode'&&(!['etchant','gas','source_gas','precursor','selectivity'].includes(f.key)||(f.key==='source_gas'&&p.cvd_type==='LPCVD'))?true:v.includes(p[k]));
  const valid=(f,v)=>f.options?f.options.includes(v):typeof v==='number'&&Number.isFinite(v)&&v>=f.min&&v<=f.max&&(!integer(f)||Number.isInteger(v));
  // A hidden invalid draft must not block the other section's native calculation.
  // Keep valid inactive values so switching back does not erase user's conditions.

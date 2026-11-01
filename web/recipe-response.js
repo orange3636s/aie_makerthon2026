@@ -3,11 +3,16 @@
 (function(root){
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
  const arr=(t,r,e)=>Math.exp(clamp(-e/8.617333262145e-5*(1/(t+273.15)-1/(r+273.15)),-20,20));
+ function lpcvdFactor(p){
+  if(p.material!=='PolySi'||p.source_gas!=='SiH4')throw Error('LPCVD 모델은 PolySi / SiH4 조합을 지원합니다.');
+  const pressure=p.cvd_pressure??.2;
+  return arr(p.depo_temperature??630,630,1)*((p.source_flow??60)/60)**.4*2*pressure/(pressure+.2);
+ }
  function nominal(op,p){
   if(p.input_mode!=='Equipment'){
    let rate=p.rate;
    if(op==='deposition'&&p.method==='PVD')rate*=(p.power??500)/500*1.25/(1+(p.pvd_pressure??5)/20)*2*(p.argon_flow??50)/((p.argon_flow??50)+50);
-   if(op==='deposition'&&p.method==='CVD')rate*=arr(p.depo_temperature??400,400,.3)*((p.source_flow??100)/100)**.4*2*(p.cvd_pressure??1)/((p.cvd_pressure??1)+1)*(p.cvd_type==='Thermal CVD'?1:((p.power??500)/500)**.3);
+   if(op==='deposition'&&p.method==='CVD')rate*=p.cvd_type==='LPCVD'?lpcvdFactor(p):arr(p.depo_temperature??400,400,.3)*((p.source_flow??100)/100)**.4*2*(p.cvd_pressure??1)/((p.cvd_pressure??1)+1)*((p.cvd_type??'PECVD')!=='PECVD'?1:((p.power??500)/500)**.3);
    if(op==='etch'&&p.method==='Directional')rate*=((p.rf_power??300)/300)**.5*((p.gas_flow??50)/50)**.3;
    if(op==='etch'&&p.method==='Isotropic')rate*=arr(p.etch_temperature??25,25,.25);
    return {rate,nm:(p.method==='ALD'?p.gpc*p.cycles:p.method==='ALE'?p.epc*p.cycles:rate*p.time)*1000};
@@ -20,7 +25,7 @@
    }else if(p.method==='CVD'){
     const allowed={'SiH4/O2':['SiO2'],'SiH4/NH3':['Si3N4'],'SiH4':['Si','PolySi'],'WF6/H2':['W']};
     if(!allowed[p.source_gas]?.includes(p.material))throw Error('Source 가스와 재료를 확인하세요.');
-    const pressure=p.cvd_pressure??1;rate=clamp(.002*arr(p.depo_temperature,400,.3)*(p.source_flow/100)**.4*(p.cvd_type==='PECVD'?(p.power/300)**.3:1)*2*pressure/(pressure+1),.00001,.03);
+    const pressure=p.cvd_pressure??1;rate=p.cvd_type==='LPCVD'?clamp(11.02/60/1000*lpcvdFactor(p),.000001,.03):clamp(.002*arr(p.depo_temperature,400,.3)*(p.source_flow/100)**.4*(p.cvd_type==='PECVD'?(p.power/300)**.3:1)*2*pressure/(pressure+1),.00001,.03);
    }else if(p.method==='ALD'){
     const spec={'TMA/H2O':['Al2O3',.00011],'TDMAH/H2O':['HfO2',.0001],'BDEAS/O2':['SiO2',.00008],'TiCl4/NH3':['TiN',.00005]}[p.precursor];
     if(!spec||spec[0]!==p.material)throw Error('전구체와 재료를 확인하세요.');gpc=spec[1]*(1-Math.exp(-p.pulse/.08));

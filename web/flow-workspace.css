@@ -126,6 +126,8 @@ input[type=range],input[type=checkbox]{accent-color:var(--accent)}
 
 /* Explanations live in tutorial; preserve units, warnings and result values. */
 .inline-recipe .field-help{display:none}
+.implant-mask-tools{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-top:6px;grid-column:1/-1}
+.implant-mask-tools small{font-size:10px;color:#738098;line-height:1.4}.implant-mask-tools button{max-width:100%;white-space:normal;font-size:11px;min-height:30px;padding:6px 9px}
 
 /* Reverse flow uses the same row grid as the laboratory timeline. */
 .integrated-workspace #r-flow .flow-card .flow-step{display:grid;grid-template-columns:58px minmax(0,1fr);align-items:center;gap:8px;border-radius:8px;padding:12px 72px 12px 10px;min-height:56px}

@@ -541,7 +541,7 @@
       "section": "2D 단면",
       "flow": [
         "Si₃N₄ target layer deposition",
-        "Poly-Si mandrel deposition",
+        "Poly-Si mandrel · LPCVD",
         "Mandrel photo pattern",
         "Poly-Si mandrel etch",
         "Mandrel PR removal",

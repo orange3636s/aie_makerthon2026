@@ -26,7 +26,7 @@ def _recipe(kind,p):
                 L('PR 2 removal',strip()),L('SiO₂ hardmask removal',remove('SiO2'))]
     if kind=='sadp':
         return [L('Si₃N₄ target layer deposition',dep('Si3N4',.13,'PVD')),
-                L('Poly-Si mandrel deposition',dep('PolySi',.18,'PVD')),
+                L('Poly-Si mandrel · LPCVD',dep('PolySi',.18)),
                 L('Mandrel photo pattern',photo(p['mandrel'],'Negative','Triple',p['pitch'])),
                 L('Poly-Si mandrel etch',etch('PolySi',.23)),L('Mandrel PR removal',strip()),
                 L('SiO₂ spacer deposition',ald('SiO2',p['spacer'])),L('Spacer directional etchback',etch('SiO2',p['spacer']+.015)),

@@ -82,6 +82,15 @@ def run(data):
             mesh=ls.Mesh();convert=ls.ToHullMesh(mesh,d.getMaterialLevelSet(m));convert.setBottomExtension(2.);convert.apply()
             display_material=int(ps.Material.Si) if m==ps.Material.BulkSi else int(m)
             polygons+=contour_mesh(mesh,display_material,True,x_bounds=(-width/2,width/2),boundary_tolerance=.001)
+        # Preserve both actual planar interfaces for sub-grid thermal oxide.
+        # Boolean shell meshing otherwise shifts a <10 nm outer interface.
+        if ps.Material.SiO2 in d.getMaterialsInDomain():
+            from planar_oxidation import interfaces
+            pair=interfaces(ps,ls,d,width)
+            if pair and 0<pair[1]-pair[0]<.01:
+                bottom,top=pair
+                polygons=[q for q in polygons if q['material']!=int(ps.Material.SiO2)]
+                polygons.append(dict(material=int(ps.Material.SiO2),closed=True,points=[[-width/2,bottom],[width/2,bottom],[width/2,top],[-width/2,top],[-width/2,bottom]]))
         if not polygons or any(not p['closed'] for p in polygons):raise ValueError('닫힌 재료 경계를 계산하지 못했습니다. 조건을 줄여 주세요.')
         if periodic:
             polygons=[dict(material=q['material'],closed=q['closed'],points=[[round(sign*x+shift,6),y] for x,y in q['points']]) for q in polygons for sign,shift in [(-1,-.6),(1,-.2),(-1,.2),(1,.6)]]
@@ -316,18 +325,23 @@ def run(data):
                     annealed.update(implanted|diffused);label=p['method']+(' · '+p['species'] if source else '')
                 else:
                     if doping_state:raise ValueError('도핑 후 열산화의 재분배는 지원하지 않습니다. 산화와 도핑 실험을 분리하세요.')
-                    if ps.Material.SiO2 not in mats:raise ValueError('산화 전에 SiO₂ seed 막이 필요합니다.')
-                    if any(m not in [ps.Material.Si,ps.Material.SiO2,ps.Material.Si3N4] for m in mats):raise ValueError('열산화는 Si / SiO₂ / Si₃N₄ 구조에서 실행하세요.')
-                    # Oxidation requires a non-wrapped mechanical mask, unlike
-                    # the cumulative level sets used by generic processes.
-                    rebuilt=ps.Domain(gridDelta=.01,xExtent=width,yExtent=2.,boundary=ps.BoundaryType.REFLECTIVE_BOUNDARY)
-                    rebuilt.insertNextLevelSetAsMaterial(d.getMaterialLevelSet(ps.Material.Si),ps.Material.Si,False)
-                    rebuilt.insertNextLevelSetAsMaterial(d.getMaterialLevelSet(ps.Material.SiO2),ps.Material.SiO2,True)
-                    if ps.Material.Si3N4 in mats:rebuilt.insertNextLevelSetAsMaterial(d.getMaterialLevelSet(ps.Material.Si3N4),ps.Material.Si3N4,False)
-                    d=rebuilt
-                    model=ps.Oxidation();model.setTemperature(p['temperature']);model.setPressure(1.);model.setTime(p['oxidation_time']);model.setTimeStep(p['oxidation_time']/3)
-                    name='Wet' if p['method'].startswith('Wet') else 'Dry';model.setOxidant(getattr(ps.OxidantType,name));model.setOrientation(ps.SiliconOrientation.Si100);model.setInitialOxideThickness(.025);model.setMaxGridPoints(100000)
-                    advance(model,0);label=p['method'];oxidized=True
+                    from planar_oxidation import apply as planar_oxidation
+                    planar=planar_oxidation(ps,ls,d,width,p)
+                    if planar:
+                        d,metric=planar;label=p['method'];oxidized=False
+                    else:
+                        if ps.Material.SiO2 not in mats:raise ValueError('현재 seed 없는 열산화는 평탄한 Si 표면을 지원합니다. 거칠기·단차 또는 마스크를 확인하세요.')
+                        if any(m not in [ps.Material.Si,ps.Material.SiO2,ps.Material.Si3N4] for m in mats):raise ValueError('열산화는 Si / SiO₂ / Si₃N₄ 구조에서 실행하세요.')
+                        # Oxidation requires a non-wrapped mechanical mask, unlike
+                        # the cumulative level sets used by generic processes.
+                        rebuilt=ps.Domain(gridDelta=.01,xExtent=width,yExtent=2.,boundary=ps.BoundaryType.REFLECTIVE_BOUNDARY)
+                        rebuilt.insertNextLevelSetAsMaterial(d.getMaterialLevelSet(ps.Material.Si),ps.Material.Si,False)
+                        rebuilt.insertNextLevelSetAsMaterial(d.getMaterialLevelSet(ps.Material.SiO2),ps.Material.SiO2,True)
+                        if ps.Material.Si3N4 in mats:rebuilt.insertNextLevelSetAsMaterial(d.getMaterialLevelSet(ps.Material.Si3N4),ps.Material.Si3N4,False)
+                        d=rebuilt
+                        model=ps.Oxidation();model.setTemperature(p['temperature']);model.setPressure(1.);model.setTime(p['oxidation_time']);model.setTimeStep(p['oxidation_time']/3)
+                        name='Wet' if p['method'].startswith('Wet') else 'Dry';model.setOxidant(getattr(ps.OxidantType,name));model.setOrientation(ps.SiliconOrientation.Si100);model.setInitialOxideThickness(.025);model.setMaxGridPoints(100000)
+                        advance(model,0);label=p['method'];oxidized=True
             elif op=='cmp' and p['action']=='Cleaning':
                 loss=response.get('filmLossUm',0.)
                 if loss and ps.Material.SiO2 in mats:

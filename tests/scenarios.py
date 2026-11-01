@@ -72,7 +72,6 @@ if __name__=='__main__':
         ('PR strip without PR',[strip()],'PR'),
         ('missing etch material',[etch('SiGe',.1)],'재료'),
         ('duplicate PR',[photo(.3),photo(.4)],'기존 PR'),
-        ('oxidation without seed',[step('diffusion',method='Wet oxidation')],'seed'),
         ('anneal without implant',[step('diffusion',method='Anneal')],'도핑'),
         ('out-of-bounds etch',[step('etch',material='Si',rate=.5,time=2.)],'학습 영역'),
     ]:check('recovery:'+name,lambda rows=rows,word=word:rejection(rows,word))

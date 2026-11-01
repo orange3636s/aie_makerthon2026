@@ -24,6 +24,20 @@ for op,variations in [('deposition',[dict(method='PVD',material='Cu',power=1000,
 for op,values in [('deposition',dict(method='PVD',power=1100,pvd_pressure=12,argon_flow=80)),('deposition',dict(method='CVD',depo_temperature=480,cvd_pressure=2,source_flow=160)),('etch',dict(method='Directional',rf_power=700,gas_flow=90,pressure=70)),('etch',dict(method='Isotropic',etch_temperature=40))]:
  p=params(op,**values);q,_,_=resolve(op,p,{})
  cases.append(dict(op=op,params=p,nm=q['rate']*q['time']*1000))
+# LPCVD has a thermal anchor, no RF response, and independent time/flow/pressure responses.
+poly=params('deposition',input_mode='Equipment',method='CVD',material='PolySi',
+ cvd_type='LPCVD',source_gas='SiH4',source_flow=60,cvd_pressure=.2,depo_temperature=630,time=150/(11.02/60))
+base=resolve('deposition',poly,{})[0]['rate']
+assert abs(base*1000*60-11.02)<1e-10
+for mode in ['Equipment','Effective']:
+ for delta in [{},{'depo_temperature':650},{'source_flow':120},{'cvd_pressure':.4},{'time':2000},{'power':50},{'power':2000}]:
+  p={**poly,'input_mode':mode,'rate':base,**delta};q,_,_=resolve('deposition',p,{})
+  if 'power' in delta:assert abs(q['rate']-base)<1e-15
+  if any(k in delta for k in ['depo_temperature','source_flow','cvd_pressure']):assert q['rate']>base
+  cases.append(dict(op='deposition',params=p,nm=q['rate']*q['time']*1000))
+for delta in [{'source_gas':'SiH4/O2'},{'material':'SiO2','source_gas':'SiH4/O2'}]:
+ try:resolve('deposition',{**poly,**delta},{});raise AssertionError('unsupported LPCVD chemistry accepted')
+ except ValueError:pass
 js="const fs=require('fs'),r=require('./web/recipe-response.js');const cases=JSON.parse(fs.readFileSync(0,'utf8'));for(const c of cases){const n=r.nominal(c.op,c.params).nm;if(Math.abs(n-c.nm)>1e-8)throw Error('preview/backend mismatch '+JSON.stringify(c));}console.log(cases.length+' frontend/backend nominal-response parity cases passed');"
 subprocess.run(['node','-e',js],input=json.dumps(cases),text=True,cwd=ROOT,check=True)
 print('Spin, adhesion, exposure, develop, pressure, CMP and unsupported chemistry tests passed',flush=True)

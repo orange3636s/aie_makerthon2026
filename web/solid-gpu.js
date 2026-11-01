@@ -46,7 +46,7 @@
    const maskKey=JSON.stringify([s.mask,s.depth,s.exploded]);
    if(maskKey!==r.maskKey){if(r.mask){r.scene.remove(r.mask);r.mask.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});}r.mask=new T.Group();r.maskKey=maskKey;
     if(s.mask&&!s.exploded){const m=s.mask;for(const [a,e] of m.solid){const box=new T.Mesh(new T.BoxGeometry(e-a,s.depth,m.t),new T.MeshStandardMaterial({color:'#717e91',roughness:.48,metalness:.25}));box.position.set((a+e)/2,0,m.y+m.t/2);box.castShadow=true;box.receiveShadow=true;r.mask.add(box);}
-     if(m.arrows)for(const [a,e] of m.open)for(const f of [.25,.5,.75]){const x=a+(e-a)*f,top=m.y+m.t+.045;const arrow=new T.ArrowHelper(new T.Vector3(0,0,-1),new T.Vector3(x,-s.depth*.1,top),top-m.surface-.008,m.species==='B'?0xc2185b:m.species?0x1255cd:0xc99b35,.025,.012);r.mask.add(arrow);}
+     if(m.arrows)for(const ray of PhotoPreview.rays(m)){const arrow=new T.ArrowHelper(new T.Vector3(0,0,-1),new T.Vector3(ray.x,-s.depth*.1,ray.start),Math.max(.001,ray.start-ray.end),ray.blocked?0x7d8798:m.species==='B'?0xc2185b:m.species?0x1255cd:0xc99b35,.025,.012);r.mask.add(arrow);}
     }r.scene.add(r.mask);
    }
    if(r.w!==w||r.h!==h){r.renderer.setSize(w,h,false);r.w=w;r.h=h;}

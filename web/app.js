@@ -81,7 +81,7 @@ function draw(canvas,data,bounds,options={}){
  canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);const c=canvas.getContext('2d');c.scale(dpr,dpr);c.fillStyle='#ffffff';c.fillRect(0,0,w,h);
  if(!data||!bounds){c.fillStyle='#536981';c.font='12px ProcessSans, Segoe UI';c.textAlign='center';c.fillText('조건을 선택하고 실행해 주세요',w/2,h/2);return}
  if(!options.mini&&!options.fitted&&window.SectionViewport)bounds=SectionViewport.fit(data,bounds,options.reference);
- const overlay=PhotoPreview.build(options.maskPreview||data.photoMask||data.exposure,bounds,data);
+ const overlay=solid?solid.maskSlice:PhotoPreview.build(options.maskPreview||data.photoMask||data.exposure,bounds,data);
  if(overlay)bounds=[bounds[0],bounds[1],bounds[2],Math.max(bounds[3],overlay.top)];
  const axisUnit=options.unit||selected?.unit||current?.unit||'µm',axisField={unit:axisUnit};
  const mini=!!options.mini,margin=mini?6:36,top=mini?7:25,bottom=mini?6:42;

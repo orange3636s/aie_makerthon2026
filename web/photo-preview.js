@@ -9,16 +9,41 @@
  function build(p,bounds,data){
   if(!p||!bounds||!data)return null;let open=windows(p,bounds);if(!open.length)return null;
   if(p.species&&p.tone==='Negative'){const inverse=[];let x=bounds[0];for(const [a,b] of open){if(a>x)inverse.push([x,a]);x=b;}if(x<bounds[1])inverse.push([x,bounds[1]]);open=inverse;}
-  const width=bounds[1]-bounds[0],surface=data.highest??Math.max(...data.polygons.flatMap(q=>q.points.map(p=>p[1]))),y=surface+width*.12,t=width*.014;
+  const width=bounds[1]-bounds[0],surface=data.highest??Math.max(...data.polygons.flatMap(q=>q.points.map(p=>p[1]))),y=surface+(p.implant?.05:width*.12),t=p.implant?.1:width*.014;
   const solid=[];let end=bounds[0];for(const [a,b] of open){if(a>end)solid.push([end,a]);end=b;}if(end<bounds[1])solid.push([end,bounds[1]]);
-  return {open,solid,y,t,surface,top:y+t+width*.07,arrows:!!p.arrows,species:p.species};
+  const result={open,solid,y,t,surface,top:y+t+width*.07,arrows:!!p.arrows,species:p.species,implant:!!p.implant};
+  if(result.implant){result.rays=[];const xs=new Set([...Array.from({length:11},(_,i)=>bounds[0]+width*(i+.5)/11),...solid.map(([a,b])=>(a+b)/2),...open.flatMap(([a,b])=>[.25,.5,.75].map(r=>a+(b-a)*r))]);
+   for(const x of [...xs].sort((a,b)=>a-b)){const hit=impact(result,data,x);if(hit)result.rays.push({x,start:result.top,end:hit.end,blocked:hit.blocked});}
+  }
+  return result;
+ }
+ function surfaceAt(data,x){
+  const hits=[];
+  for(const polygon of data?.polygons||[]){const ys=[],points=polygon.points;
+   for(let i=0;i<points.length;i++){const [a,b]=[points[i],points[(i+1)%points.length]];if((a[0]<=x&&x<b[0])||(b[0]<=x&&x<a[0]))ys.push(a[1]+(x-a[0])*(b[1]-a[1])/(b[0]-a[0]));}
+   ys.sort((a,b)=>a-b);if(ys.length>=2)hits.push({top:ys.at(-1),bottom:ys.at(-2),material:polygon.material});
+  }
+  return hits.sort((a,b)=>b.top-a.top)[0]||null;
+ }
+ function impact(mask,data,x){
+  if(mask?.solid.some(([a,b])=>x>=a&&x<=b))return {end:mask.y+mask.t,blocked:true};
+  const hit=surfaceAt(data,x);if(!hit)return null;
+  const blocked=hit.material!==10;
+  return {end:blocked?hit.top+.003:hit.top-Math.min(.035,Math.max(0,hit.top-hit.bottom)*.2),blocked};
+ }
+ function rays(mask){return mask.rays||mask.open.flatMap(([a,b])=>[.25,.5,.75].map(f=>({x:a+(b-a)*f,start:mask.y+mask.t+.025,end:mask.surface+.008,blocked:false})));}
+ function slice(mask,axis,at,depth,data){
+  if(!mask||axis==='Y')return mask;
+  if(axis==='Z')return at>=mask.y&&at<=mask.y+mask.t?{...mask,y:-depth/2,t:depth,top:depth/2,arrows:false}:null;
+  const covered=mask.solid.some(([a,b])=>at>=a&&at<=b),hit=mask.implant?impact(mask,data,at):{end:mask.surface+.008,blocked:covered};
+  return {...mask,solid:covered?[[-depth/2,depth/2]]:[],open:covered?[]:[[-depth/2,depth/2]],rays:hit?Array.from({length:5},(_,i)=>({x:depth*((i+.5)/5-.5),start:mask.top,end:hit.end,blocked:hit.blocked})):[],arrows:mask.arrows};
  }
  function context(row,rows,frame){
   if(row?.op==='diffusion'&&row.params.method==='Ion implantation'){
    const p=row.params;
-   if(p.implant_mask&&p.implant_mask!=='Existing')return {pattern:p.implant_mask,width:p.implant_width,pitch:p.implant_pitch,offset:p.implant_offset,arrows:true,species:p.species};
-   for(let i=rows.length-1;i>=0;i--){const s=rows[i];if(s.op==='photo'&&s.params.action==='Strip')break;if(s.op==='photo'&&['Pattern','Patterning','Exposure'].includes(s.params.action)){const coat=rows.slice(0,i).findLast(x=>x.op==='photo'&&x.params.action==='Coat');return {...s.params,tone:s.params.action==='Pattern'?s.params.tone:coat?.params.tone,arrows:true,species:p.species};}}
-   return {pattern:'Central',width:100,pitch:1,offset:0,arrows:true,species:p.species};
+   if(p.implant_mask&&p.implant_mask!=='Existing')return {pattern:p.implant_mask,width:p.implant_width,pitch:p.implant_pitch,offset:p.implant_offset,arrows:true,species:p.species,implant:true};
+   // Existing gate/PR masks are real geometry, not a second floating photo mask.
+   return {pattern:'Central',width:100,pitch:1,offset:0,arrows:true,species:p.species,implant:true};
   }
   if(row?.op!=='photo')return null;const p=row.params;
   if(['Patterning','Pattern','Exposure'].includes(p.action))return {...p,arrows:p.action==='Exposure'};
@@ -32,8 +57,8 @@
    if(extra){c.fillStyle='#B8BEC7';c.beginPath();c.moveTo(x,y);c.lineTo(x+extra,y-extra);c.lineTo(r+extra,y-extra);c.lineTo(r,y);c.closePath();c.fill();c.fillStyle='#777F8C';c.beginPath();c.moveTo(r,y);c.lineTo(r+extra,y-extra);c.lineTo(r+extra,bottom-extra);c.lineTo(r,bottom);c.closePath();c.fill();}
    c.fillStyle='#959DA9';c.fillRect(x,y,r-x,bottom-y);
   }
-  if(p.arrows){c.strokeStyle=p.species==='B'?'#CB7099':p.species==='P'?'#428AD0':'#D3AA43';c.lineWidth=1.15;for(const [a,b] of p.open)for(const ratio of [.25,.5,.75]){const x=px(a+(b-a)*ratio),end=py(p.surface+.008);c.beginPath();c.moveTo(x,py(p.y+p.t+.025));c.lineTo(x,end);c.lineTo(x-3,end-5);c.moveTo(x,end);c.lineTo(x+3,end-5);c.stroke();}}
-  if(!mini){c.font='11px ProcessSans, sans-serif';c.fillStyle='#64748B';c.textAlign='left';c.fillText(p.species?p.species+' implantation':p.arrows?'Mask / UV · 도식':'Mask preview',px(p.solid[0]?.[0]??p.open[0][0]),py(p.top)+8);}
+  if(p.arrows){c.lineWidth=1.15;for(const ray of rays(p)){c.strokeStyle=ray.blocked?'#7D8798':p.species==='B'?'#CB7099':p.species==='P'?'#428AD0':'#D3AA43';const x=px(ray.x),end=py(ray.end);c.beginPath();c.moveTo(x,py(ray.start));c.lineTo(x,end);c.lineTo(x-3,end-5);c.moveTo(x,end);c.lineTo(x+3,end-5);c.stroke();if(ray.blocked){c.beginPath();c.moveTo(x-4,end);c.lineTo(x+4,end);c.stroke();}}}
+  if(!mini){c.font='11px ProcessSans, sans-serif';c.fillStyle='#64748B';c.textAlign='left';c.fillText(p.species?p.species+' implantation':p.arrows?'Mask / UV · 도식':'Mask preview',px(p.solid[0]?.[0]??p.open[0]?.[0]??0),py(p.top)+8);}
  }
- const api={windows,build,context,paint};if(typeof module==='object'&&module.exports)module.exports=api;else root.PhotoPreview=api;
+ const api={windows,build,context,paint,surfaceAt,impact,rays,slice};if(typeof module==='object'&&module.exports)module.exports=api;else root.PhotoPreview=api;
 })(typeof window==='object'?window:globalThis);

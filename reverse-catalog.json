@@ -868,6 +868,7 @@
           "label": "CVD 방식",
           "options": [
             "Thermal CVD",
+            "LPCVD",
             "PECVD"
           ],
           "default": "PECVD",
@@ -1955,12 +1956,19 @@
           "op": "deposition",
           "params": {
             "material": "PolySi",
-            "method": "PVD",
-            "rate": 0.08,
-            "time": 1.875,
-            "sticking": 1.0,
-            "exponent": 30
-          }
+            "method": "CVD",
+            "input_mode": "Equipment",
+            "cvd_type": "LPCVD",
+            "source_gas": "SiH4",
+            "source_flow": 60,
+            "cvd_pressure": 0.2,
+            "depo_temperature": 630,
+            "rate": 0.00018366666666666667,
+            "time": 816.6969147005444,
+            "sticking": 0.05,
+            "exponent": 1.0
+          },
+          "label": "LPCVD · Poly Si"
         },
         {
           "op": "photo",
@@ -2196,13 +2204,19 @@
           "op": "deposition",
           "params": {
             "material": "PolySi",
-            "method": "PVD",
-            "rate": 0.08,
-            "time": 1.75,
-            "sticking": 1.0,
-            "exponent": 30
+            "method": "CVD",
+            "input_mode": "Equipment",
+            "cvd_type": "LPCVD",
+            "source_gas": "SiH4",
+            "source_flow": 60,
+            "cvd_pressure": 0.2,
+            "depo_temperature": 630,
+            "rate": 0.00018366666666666667,
+            "time": 762.2504537205083,
+            "sticking": 0.05,
+            "exponent": 1.0
           },
-          "label": "Gate deposition"
+          "label": "Gate deposition · LPCVD"
         },
         {
           "op": "photo",
@@ -2456,13 +2470,19 @@
           "op": "deposition",
           "params": {
             "material": "PolySi",
-            "method": "PVD",
-            "rate": 0.08,
-            "time": 1.75,
-            "sticking": 1.0,
-            "exponent": 30
+            "method": "CVD",
+            "input_mode": "Equipment",
+            "cvd_type": "LPCVD",
+            "source_gas": "SiH4",
+            "source_flow": 60,
+            "cvd_pressure": 0.2,
+            "depo_temperature": 630,
+            "rate": 0.00018366666666666667,
+            "time": 762.2504537205083,
+            "sticking": 0.05,
+            "exponent": 1.0
           },
-          "label": "Gate deposition"
+          "label": "Gate deposition · LPCVD"
         },
         {
           "op": "photo",
@@ -2783,12 +2803,18 @@
           "params": {
             "material": "PolySi",
             "method": "CVD",
-            "rate": 0.08,
-            "time": 5.25,
-            "sticking": 0.01,
-            "exponent": 10.0
+            "input_mode": "Equipment",
+            "cvd_type": "LPCVD",
+            "source_gas": "SiH4",
+            "source_flow": 60,
+            "cvd_pressure": 0.2,
+            "depo_temperature": 630,
+            "rate": 0.00018366666666666667,
+            "time": 2286.7513611615245,
+            "sticking": 0.05,
+            "exponent": 1.0
           },
-          "label": "Recess gate fill"
+          "label": "Recess gate fill · LPCVD"
         },
         {
           "op": "etch",
@@ -4596,13 +4622,19 @@
           "op": "deposition",
           "params": {
             "material": "PolySi",
-            "method": "PVD",
-            "rate": 0.08,
-            "time": 1.875,
-            "sticking": 1.0,
-            "exponent": 30
+            "method": "CVD",
+            "input_mode": "Equipment",
+            "cvd_type": "LPCVD",
+            "source_gas": "SiH4",
+            "source_flow": 60,
+            "cvd_pressure": 0.2,
+            "depo_temperature": 630,
+            "rate": 0.00018366666666666667,
+            "time": 816.6969147005444,
+            "sticking": 0.05,
+            "exponent": 1.0
           },
-          "label": "Control gate"
+          "label": "Control gate · LPCVD"
         },
         {
           "op": "photo",
@@ -5723,13 +5755,19 @@
           "op": "deposition",
           "params": {
             "material": "PolySi",
-            "method": "PVD",
-            "rate": 0.08,
-            "time": 2.25,
-            "sticking": 1.0,
-            "exponent": 30
+            "method": "CVD",
+            "input_mode": "Equipment",
+            "cvd_type": "LPCVD",
+            "source_gas": "SiH4",
+            "source_flow": 60,
+            "cvd_pressure": 0.2,
+            "depo_temperature": 630,
+            "rate": 0.00018366666666666667,
+            "time": 980.0362976406533,
+            "sticking": 0.05,
+            "exponent": 1.0
           },
-          "label": "Poly-Si mandrel deposition"
+          "label": "Poly-Si mandrel · LPCVD"
         },
         {
           "op": "photo",

@@ -40,7 +40,7 @@ def extend(ops,n,choice):
       n('argon_flow','Ar flow',50,5,200,'sccm',5,{'input_mode':['Equipment'],'method':['PVD']}),
       n('cvd_pressure','챔버 압력',1,.1,10,'Torr',.1,{'input_mode':['Equipment'],'method':['CVD']}),
       n('power','DC / RF power',500,50,2000,'W',10,{'input_mode':['Equipment'],'method':['PVD','CVD']}),
-      choice('cvd_type','CVD 방식',['Thermal CVD','PECVD'],'PECVD',{'input_mode':['Equipment'],'method':['CVD']}),
+      choice('cvd_type','CVD 방식',['Thermal CVD','LPCVD','PECVD'],'PECVD',{'input_mode':['Equipment'],'method':['CVD']}),
       choice('source_gas','Source 가스',['SiH4/O2','SiH4/NH3','SiH4','WF6/H2'],'SiH4/O2',{'input_mode':['Equipment'],'method':['CVD']}),
       n('source_flow','Source 유량',100,10,500,'sccm',10,{'input_mode':['Equipment'],'method':['CVD']}),
       n('depo_temperature','챔버 온도',400,200,800,'°C',10,{'input_mode':['Equipment'],'method':['CVD']}),

@@ -1,17 +1,18 @@
 {
   "version": 1,
-  "modelHash": "1aaa1b6f85c2b7e81e7ea227b7358f8c4575b27238b0c0cc500df5475b308e60",
-  "createdAt": "2026-10-30T02:56:42.745Z",
+  "modelHash": "a3bb9815ea5d2c412afc8a4dcbd628b863df7e849f266c74fdb28e7adad0760b",
+  "createdAt": "2026-11-01T13:39:22.407Z",
   "entries": [
     {
       "id": "reference",
       "name": "기존 교육 기준",
       "file": "reference.json.gz",
-      "sha256": "8fdc0faf128670fd0e430b00eda05ddf09fa6d37e975bb8672f2b6a32e826244",
+      "sha256": "e051ffa4e991532fc8059d63442423121215d01580cab460abbf2b00c0f7f3e9",
       "steps": [
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "ALD",
             "material": "SiO2",
             "rate": 0.08,
@@ -21,23 +22,45 @@
             "cycles": 25,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           }
         },
         {
           "op": "deposition",
           "params": {
-            "method": "PVD",
+            "input_mode": "Equipment",
+            "method": "CVD",
             "material": "PolySi",
-            "rate": 0.08,
-            "time": 1.875,
-            "sticking": 1,
-            "exponent": 30,
+            "rate": 0.00018366666666666667,
+            "time": 816.6969147005444,
+            "sticking": 0.05,
+            "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
-          }
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 0.2,
+            "power": 500,
+            "cvd_type": "LPCVD",
+            "source_gas": "SiH4",
+            "source_flow": 60,
+            "depo_temperature": 630,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
+          },
+          "label": "LPCVD · Poly Si"
         },
         {
           "op": "photo",
@@ -49,7 +72,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "PR coating"
         },
@@ -63,7 +99,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Patterning"
         },
@@ -77,13 +126,27 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 150
+            "develop_time": 150,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Developing"
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "PolySi",
             "method": "Directional",
             "rate": 0.1,
@@ -91,7 +154,14 @@
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
@@ -104,20 +174,41 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           }
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "SiO2",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 34.99999999999999,
+            "rate": 0.1,
+            "time": 0.35,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
@@ -135,7 +226,9 @@
             "time": 30,
             "surface_concentration": 100000000000000000000,
             "diffusion_time": 600,
-            "oxidation_time": 0.03
+            "oxidation_time": 0.03,
+            "tilt": 7,
+            "twist": 0
           },
           "label": "Source / drain implant · P"
         },
@@ -154,13 +247,16 @@
             "time": 30,
             "surface_concentration": 100000000000000000000,
             "diffusion_time": 600,
-            "oxidation_time": 0.03
+            "oxidation_time": 0.03,
+            "tilt": 7,
+            "twist": 0
           },
           "label": "Dopant activation"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "ALD",
             "material": "Si3N4",
             "rate": 0.08,
@@ -170,60 +266,106 @@
             "cycles": 40,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           }
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "Si3N4",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 45.00000000000001,
+            "rate": 0.1,
+            "time": 0.45,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "SiO2",
-            "rate": 0.001,
-            "time": 320,
+            "rate": 0.08,
+            "time": 4,
             "sticking": 0.15,
             "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "ILD deposition"
         },
         {
           "op": "cmp",
           "params": {
+            "action": "CMP",
+            "input_mode": "Effective",
             "rate": 0.01,
             "time": 120,
-            "slurry": "Ceria oxide"
+            "slurry": "Ceria oxide",
+            "down_force": 3,
+            "platen_speed": 60,
+            "chemical": "SC-1",
+            "clean_time": 60
           },
           "label": "ILD planarization"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "SiO2",
-            "rate": 0.001,
-            "time": 100,
+            "rate": 0.08,
+            "time": 1.25,
             "sticking": 0.15,
             "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "Contact dielectric cap"
         },
@@ -237,7 +379,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "PR coating"
         },
@@ -251,7 +406,20 @@
             "pitch": 0.5,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "S/D + gate contact openings"
         },
@@ -265,21 +433,42 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 150
+            "develop_time": 150,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Developing"
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "SiO2",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 600.0000000000001,
+            "rate": 0.1,
+            "time": 6,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           },
           "label": "Contact-hole etch · ILD"
         },
@@ -293,13 +482,27 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Contact PR strip"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "W",
             "rate": 0.08,
@@ -309,16 +512,32 @@
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "W contact fill"
         },
         {
           "op": "cmp",
           "params": {
+            "action": "CMP",
+            "input_mode": "Effective",
             "rate": 0.01,
             "time": 120,
-            "slurry": "Silica tungsten"
+            "slurry": "Silica tungsten",
+            "down_force": 3,
+            "platen_speed": 60,
+            "chemical": "SC-1",
+            "clean_time": 60
           },
           "label": "Contact metal CMP"
         }
@@ -334,11 +553,12 @@
       "id": "extension",
       "name": "Extension → spacer → S/D",
       "file": "extension.json.gz",
-      "sha256": "ec8ba397756bbeab8805726b3c75d15320ddb1d8f42d2a8131ede7aeb11d007a",
+      "sha256": "6241c3b6946b1d61549461f26a388db661a64071b53af0af573975ef14c59de3",
       "steps": [
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "ALD",
             "material": "SiO2",
             "rate": 0.08,
@@ -348,23 +568,45 @@
             "cycles": 25,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           }
         },
         {
           "op": "deposition",
           "params": {
-            "method": "PVD",
+            "input_mode": "Equipment",
+            "method": "CVD",
             "material": "PolySi",
-            "rate": 0.08,
-            "time": 1.875,
-            "sticking": 1,
-            "exponent": 30,
+            "rate": 0.00018366666666666667,
+            "time": 816.6969147005444,
+            "sticking": 0.05,
+            "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
-          }
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 0.2,
+            "power": 500,
+            "cvd_type": "LPCVD",
+            "source_gas": "SiH4",
+            "source_flow": 60,
+            "depo_temperature": 630,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
+          },
+          "label": "LPCVD · Poly Si"
         },
         {
           "op": "photo",
@@ -376,7 +618,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "PR coating"
         },
@@ -390,7 +645,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Patterning"
         },
@@ -404,13 +672,27 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 150
+            "develop_time": 150,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Developing"
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "PolySi",
             "method": "Directional",
             "rate": 0.1,
@@ -418,7 +700,14 @@
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
@@ -431,20 +720,41 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           }
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "SiO2",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 34.99999999999999,
+            "rate": 0.1,
+            "time": 0.35,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
@@ -462,13 +772,16 @@
             "time": 30,
             "surface_concentration": 100000000000000000000,
             "diffusion_time": 600,
-            "oxidation_time": 0.03
+            "oxidation_time": 0.03,
+            "tilt": 7,
+            "twist": 0
           },
           "label": "Shallow extension implant"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "ALD",
             "material": "Si3N4",
             "rate": 0.08,
@@ -478,20 +791,38 @@
             "cycles": 40,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           }
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "Si3N4",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 45.00000000000001,
+            "rate": 0.1,
+            "time": 0.45,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
@@ -509,7 +840,9 @@
             "time": 30,
             "surface_concentration": 100000000000000000000,
             "diffusion_time": 600,
-            "oxidation_time": 0.03
+            "oxidation_time": 0.03,
+            "tilt": 7,
+            "twist": 0
           },
           "label": "Source / drain implant · P"
         },
@@ -528,48 +861,78 @@
             "time": 30,
             "surface_concentration": 100000000000000000000,
             "diffusion_time": 600,
-            "oxidation_time": 0.03
+            "oxidation_time": 0.03,
+            "tilt": 7,
+            "twist": 0
           },
           "label": "Dopant activation"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "SiO2",
-            "rate": 0.001,
-            "time": 320,
+            "rate": 0.08,
+            "time": 4,
             "sticking": 0.15,
             "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "ILD deposition"
         },
         {
           "op": "cmp",
           "params": {
+            "action": "CMP",
+            "input_mode": "Effective",
             "rate": 0.01,
             "time": 120,
-            "slurry": "Ceria oxide"
+            "slurry": "Ceria oxide",
+            "down_force": 3,
+            "platen_speed": 60,
+            "chemical": "SC-1",
+            "clean_time": 60
           },
           "label": "ILD planarization"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "SiO2",
-            "rate": 0.001,
-            "time": 100,
+            "rate": 0.08,
+            "time": 1.25,
             "sticking": 0.15,
             "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "Contact dielectric cap"
         },
@@ -583,7 +946,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "PR coating"
         },
@@ -597,7 +973,20 @@
             "pitch": 0.5,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "S/D + gate contact openings"
         },
@@ -611,21 +1000,42 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 150
+            "develop_time": 150,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Developing"
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "SiO2",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 600.0000000000001,
+            "rate": 0.1,
+            "time": 6,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           },
           "label": "Contact-hole etch · ILD"
         },
@@ -639,13 +1049,27 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Contact PR strip"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "W",
             "rate": 0.08,
@@ -655,16 +1079,32 @@
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "W contact fill"
         },
         {
           "op": "cmp",
           "params": {
+            "action": "CMP",
+            "input_mode": "Effective",
             "rate": 0.01,
             "time": 120,
-            "slurry": "Silica tungsten"
+            "slurry": "Silica tungsten",
+            "down_force": 3,
+            "platen_speed": 60,
+            "chemical": "SC-1",
+            "clean_time": 60
           },
           "label": "Contact metal CMP"
         }
@@ -680,11 +1120,12 @@
       "id": "barrier",
       "name": "TiN → ALD W → CVD W",
       "file": "barrier.json.gz",
-      "sha256": "702eeda0ac92d8d0dc2527a839a99ac4ead9f5d7cfcfbc7ac5618ebb84f2613e",
+      "sha256": "5cf1c6c418fef65e7fcde485bf7500c75849c719ce2216e622e8154e2f375f9a",
       "steps": [
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "ALD",
             "material": "SiO2",
             "rate": 0.08,
@@ -694,23 +1135,45 @@
             "cycles": 25,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           }
         },
         {
           "op": "deposition",
           "params": {
-            "method": "PVD",
+            "input_mode": "Equipment",
+            "method": "CVD",
             "material": "PolySi",
-            "rate": 0.08,
-            "time": 1.875,
-            "sticking": 1,
-            "exponent": 30,
+            "rate": 0.00018366666666666667,
+            "time": 816.6969147005444,
+            "sticking": 0.05,
+            "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
-          }
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 0.2,
+            "power": 500,
+            "cvd_type": "LPCVD",
+            "source_gas": "SiH4",
+            "source_flow": 60,
+            "depo_temperature": 630,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
+          },
+          "label": "LPCVD · Poly Si"
         },
         {
           "op": "photo",
@@ -722,7 +1185,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "PR coating"
         },
@@ -736,7 +1212,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Patterning"
         },
@@ -750,13 +1239,27 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 150
+            "develop_time": 150,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Developing"
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "PolySi",
             "method": "Directional",
             "rate": 0.1,
@@ -764,7 +1267,14 @@
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
@@ -777,20 +1287,41 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           }
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "SiO2",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 34.99999999999999,
+            "rate": 0.1,
+            "time": 0.35,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
@@ -808,7 +1339,9 @@
             "time": 30,
             "surface_concentration": 100000000000000000000,
             "diffusion_time": 600,
-            "oxidation_time": 0.03
+            "oxidation_time": 0.03,
+            "tilt": 7,
+            "twist": 0
           },
           "label": "Source / drain implant · P"
         },
@@ -827,13 +1360,16 @@
             "time": 30,
             "surface_concentration": 100000000000000000000,
             "diffusion_time": 600,
-            "oxidation_time": 0.03
+            "oxidation_time": 0.03,
+            "tilt": 7,
+            "twist": 0
           },
           "label": "Dopant activation"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "ALD",
             "material": "Si3N4",
             "rate": 0.08,
@@ -843,60 +1379,106 @@
             "cycles": 40,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           }
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "Si3N4",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 45.00000000000001,
+            "rate": 0.1,
+            "time": 0.45,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "SiO2",
-            "rate": 0.001,
-            "time": 320,
+            "rate": 0.08,
+            "time": 4,
             "sticking": 0.15,
             "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "ILD deposition"
         },
         {
           "op": "cmp",
           "params": {
+            "action": "CMP",
+            "input_mode": "Effective",
             "rate": 0.01,
             "time": 120,
-            "slurry": "Ceria oxide"
+            "slurry": "Ceria oxide",
+            "down_force": 3,
+            "platen_speed": 60,
+            "chemical": "SC-1",
+            "clean_time": 60
           },
           "label": "ILD planarization"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "SiO2",
-            "rate": 0.001,
-            "time": 100,
+            "rate": 0.08,
+            "time": 1.25,
             "sticking": 0.15,
             "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "Contact dielectric cap"
         },
@@ -910,7 +1492,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "PR coating"
         },
@@ -924,7 +1519,20 @@
             "pitch": 0.5,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "S/D + gate contact openings"
         },
@@ -938,21 +1546,42 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 150
+            "develop_time": 150,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Developing"
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "SiO2",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 600.0000000000001,
+            "rate": 0.1,
+            "time": 6,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           },
           "label": "Contact-hole etch · ILD"
         },
@@ -966,13 +1595,27 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Contact PR strip"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "ALD",
             "material": "TiN",
             "rate": 0.08,
@@ -982,13 +1625,24 @@
             "cycles": 10,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "Contact TiN barrier · ALD"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "ALD",
             "material": "W",
             "rate": 0.08,
@@ -998,13 +1652,24 @@
             "cycles": 10,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "W nucleation · ALD"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "W",
             "rate": 0.08,
@@ -1014,16 +1679,32 @@
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "W bulk fill · CVD"
         },
         {
           "op": "cmp",
           "params": {
+            "action": "CMP",
+            "input_mode": "Effective",
             "rate": 0.01,
             "time": 120,
-            "slurry": "Silica tungsten"
+            "slurry": "Silica tungsten",
+            "down_force": 3,
+            "platen_speed": 60,
+            "chemical": "SC-1",
+            "clean_time": 60
           },
           "label": "Contact metal CMP"
         }
@@ -1039,11 +1720,12 @@
       "id": "defect-activation",
       "name": "농도 이상",
       "file": "defect-activation.json.gz",
-      "sha256": "f284020b611b54fc4b23be36a267fb4405ef1ef4ea92b1120d1a4c2dd7629047",
+      "sha256": "78bec29f6a18a1cb213aef90ed946fdcd5df6c49e71a9ff7be4287e796e0eacf",
       "steps": [
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "ALD",
             "material": "SiO2",
             "rate": 0.08,
@@ -1053,23 +1735,45 @@
             "cycles": 25,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           }
         },
         {
           "op": "deposition",
           "params": {
-            "method": "PVD",
+            "input_mode": "Equipment",
+            "method": "CVD",
             "material": "PolySi",
-            "rate": 0.08,
-            "time": 1.875,
-            "sticking": 1,
-            "exponent": 30,
+            "rate": 0.00018366666666666667,
+            "time": 816.6969147005444,
+            "sticking": 0.05,
+            "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
-          }
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 0.2,
+            "power": 500,
+            "cvd_type": "LPCVD",
+            "source_gas": "SiH4",
+            "source_flow": 60,
+            "depo_temperature": 630,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
+          },
+          "label": "LPCVD · Poly Si"
         },
         {
           "op": "photo",
@@ -1081,7 +1785,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "PR coating"
         },
@@ -1095,7 +1812,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Patterning"
         },
@@ -1109,13 +1839,27 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 150
+            "develop_time": 150,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Developing"
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "PolySi",
             "method": "Directional",
             "rate": 0.1,
@@ -1123,7 +1867,14 @@
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
@@ -1136,20 +1887,41 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           }
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "SiO2",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 34.99999999999999,
+            "rate": 0.1,
+            "time": 0.35,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
@@ -1167,13 +1939,16 @@
             "time": 30,
             "surface_concentration": 100000000000000000000,
             "diffusion_time": 600,
-            "oxidation_time": 0.03
+            "oxidation_time": 0.03,
+            "tilt": 7,
+            "twist": 0
           },
           "label": "Source / drain implant · P"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "ALD",
             "material": "Si3N4",
             "rate": 0.08,
@@ -1183,60 +1958,106 @@
             "cycles": 40,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           }
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "Si3N4",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 45.00000000000001,
+            "rate": 0.1,
+            "time": 0.45,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "SiO2",
-            "rate": 0.001,
-            "time": 320,
+            "rate": 0.08,
+            "time": 4,
             "sticking": 0.15,
             "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "ILD deposition"
         },
         {
           "op": "cmp",
           "params": {
+            "action": "CMP",
+            "input_mode": "Effective",
             "rate": 0.01,
             "time": 120,
-            "slurry": "Ceria oxide"
+            "slurry": "Ceria oxide",
+            "down_force": 3,
+            "platen_speed": 60,
+            "chemical": "SC-1",
+            "clean_time": 60
           },
           "label": "ILD planarization"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "SiO2",
-            "rate": 0.001,
-            "time": 100,
+            "rate": 0.08,
+            "time": 1.25,
             "sticking": 0.15,
             "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "Contact dielectric cap"
         },
@@ -1250,7 +2071,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "PR coating"
         },
@@ -1264,7 +2098,20 @@
             "pitch": 0.5,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "S/D + gate contact openings"
         },
@@ -1278,21 +2125,42 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 150
+            "develop_time": 150,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Developing"
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "SiO2",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 600.0000000000001,
+            "rate": 0.1,
+            "time": 6,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           },
           "label": "Contact-hole etch · ILD"
         },
@@ -1306,13 +2174,27 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Contact PR strip"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "W",
             "rate": 0.08,
@@ -1322,16 +2204,32 @@
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "W contact fill"
         },
         {
           "op": "cmp",
           "params": {
+            "action": "CMP",
+            "input_mode": "Effective",
             "rate": 0.01,
             "time": 120,
-            "slurry": "Silica tungsten"
+            "slurry": "Silica tungsten",
+            "down_force": 3,
+            "platen_speed": 60,
+            "chemical": "SC-1",
+            "clean_time": 60
           },
           "label": "Contact metal CMP"
         }
@@ -1347,11 +2245,12 @@
       "id": "defect-oxide",
       "name": "절연막 두께 편차",
       "file": "defect-oxide.json.gz",
-      "sha256": "1486ef2c5306be18f63a2091d2f42a6f632bbb4ee2cbf1805dbb6ad2939d3beb",
+      "sha256": "9b4717ef0de6726e91f57cae126f210d32d93fc54ffc8693ef1331854dc4bd1a",
       "steps": [
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "ALD",
             "material": "SiO2",
             "rate": 0.08,
@@ -1361,23 +2260,45 @@
             "cycles": 38,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           }
         },
         {
           "op": "deposition",
           "params": {
-            "method": "PVD",
+            "input_mode": "Equipment",
+            "method": "CVD",
             "material": "PolySi",
-            "rate": 0.08,
-            "time": 1.875,
-            "sticking": 1,
-            "exponent": 30,
+            "rate": 0.00018366666666666667,
+            "time": 816.6969147005444,
+            "sticking": 0.05,
+            "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
-          }
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 0.2,
+            "power": 500,
+            "cvd_type": "LPCVD",
+            "source_gas": "SiH4",
+            "source_flow": 60,
+            "depo_temperature": 630,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
+          },
+          "label": "LPCVD · Poly Si"
         },
         {
           "op": "photo",
@@ -1389,7 +2310,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "PR coating"
         },
@@ -1403,7 +2337,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Patterning"
         },
@@ -1417,13 +2364,27 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 150
+            "develop_time": 150,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Developing"
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "PolySi",
             "method": "Directional",
             "rate": 0.1,
@@ -1431,7 +2392,14 @@
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
@@ -1444,20 +2412,41 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           }
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "SiO2",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 34.99999999999999,
+            "rate": 0.1,
+            "time": 0.35,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
@@ -1475,7 +2464,9 @@
             "time": 30,
             "surface_concentration": 100000000000000000000,
             "diffusion_time": 600,
-            "oxidation_time": 0.03
+            "oxidation_time": 0.03,
+            "tilt": 7,
+            "twist": 0
           },
           "label": "Source / drain implant · P"
         },
@@ -1494,13 +2485,16 @@
             "time": 30,
             "surface_concentration": 100000000000000000000,
             "diffusion_time": 600,
-            "oxidation_time": 0.03
+            "oxidation_time": 0.03,
+            "tilt": 7,
+            "twist": 0
           },
           "label": "Dopant activation"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "ALD",
             "material": "Si3N4",
             "rate": 0.08,
@@ -1510,60 +2504,106 @@
             "cycles": 40,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           }
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "Si3N4",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 45.00000000000001,
+            "rate": 0.1,
+            "time": 0.45,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "SiO2",
-            "rate": 0.001,
-            "time": 320,
+            "rate": 0.08,
+            "time": 4,
             "sticking": 0.15,
             "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "ILD deposition"
         },
         {
           "op": "cmp",
           "params": {
+            "action": "CMP",
+            "input_mode": "Effective",
             "rate": 0.01,
             "time": 120,
-            "slurry": "Ceria oxide"
+            "slurry": "Ceria oxide",
+            "down_force": 3,
+            "platen_speed": 60,
+            "chemical": "SC-1",
+            "clean_time": 60
           },
           "label": "ILD planarization"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "SiO2",
-            "rate": 0.001,
-            "time": 100,
+            "rate": 0.08,
+            "time": 1.25,
             "sticking": 0.15,
             "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "Contact dielectric cap"
         },
@@ -1577,7 +2617,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "PR coating"
         },
@@ -1591,7 +2644,20 @@
             "pitch": 0.5,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "S/D + gate contact openings"
         },
@@ -1605,21 +2671,42 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 150
+            "develop_time": 150,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Developing"
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "SiO2",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 600.0000000000001,
+            "rate": 0.1,
+            "time": 6,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           },
           "label": "Contact-hole etch · ILD"
         },
@@ -1633,13 +2720,27 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Contact PR strip"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "W",
             "rate": 0.08,
@@ -1649,16 +2750,32 @@
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "W contact fill"
         },
         {
           "op": "cmp",
           "params": {
+            "action": "CMP",
+            "input_mode": "Effective",
             "rate": 0.01,
             "time": 120,
-            "slurry": "Silica tungsten"
+            "slurry": "Silica tungsten",
+            "down_force": 3,
+            "platen_speed": 60,
+            "chemical": "SC-1",
+            "clean_time": 60
           },
           "label": "Contact metal CMP"
         }
@@ -1674,7 +2791,7 @@
       "id": "defect-cost",
       "name": "불필요한 처리 비용",
       "file": "defect-cost.json.gz",
-      "sha256": "b559e4dc49a076f5ddb9815d64a309dbac2c250e862ad13c75d03fe78bfff618",
+      "sha256": "3073e68d5b8c7b361b251cd5721179632cbf104bddb9c457b7c235293a9cfca3",
       "steps": [
         {
           "op": "photo",
@@ -1686,7 +2803,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "PR coating"
         },
@@ -1700,12 +2830,26 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           }
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "ALD",
             "material": "SiO2",
             "rate": 0.08,
@@ -1715,23 +2859,45 @@
             "cycles": 25,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           }
         },
         {
           "op": "deposition",
           "params": {
-            "method": "PVD",
+            "input_mode": "Equipment",
+            "method": "CVD",
             "material": "PolySi",
-            "rate": 0.08,
-            "time": 1.875,
-            "sticking": 1,
-            "exponent": 30,
+            "rate": 0.00018366666666666667,
+            "time": 816.6969147005444,
+            "sticking": 0.05,
+            "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
-          }
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 0.2,
+            "power": 500,
+            "cvd_type": "LPCVD",
+            "source_gas": "SiH4",
+            "source_flow": 60,
+            "depo_temperature": 630,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
+          },
+          "label": "LPCVD · Poly Si"
         },
         {
           "op": "photo",
@@ -1743,7 +2909,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "PR coating"
         },
@@ -1757,7 +2936,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Patterning"
         },
@@ -1771,13 +2963,27 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 150
+            "develop_time": 150,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Developing"
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "PolySi",
             "method": "Directional",
             "rate": 0.1,
@@ -1785,7 +2991,14 @@
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
@@ -1798,20 +3011,41 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           }
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "SiO2",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 34.99999999999999,
+            "rate": 0.1,
+            "time": 0.35,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
@@ -1829,7 +3063,9 @@
             "time": 30,
             "surface_concentration": 100000000000000000000,
             "diffusion_time": 600,
-            "oxidation_time": 0.03
+            "oxidation_time": 0.03,
+            "tilt": 7,
+            "twist": 0
           },
           "label": "Source / drain implant · P"
         },
@@ -1848,13 +3084,16 @@
             "time": 30,
             "surface_concentration": 100000000000000000000,
             "diffusion_time": 600,
-            "oxidation_time": 0.03
+            "oxidation_time": 0.03,
+            "tilt": 7,
+            "twist": 0
           },
           "label": "Dopant activation"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "ALD",
             "material": "Si3N4",
             "rate": 0.08,
@@ -1864,60 +3103,106 @@
             "cycles": 40,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           }
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "Si3N4",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 45.00000000000001,
+            "rate": 0.1,
+            "time": 0.45,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           }
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "SiO2",
-            "rate": 0.001,
-            "time": 320,
+            "rate": 0.08,
+            "time": 4,
             "sticking": 0.15,
             "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "ILD deposition"
         },
         {
           "op": "cmp",
           "params": {
+            "action": "CMP",
+            "input_mode": "Effective",
             "rate": 0.01,
             "time": 120,
-            "slurry": "Ceria oxide"
+            "slurry": "Ceria oxide",
+            "down_force": 3,
+            "platen_speed": 60,
+            "chemical": "SC-1",
+            "clean_time": 60
           },
           "label": "ILD planarization"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "SiO2",
-            "rate": 0.001,
-            "time": 100,
+            "rate": 0.08,
+            "time": 1.25,
             "sticking": 0.15,
             "exponent": 1,
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "Contact dielectric cap"
         },
@@ -1931,7 +3216,20 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "PR coating"
         },
@@ -1945,7 +3243,20 @@
             "pitch": 0.5,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "S/D + gate contact openings"
         },
@@ -1959,21 +3270,42 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 150
+            "develop_time": 150,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Developing"
         },
         {
           "op": "etch",
           "params": {
+            "input_mode": "Effective",
             "material": "SiO2",
             "method": "Directional",
-            "rate": 0.001,
-            "time": 600.0000000000001,
+            "rate": 0.1,
+            "time": 6,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
-            "epc": 0.0002
+            "epc": 0.0002,
+            "etchant": "HF",
+            "etch_temperature": 25,
+            "gas": "CF4",
+            "rf_power": 300,
+            "gas_flow": 50,
+            "pressure": 30,
+            "selectivity": 10
           },
           "label": "Contact-hole etch · ILD"
         },
@@ -1987,13 +3319,27 @@
             "pitch": 0.6,
             "offset": 0,
             "thickness": 0.06,
-            "develop_time": 60
+            "develop_time": 60,
+            "coat_mode": "Thickness",
+            "spin_speed": 3000,
+            "spin_time": 30,
+            "treatment_time": 60,
+            "bake_temperature": 105,
+            "bake_time": 60,
+            "wavelength": 193,
+            "na": 0.85,
+            "exposure_dose": 40,
+            "focus": 0,
+            "developer_concentration": 2.38,
+            "oxygen_flow": 100,
+            "ash_time": 60
           },
           "label": "Contact PR strip"
         },
         {
           "op": "deposition",
           "params": {
+            "input_mode": "Effective",
             "method": "CVD",
             "material": "W",
             "rate": 0.08,
@@ -2003,16 +3349,32 @@
             "cycles": 30,
             "gpc": 0.001,
             "pulse": 0.1,
-            "ald_sticking": 0.00005
+            "ald_sticking": 0.00005,
+            "pvd_pressure": 5,
+            "argon_flow": 50,
+            "cvd_pressure": 1,
+            "power": 500,
+            "cvd_type": "PECVD",
+            "source_gas": "SiH4/O2",
+            "source_flow": 100,
+            "depo_temperature": 400,
+            "precursor": "BDEAS/O2",
+            "purge_time": 2
           },
           "label": "W contact fill"
         },
         {
           "op": "cmp",
           "params": {
+            "action": "CMP",
+            "input_mode": "Effective",
             "rate": 0.01,
             "time": 120,
-            "slurry": "Silica tungsten"
+            "slurry": "Silica tungsten",
+            "down_force": 3,
+            "platen_speed": 60,
+            "chemical": "SC-1",
+            "clean_time": 60
           },
           "label": "Contact metal CMP"
         }

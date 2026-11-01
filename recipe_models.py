@@ -11,6 +11,13 @@ def clamp(x,a,b):return max(a,min(b,x))
 def arrhenius(temp,reference,energy):
     return math.exp(clamp(-energy/KB*(1/(temp+273.15)-1/(reference+273.15)),-20,20))
 
+def lpcvd_factor(p):
+    # Published nominal point; off-nominal sensitivities are teaching assumptions.
+    if p.get('material')!='PolySi' or p.get('source_gas')!='SiH4':
+        raise ValueError('LPCVD 모델은 PolySi / SiH4 조합을 지원합니다.')
+    pressure=p.get('cvd_pressure',.2)
+    return arrhenius(p.get('depo_temperature',630),630,1.)*(p.get('source_flow',60)/60)**.4*2*pressure/(pressure+.2)
+
 def resolve(op,params,state):
     p=dict(params);m={};events=[];action=p.get('action');equipment=p.get('input_mode')=='Equipment'
     # Existing recipes retain their calibrated reference rates. Equipment
@@ -21,9 +28,11 @@ def resolve(op,params,state):
             p['rate']*=p.get('power',500)/500*1.25/(1+pressure/20)*2*flow/(flow+50)
             p['exponent']=clamp(p['exponent']*(5/pressure)**.4,0,40)
         elif op=='deposition' and p['method']=='CVD':
-            pressure=p.get('cvd_pressure',1)
-            p['rate']*=arrhenius(p.get('depo_temperature',400),400,.3)*(p.get('source_flow',100)/100)**.4*2*pressure/(pressure+1)
-            if p.get('cvd_type','PECVD')=='PECVD':p['rate']*=(p.get('power',500)/500)**.3
+            if p.get('cvd_type')=='LPCVD':p['rate']*=lpcvd_factor(p)
+            else:
+                pressure=p.get('cvd_pressure',1)
+                p['rate']*=arrhenius(p.get('depo_temperature',400),400,.3)*(p.get('source_flow',100)/100)**.4*2*pressure/(pressure+1)
+                if p.get('cvd_type','PECVD')=='PECVD':p['rate']*=(p.get('power',500)/500)**.3
         elif op=='etch' and p['method']=='Directional':
             p['rate']*=(p.get('rf_power',300)/300)**.5*(p.get('gas_flow',50)/50)**.3
             p['isotropic']=clamp(p['isotropic']*(p.get('pressure',30)/30)**.5*(300/p.get('rf_power',300))**.3,0,1)
@@ -99,7 +108,9 @@ def resolve(op,params,state):
             temperature=p['depo_temperature'];thermal=arrhenius(temperature,400,.3)
             plasma=(p['power']/300)**.3 if p['cvd_type']=='PECVD' else 1.
             pressure=p.get('cvd_pressure',1);supply=2*pressure/(pressure+1)
-            p.update(rate=clamp(.002*thermal*(p['source_flow']/100)**.4*plasma*supply,.00001,.03),sticking=clamp(.15*thermal,.03,.8),exponent=1.)
+            if p['cvd_type']=='LPCVD':
+                p.update(rate=clamp(11.02/60/1000*lpcvd_factor(p),.000001,.03),sticking=.05,exponent=1.)
+            else:p.update(rate=clamp(.002*thermal*(p['source_flow']/100)**.4*plasma*supply,.00001,.03),sticking=clamp(.15*thermal,.03,.8),exponent=1.)
         elif p['method']=='ALD':
             recipes={'TMA/H2O':('Al2O3',.00011),'TDMAH/H2O':('HfO2',.00010),'BDEAS/O2':('SiO2',.00008),'TiCl4/NH3':('TiN',.00005)}
             material,gpc=recipes[p['precursor']]

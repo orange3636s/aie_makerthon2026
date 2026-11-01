@@ -51,7 +51,7 @@
    row.params=ProcessUI.normalizeInactive(op.fields,row.params);delete row.label;
    ParameterPreview.cancelAll();status('');if(f.options)paint();else {preview();mountPreview()}drawMain();
   })}
-  ImplantControls.mount($('obs-step-fields'),'obs-p-',row);window.RecipeSliders?.sliders($('obs-step-fields'));
+  ImplantControls.mount($('obs-step-fields'),'obs-p-',row,{frame:current?.frames[frame],bounds:current?.bounds});window.RecipeSliders?.sliders($('obs-step-fields'));
  }
  form.onsubmit=async e=>{
   e.preventDefault();await ParameterPreview.cancelAll();if(busy||(!runnable()&&!cyclic()))return;

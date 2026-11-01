@@ -30,9 +30,9 @@ def recipe(kind, p=None):
            L('Hardmask etch',etch('Si3N4',.08)),L('Channel recess',etch('Si',depth,.05)),
            L('PR strip',strip()),L('Gate dielectric',ald('SiO2',ox))]
         fill=dep('PolySi' if kind=='rcat' else 'W',.42)
-        fill['params'].update(sticking=.01,exponent=10.)
+        if kind!='rcat':fill['params'].update(sticking=.01,exponent=10.)
         if kind=='rcat':
-            r += [L('Recess gate fill',fill),L('Gate thickness etchback',etch('PolySi',.25)),L('Gate pattern',photo(w+.16)),
+            r += [L('Recess gate fill · LPCVD',fill),L('Gate thickness etchback',etch('PolySi',.25)),L('Gate pattern',photo(w+.16)),
                   L('Gate etch',etch('PolySi',.5)),L('PR strip',strip()),
                   L('Exposed oxide removal',etch('SiO2',ox+.015)),L('Hardmask removal',remove('Si3N4')),
                   L('Spacer deposition',ald('Si3N4',.03)),L('Spacer etchback',etch('Si3N4',.04))]
@@ -47,7 +47,7 @@ def recipe(kind, p=None):
         return r+[L('Source / drain implant · P',implant()),L('Dopant activation',anneal())]+contacts(cap=kind=='bcat')
     if kind in ('fdsoi','pdsoi'):
         length=p.get('length',.32);ox=p.get('oxide',.02)
-        return [L('Gate dielectric',ald('SiO2',ox)),L('Gate deposition',dep('PolySi',.14,'PVD')),
+        return [L('Gate dielectric',ald('SiO2',ox)),L('Gate deposition · LPCVD',dep('PolySi',.14)),
                 L('Gate pattern',photo(length)),L('Gate etch',etch('PolySi',.17)),L('PR strip',strip()),
                 L('Exposed oxide removal',etch('SiO2',ox+.01)),L('Spacer deposition',ald('Si3N4',.025)),
                 L('Spacer etchback',etch('Si3N4',.035)),L('Source / drain implant',implant(energy=8)),
@@ -70,7 +70,7 @@ def recipe(kind, p=None):
     if kind=='charge-trap':
         tunnel=p.get('tunnel',.02); trap=p.get('trap',.035);block=p.get('block',.03)
         return [L('Tunnel oxide',ald('SiO2',tunnel)),L('Charge-trap nitride',ald('Si3N4',trap)),
-                L('Blocking oxide',ald('SiO2',block)),L('Control gate',dep('PolySi',.15,'PVD')),
+                L('Blocking oxide',ald('SiO2',block)),L('Control gate · LPCVD',dep('PolySi',.15)),
                 L('Cell gate pattern',photo(p.get('length',.4))),L('Control-gate etch',etch('PolySi',.18)),
                 L('Blocking-oxide etch',etch('SiO2',block+.01)),L('Trap-layer etch',etch('Si3N4',trap+.01)),
                 L('Tunnel-oxide etch',etch('SiO2',tunnel+.01)),L('PR strip',strip()),
