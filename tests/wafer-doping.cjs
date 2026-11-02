@@ -42,5 +42,11 @@ const heavy=B.apply(raw,{type:'p',concentration:1e17});assert.notEqual(M.deviceI
 const light=D.rgb(-1e16),strong=D.rgb(-1e19);assert(strong[1]<light[1],'p+ darker than substrate');assert(D.rgb(1e19)[0]<D.rgb(1e16)[0],'n+ darker');assert.notDeepEqual(D.rgb(1e14),D.rgb(-1e14));
 assert(D.legend(f).includes('p형 · B')&&D.legend(f).includes('n형 · P')&&D.legend(f).includes('cm⁻³'));
 for(const axis of ['X','Z']){const slice=D.slice(f,[-.4,.4,-.3,.2],axis,axis==='X'?0:-.2,.8);assert(slice.fields.net_active.some(v=>v<0),'slice retains background '+axis);}
-const cf=B.apply(JSON.parse(fs.readFileSync('references/cfet.json'))).frames.at(-1);assert.equal(cf.concentration.background.upperBodyType,'n');assert(M.density(cf,0,.53)>0,'upper pFET has n body');assert(M.density(cf,0,.03)<0,'lower nFET has p body');
+const cf=B.apply(JSON.parse(fs.readFileSync('references/cfet.json'))).frames.at(-1);
+assert.equal(cf.concentration.background.upperBodyType,'n');
+const highK=L.intervals(cf,32,1,0);
+const sheetCenters=L.intervals(cf,10,1,0).filter(([a,b])=>highK.some(h=>Math.abs(h[1]-a)<.003)&&highK.some(h=>Math.abs(h[0]-b)<.003)).map(([a,b])=>(a+b)/2);
+assert.equal(sheetCenters.length,2);
+assert(M.density(cf,0,sheetCenters[1])>0,'upper pFET has n body');
+assert(M.density(cf,0,sheetCenters[0])<0,'lower nFET has p body');
 console.log(`24 examples / ${count} frames: p/n/intrinsic wafer, compensation, material clipping, 11 I–V models, CFET bodies, fixed color scale and X/Z slices passed.`);
