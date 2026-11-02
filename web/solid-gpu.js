@@ -34,9 +34,21 @@
   try{
    let r=instances.get(canvas.id);if(!r){const renderer=new T.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});renderer.setClearColor('#fbfcff',1);renderer.setPixelRatio(Math.min(devicePixelRatio,2));const scene=new T.Scene();r={renderer,scene,studio:studio(T,renderer,scene),camera:new T.OrthographicCamera(),source:null};instances.set(canvas.id,r);}
    const w=canvas.clientWidth,h=canvas.clientHeight,b=s.bounds;
-   const key=b.join('|')+'|'+s.depth+'|'+s.doping;
+   const key=b.join('|')+'|'+s.depth+'|'+s.doping+'|'+!!s.core;
    if(r.source!==s.data||r.key!==key){if(r.group){r.scene.remove(r.group);r.group.traverse(o=>{o.geometry?.dispose();o.material?.map?.dispose();if(o.material)o.material.dispose()});}
-    const polys=s.data.polygons.map(p=>({...p,points:ProcessExtrusion.clipPolygon(p.points,b)})).filter(p=>p.points.length>=3);r.group=SolidGeometry.build(T,polys,s.depth,id=>style(id).color);r.scene.add(r.group);r.source=s.data;r.key=key;r.lightingKey=null;
+    const polys=s.core?[]:s.data.polygons.map(p=>({...p,points:ProcessExtrusion.clipPolygon(p.points,b)})).filter(p=>p.points.length>=3);if(s.core){
+     r.group=new T.Group();
+     for(const part of s.core.parts){
+      const body=SolidGeometry.build(T,part.polygons,part.hi-part.lo,id=>style(id).color);
+      for(const mesh of [...body.children]){
+       // Profile coordinates are Y/Z; extrusion runs along the channel X axis.
+       for(const object of [mesh,...mesh.children]){
+        object.geometry.rotateZ(Math.PI/2);object.geometry.translate((part.lo+part.hi)/2,0,0);
+       }
+       r.group.add(mesh);
+      }
+     }
+    }else r.group=SolidGeometry.build(T,polys,s.depth,id=>style(id).color);r.scene.add(r.group);r.source=s.data;r.key=key;r.lightingKey=null;
     if(s.doping&&s.data.concentration)for(const mesh of r.group.children){if(![10,11,13].includes(mesh.userData.materialId))continue;
      const bitmap=DopantView.texture(s.data,b,style(mesh.userData.materialId).color,undefined,mesh.userData.materialId),texture=new T.CanvasTexture(bitmap);texture.colorSpace=T.SRGBColorSpace;
      const pos=mesh.geometry.attributes.position,uv=mesh.geometry.attributes.uv;for(let i=0;i<pos.count;i++)uv.setXY(i,(pos.getX(i)-b[0])/(b[1]-b[0]),(pos.getZ(i)-b[2])/(b[3]-b[2]));uv.needsUpdate=true;

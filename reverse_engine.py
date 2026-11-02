@@ -49,7 +49,7 @@ def run(data):
             ps.MakePlane(d,-body-box_thickness,handle,True).apply()
             ps.MakePlane(d,-body,ps.Material.SiO2,True).apply()
         ps.MakePlane(d,0.,ps.Material.Si,True).apply()
-    frames=[];cmp_stop=None;doping_state=None;concentration=None;failure=None;oxidized=False
+    frames=[];cmp_stop=None;metal_on_oxide=False;doping_state=None;concentration=None;failure=None;oxidized=False
     implanted=set();diffused=set();annealed=set();mask_intervals=None;current_step=0
     process_state={};defects=[]
     photo_mask=None;pr_tone='Positive';pr_top=0.;developed_depth=0.;pr_thickness=.06
@@ -279,8 +279,11 @@ def run(data):
                         replace_material(m,remaining)
                 label=f"Etch · {p['material']}"
             elif op=='deposition':
-                cmp_stop=surface_top();m=material(p['material']);d.duplicateTopLevelSet(m)
-                if p['method']=='Conformal':
+                cmp_stop=surface_top()
+                metal_on_oxide=p['material'] in ('W','Co','Mo') and ps.Material.SiO2 in mats
+                m=material(p['material']);d.duplicateTopLevelSet(m)
+                side_fed=p['method']=='CVD' and p.get('cvd_access')=='Section sides' and p['material'] in ('Si','SiGe','HfO2','TiN','W')
+                if p['method']=='Conformal' or side_fed:
                     advance(ps.SphereDistribution(radius=p['rate']*p['time']),0)
                 elif p['method'] in ('PVD','CVD'):
                     advance(ps.SingleParticleProcess(rate=p['rate'],stickingProbability=p['sticking'],sourceExponent=p['exponent']),p['time'],True)
@@ -350,8 +353,12 @@ def run(data):
                 label=p['chemical']+' cleaning'
             elif op=='cmp':
                 if cmp_stop is None:raise ValueError('증착 후에 Global planarization을 추가하세요.')
-                top=surface_top();cut=max(cmp_stop,top-p['rate']*p['time'])
+                # The field height is its highest point. A bounded overpolish
+                # clears metal from lower spots only if the removal budget allows it.
+                cmp_clearance=p['overpolish_nm']/1000 if metal_on_oxide and p['slurry'] in ('Silica tungsten','Cobalt formulated','Silica molybdenum') else 0.
+                top=surface_top();cut=max(cmp_stop-cmp_clearance,top-p['rate']*p['time'])
                 ps.Planarize(d,cut).apply();label='C&C';metric={'stopHeightUm':cmp_stop,'cutHeightUm':cut,'removedHeightNm':round((top-cut)*1000,3),'slurryRecord':p['slurry']}
+                if cmp_clearance:metric['fieldOverpolishNm']=round(max(0.,cmp_stop-cut)*1000,3)
             if doping_state and op!='diffusion':transport('sync',{})
             metric.update(response)
             snap(row.get('label',label),metric)

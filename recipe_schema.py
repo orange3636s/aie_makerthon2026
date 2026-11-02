@@ -36,6 +36,7 @@ def extend(ops,n,choice):
       n('selectivity','타겟 / PR 선택비',10,1,100,'',1,{'input_mode':['Equipment'],'method':['Isotropic','Directional']})])
     by['etch']['fields'][0]['when']={'method':['Directional','Isotropic']}
     by['deposition']['fields'].extend([
+      choice('cvd_access','막 성장 경계 조건',['Top surface','Section sides'],'Top surface',{'method':['CVD'],'material':['Si','SiGe','HfO2','TiN','W']}),
       n('pvd_pressure','Ar pressure',5,1,30,'mTorr',1,{'input_mode':['Equipment'],'method':['PVD']}),
       n('argon_flow','Ar flow',50,5,200,'sccm',5,{'input_mode':['Equipment'],'method':['PVD']}),
       n('cvd_pressure','챔버 압력',1,.1,10,'Torr',.1,{'input_mode':['Equipment'],'method':['CVD']}),
@@ -55,6 +56,7 @@ def extend(ops,n,choice):
     for f in cmp:
         if f['key']!='action':f.setdefault('when',{})['action']=['CMP']
     cmp.extend([
+      n('overpolish_nm','금속 CMP 추가 연마 깊이',30,0,50,'nm',1,{'action':['CMP'],'slurry':['Silica tungsten','Cobalt formulated','Silica molybdenum']}),
       n('down_force','Down pressure',3,.5,8,'psi',.1,{'action':['CMP'],'input_mode':['Equipment']}),
       n('platen_speed','Platen speed',60,10,150,'RPM',1,{'action':['CMP'],'input_mode':['Equipment']}),
       choice('chemical','Chemical',['SPM','SC-1','SC-2','DHF'],'SC-1',{'action':['Cleaning']}),

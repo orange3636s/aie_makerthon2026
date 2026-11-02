@@ -795,6 +795,27 @@
           }
         },
         {
+          "key": "cvd_access",
+          "label": "막 성장 경계 조건",
+          "options": [
+            "Top surface",
+            "Section sides"
+          ],
+          "default": "Top surface",
+          "when": {
+            "method": [
+              "CVD"
+            ],
+            "material": [
+              "Si",
+              "SiGe",
+              "HfO2",
+              "TiN",
+              "W"
+            ]
+          }
+        },
+        {
           "key": "pvd_pressure",
           "label": "Ar pressure",
           "default": 5,
@@ -1311,6 +1332,25 @@
           "when": {
             "action": [
               "CMP"
+            ]
+          }
+        },
+        {
+          "key": "overpolish_nm",
+          "label": "금속 CMP 추가 연마 깊이",
+          "default": 30,
+          "min": 0,
+          "max": 50,
+          "unit": "nm",
+          "step": 1,
+          "when": {
+            "action": [
+              "CMP"
+            ],
+            "slurry": [
+              "Silica tungsten",
+              "Cobalt formulated",
+              "Silica molybdenum"
             ]
           }
         },
@@ -3717,7 +3757,7 @@
         }
       ],
       "projectedMask": true,
-      "assumptions": "S/D 지지부·채널·게이트·컨택이 함께 보이는 2D 길이 방향 학습 단면입니다. Si 채움은 S/D 에피택시의 형상 근사입니다. 게이트 박막은 낮은 부착확률의 CVD 유효 입자 모델로 계산합니다. 방향성 식각은 PR 수직 투영을 보존합니다. 결정 성장·strain·3D 게이트·전기 특성을 계산하지 않습니다.",
+      "assumptions": "S/D 지지부·채널·게이트·컨택이 함께 보이는 2D 길이 방향 학습 단면입니다. Si 채움은 S/D 에피택시의 형상 근사입니다. 방향성 식각은 PR 수직 투영을 보존합니다. 결정 성장·strain·3D 게이트·전기 특성을 계산하지 않습니다.",
       "assessment": {
         "version": 2,
         "species": [
@@ -3898,7 +3938,8 @@
             "rate": 0.08,
             "time": 0.25,
             "sticking": 0.05,
-            "exponent": 1.0
+            "exponent": 1.0,
+            "cvd_access": "Section sides"
           },
           "label": "GAA · HfO₂ conformal dielectric"
         },
@@ -3910,7 +3951,8 @@
             "rate": 0.08,
             "time": 0.625,
             "sticking": 0.05,
-            "exponent": 1.0
+            "exponent": 1.0,
+            "cvd_access": "Section sides"
           },
           "label": "GAA · TiN wrap gate"
         },
@@ -4070,7 +4112,7 @@
           "figure": "Fig. 4 · nanowire / nanosheet"
         }
       ],
-      "assumptions": "S/D 지지부·채널·게이트·컨택이 함께 보이는 2D 길이 방향 학습 단면입니다. Si 채움은 S/D 에피택시의 형상 근사입니다. 게이트 박막은 낮은 부착확률의 CVD 유효 입자 모델로 계산합니다. 방향성 식각은 PR 수직 투영을 보존합니다. 결정 성장·strain·3D 게이트·전기 특성을 계산하지 않습니다.",
+      "assumptions": "S/D 지지부·채널·게이트·컨택이 함께 보이는 2D 길이 방향 학습 단면입니다. Si 채움은 S/D 에피택시의 형상 근사입니다. 방향성 식각은 PR 수직 투영을 보존합니다. 결정 성장·strain·3D 게이트·전기 특성을 계산하지 않습니다. 방출된 채널의 게이트 적층은 단면 밖 측면으로 공급되는 등각 성장으로 근사합니다.",
       "projectedMask": true,
       "assessment": {
         "version": 2,
@@ -4109,11 +4151,12 @@
           "op": "deposition",
           "params": {
             "material": "SiGe",
-            "method": "PVD",
+            "method": "CVD",
             "rate": 0.08,
             "time": 0.75,
-            "sticking": 1.0,
-            "exponent": 30
+            "sticking": 0.15,
+            "exponent": 1.0,
+            "cvd_access": "Section sides"
           },
           "label": "Stack 1 · SiGe"
         },
@@ -4121,11 +4164,12 @@
           "op": "deposition",
           "params": {
             "material": "Si",
-            "method": "PVD",
+            "method": "CVD",
             "rate": 0.08,
             "time": 0.5,
-            "sticking": 1.0,
-            "exponent": 30
+            "sticking": 0.15,
+            "exponent": 1.0,
+            "cvd_access": "Section sides"
           },
           "label": "Stack 1 · Si nanosheet"
         },
@@ -4133,11 +4177,12 @@
           "op": "deposition",
           "params": {
             "material": "SiGe",
-            "method": "PVD",
+            "method": "CVD",
             "rate": 0.08,
             "time": 0.75,
-            "sticking": 1.0,
-            "exponent": 30
+            "sticking": 0.15,
+            "exponent": 1.0,
+            "cvd_access": "Section sides"
           },
           "label": "Stack 2 · SiGe"
         },
@@ -4145,11 +4190,12 @@
           "op": "deposition",
           "params": {
             "material": "Si",
-            "method": "PVD",
+            "method": "CVD",
             "rate": 0.08,
             "time": 0.5,
-            "sticking": 1.0,
-            "exponent": 30
+            "sticking": 0.15,
+            "exponent": 1.0,
+            "cvd_access": "Section sides"
           },
           "label": "Stack 2 · Si nanosheet"
         },
@@ -4157,11 +4203,12 @@
           "op": "deposition",
           "params": {
             "material": "SiGe",
-            "method": "PVD",
+            "method": "CVD",
             "rate": 0.08,
             "time": 0.75,
-            "sticking": 1.0,
-            "exponent": 30
+            "sticking": 0.15,
+            "exponent": 1.0,
+            "cvd_access": "Section sides"
           },
           "label": "Stack 3 · SiGe"
         },
@@ -4169,11 +4216,12 @@
           "op": "deposition",
           "params": {
             "material": "Si",
-            "method": "PVD",
+            "method": "CVD",
             "rate": 0.08,
             "time": 0.5,
-            "sticking": 1.0,
-            "exponent": 30
+            "sticking": 0.15,
+            "exponent": 1.0,
+            "cvd_access": "Section sides"
           },
           "label": "Stack 3 · Si nanosheet"
         },
@@ -4209,7 +4257,7 @@
           "params": {
             "material": "Si",
             "rate": 0.1,
-            "time": 0.55,
+            "time": 1.0,
             "isotropic": 0
           },
           "label": "S/D recess 1 · Si"
@@ -4219,7 +4267,7 @@
           "params": {
             "material": "SiGe",
             "rate": 0.1,
-            "time": 0.75,
+            "time": 1.2,
             "isotropic": 0
           },
           "label": "S/D recess 1 · SiGe"
@@ -4229,7 +4277,7 @@
           "params": {
             "material": "Si",
             "rate": 0.1,
-            "time": 0.55,
+            "time": 1.0,
             "isotropic": 0
           },
           "label": "S/D recess 2 · Si"
@@ -4239,7 +4287,7 @@
           "params": {
             "material": "SiGe",
             "rate": 0.1,
-            "time": 0.75,
+            "time": 1.2,
             "isotropic": 0
           },
           "label": "S/D recess 2 · SiGe"
@@ -4249,7 +4297,7 @@
           "params": {
             "material": "Si",
             "rate": 0.1,
-            "time": 0.55,
+            "time": 1.0,
             "isotropic": 0
           },
           "label": "S/D recess 3 · Si"
@@ -4259,7 +4307,7 @@
           "params": {
             "material": "SiGe",
             "rate": 0.1,
-            "time": 0.75,
+            "time": 1.2,
             "isotropic": 0
           },
           "label": "S/D recess 3 · SiGe"
@@ -4382,7 +4430,8 @@
             "rate": 0.08,
             "time": 0.25,
             "sticking": 0.05,
-            "exponent": 1.0
+            "exponent": 1.0,
+            "cvd_access": "Section sides"
           },
           "label": "Nanosheet · HfO₂ conformal dielectric"
         },
@@ -4394,7 +4443,8 @@
             "rate": 0.08,
             "time": 0.625,
             "sticking": 0.05,
-            "exponent": 1.0
+            "exponent": 1.0,
+            "cvd_access": "Section sides"
           },
           "label": "Nanosheet · TiN wrap gate"
         },
@@ -4548,7 +4598,7 @@
         }
       ],
       "projectedMask": true,
-      "assumptions": "S/D 지지부·채널·게이트·컨택이 함께 보이는 2D 길이 방향 학습 단면입니다. Si 채움은 S/D 에피택시의 형상 근사입니다. 게이트 박막은 낮은 부착확률의 CVD 유효 입자 모델로 계산합니다. 방향성 식각은 PR 수직 투영을 보존합니다. 결정 성장·strain·3D 게이트·전기 특성을 계산하지 않습니다.",
+      "assumptions": "S/D 지지부·채널·게이트·컨택이 함께 보이는 2D 길이 방향 학습 단면입니다. Si 채움은 S/D 에피택시의 형상 근사입니다. 방향성 식각은 PR 수직 투영을 보존합니다. 결정 성장·strain·3D 게이트·전기 특성을 계산하지 않습니다. 방출된 채널의 게이트 적층은 단면 밖 측면으로 공급되는 등각 성장으로 근사합니다.",
       "assessment": {
         "version": 2,
         "species": [
@@ -5017,7 +5067,8 @@
             "rate": 0.08,
             "time": 0.25,
             "sticking": 0.05,
-            "exponent": 1.0
+            "exponent": 1.0,
+            "cvd_access": "Section sides"
           },
           "label": "Lower nFET · HfO₂ conformal dielectric"
         },
@@ -5029,7 +5080,8 @@
             "rate": 0.08,
             "time": 0.625,
             "sticking": 0.05,
-            "exponent": 1.0
+            "exponent": 1.0,
+            "cvd_access": "Section sides"
           },
           "label": "Lower nFET · TiN wrap gate"
         },
@@ -5352,7 +5404,8 @@
             "rate": 0.08,
             "time": 0.25,
             "sticking": 0.05,
-            "exponent": 1.0
+            "exponent": 1.0,
+            "cvd_access": "Section sides"
           },
           "label": "Upper pFET · HfO₂ conformal dielectric"
         },
@@ -5364,7 +5417,8 @@
             "rate": 0.08,
             "time": 0.625,
             "sticking": 0.05,
-            "exponent": 1.0
+            "exponent": 1.0,
+            "cvd_access": "Section sides"
           },
           "label": "Upper pFET · W wrap gate"
         },
@@ -5524,7 +5578,7 @@
           "figure": "p. 3 · stacked CMOS"
         }
       ],
-      "assumptions": "S/D 지지부·채널·게이트·컨택이 함께 보이는 2D 길이 방향 학습 단면입니다. Si 채움은 S/D 에피택시의 형상 근사입니다. 게이트 박막은 낮은 부착확률의 CVD 유효 입자 모델로 계산합니다. 방향성 식각은 PR 수직 투영을 보존합니다. 결정 성장·strain·3D 게이트·전기 특성을 계산하지 않습니다. 하부 n형/상부 p형의 순차 적층 예시이며 상부 Si는 준비된 결정층의 형상 근사입니다.",
+      "assumptions": "S/D 지지부·채널·게이트·컨택이 함께 보이는 2D 길이 방향 학습 단면입니다. Si 채움은 S/D 에피택시의 형상 근사입니다. 방향성 식각은 PR 수직 투영을 보존합니다. 결정 성장·strain·3D 게이트·전기 특성을 계산하지 않습니다. 하부 n형/상부 p형의 순차 적층 예시이며 상부 Si는 준비된 결정층의 형상 근사입니다. 방출된 채널의 게이트 적층은 단면 밖 측면으로 공급되는 등각 성장으로 근사합니다.",
       "projectedMask": true,
       "assessment": {
         "version": 2,

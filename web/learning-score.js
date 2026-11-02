@@ -28,8 +28,16 @@
   const priority=[11,79,32,30,16,70,72,80,13,31,201,0],ids=new Set(frame.polygons.map(p=>p.material)),plan=[];
   for(const id of priority.filter(id=>ids.has(id)).slice(0,limit)){
    const points=frame.polygons.filter(p=>p.material===id).flatMap(p=>p.points).filter(p=>p[1]>=roi[2]&&p[1]<=roi[3]);if(!points.length)continue;
-   const low=Math.min(...points.map(p=>p[1])),high=Math.max(...points.map(p=>p[1])),y=(low+high)/2;
-   const span=closest(intervals(frame,id,0,y),0);if(!span)continue;
+   const low=Math.min(...points.map(p=>p[1])),high=Math.max(...points.map(p=>p[1]));
+   let y=(low+high)/2,span=closest(intervals(frame,id,0,y),0);
+   // A stack's midpoint can fall in a different material between two tiers.
+   if(!span){
+    const layer=closest(intervals(frame,id,1,0).filter(([a,b])=>b>roi[2]&&a<roi[3]),y);
+    if(!layer)continue;
+    y=(Math.max(layer[0],roi[2])+Math.min(layer[1],roi[3]))/2;
+    span=closest(intervals(frame,id,0,y),0);
+    if(!span)continue;
+   }
    const x=(span[0]+span[1])/2;
    plan.push({id,kind:'폭',axis:0,at:y,anchor:x,target:(span[1]-span[0])*1000});
    const vertical=closest(intervals(frame,id,1,x),y);

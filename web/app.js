@@ -138,6 +138,15 @@ function draw(canvas,data,bounds,options={}){
   const dev=data.metrics.development,pr=grouped.get(0)||[];c.save();c.beginPath();for(const poly of pr){poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.closePath()}c.clip('evenodd');c.fillStyle=`rgba(190,137,221,${.18+.32*dev.fraction})`;for(const [a,b] of dev.intervals)c.fillRect(px(a),py(bounds[3]),(b-a)*scale,(bounds[3]-bounds[2])*scale);c.restore();
  }
  PhotoPreview.paint(c,overlay,px,py,extra,mini);
+ if(solid?.state.core?.labels.length&&solid.state.axis==='Y'&&w>=320){
+  c.save();c.font='600 11px ProcessSans, sans-serif';c.textAlign='center';c.textBaseline='middle';
+  for(const label of solid.state.core.labels){
+   const x=px(label.x),y=py(label.z)-(label.above?10:0);
+   c.lineWidth=2.5;c.strokeStyle='#ffffff';c.strokeText(label.text,x,y);
+   c.fillStyle='#203454';c.fillText(label.text,x,y);
+  }
+  c.restore();
+ }
  if(!mini)window.SolidView?.overlay(canvas,c,px,py);
  // Reference contours are drawn once on the front 2D plane, never extruded.
  if(options.reference){c.strokeStyle='#a85b00';c.lineWidth=1.4;c.setLineDash([5,4]);for(const poly of options.reference.polygons){c.beginPath();poly.points.forEach((p,i)=>i?c.lineTo(px(p[0]),py(p[1])):c.moveTo(px(p[0]),py(p[1])));c.stroke()}c.setLineDash([]);}
@@ -149,7 +158,7 @@ function drawMain(){
  const data=window.ParameterPreview?.frame('section',current?.frames[frame])||current?.frames[frame],hasDoping=!!data?.concentration,field=dopingFieldFor(data);
  $('doping-tools').hidden=true;
  const saved=references.get(ProcessUI.referenceKey(selected?.id,current?.params)),reference=$('compare').checked&&saved?.params?.section===current?.params?.section?saved:null;
- draw($('section'),data,current?combinedBounds(current,reference):null,{maskPreview:window.simulationEditor?.maskPreview(),extrude:mode==='2.5d',reference:reference?refFrame():null,doping:$('show-doping').checked,dopingField:field});
+ draw($('section'),data,current?combinedBounds(current,reference):null,{deviceId:selected?.id,finalStep:frame===current?.frames?.length-1,maskPreview:window.simulationEditor?.maskPreview(),extrude:mode==='2.5d',reference:reference?refFrame():null,doping:$('show-doping').checked,dopingField:field});
 }
 // Reveal only within the horizontal timeline; never move the document viewport.
 function revealFrame(){const holder=$('timeline'),card=holder.querySelector('.frame-card.selected');if(!card)return;const a=holder.getBoundingClientRect(),b=card.getBoundingClientRect();if(b.left<a.left)holder.scrollLeft+=b.left-a.left;else if(b.right>a.right)holder.scrollLeft+=b.right-a.right;}

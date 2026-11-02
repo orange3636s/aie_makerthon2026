@@ -19,7 +19,10 @@
   const box=canvas.closest('.viewer,.reverse-view'),bar=document.createElement('div');bar.className='solid-controls';bar.innerHTML='<div class="slice-axis" role="group" aria-label="절단 축">'+['X','Y','Z'].map(a=>`<button type="button" data-axis="${a}" aria-pressed="${a==='Y'}">${a} 단면</button>`).join('')+'</div><input class="slice-position" type="range" min="0" max="1000" value="500" aria-label="절단 위치"><output class="slice-value">0 nm</output><label class="solid-depth">깊이 <input type="number" min="100" max="2000" step="10" value="800" aria-label="3D 확장 깊이 nm"> nm</label><button type="button" class="live-toggle" aria-pressed="false">▷ Live</button><span class="solid-model" title="계산된 2D 단면을 일정 깊이로 확장한 3D 모델">단면 기반 3D</span>';
   const explode=document.createElement('div');explode.className='explode-controls';explode.hidden=true;
   explode.innerHTML='<button type="button" class="explode-toggle" aria-pressed="false">분리 보기</button><div class="explode-options" hidden><select aria-label="분리 기준"><option value="layer">층별</option><option value="material">재료별</option></select><label>표시 간격 <input type="range" min="20" max="300" step="10" value="120" aria-label="분리 간격 nm"></label><output>120 nm</output><button type="button" class="explode-reset">원래 구조</button></div>';
-  bar.append(explode);
+  const mode=document.createElement('button');mode.type='button';mode.className='channel-toggle';mode.hidden=true;
+  mode.title='게이트 절개와 전체 공정 단면 전환 · 절개 높이와 길이는 계산 단면에서 추출하며 폭 방향은 교육용 가정입니다.';
+  mode.onclick=()=>{s.fullProcess=!!s.core;s.redraw();};
+  bar.append(mode,explode);
   const syncExplode=()=>{explode.querySelector('.explode-toggle').setAttribute('aria-pressed',s.exploded);explode.querySelector('.explode-options').hidden=!s.exploded;s.redraw()};
   explode.querySelector('.explode-toggle').onclick=()=>{s.exploded=!s.exploded;syncExplode()};
   explode.querySelector('select').onchange=e=>{s.explodeMode=e.target.value;s.redraw()};
@@ -40,7 +43,7 @@
   canvas.addEventListener('keydown',e=>{if(s.view!=='3d')return;let used=true;if(e.key==='ArrowLeft')s.yaw-=.1;else if(e.key==='ArrowRight')s.yaw+=.1;else if(e.key==='ArrowUp')s.pitch=clamp(s.pitch-.1,-1.3,1.3);else if(e.key==='ArrowDown')s.pitch=clamp(s.pitch+.1,-1.3,1.3);else if(['+','='].includes(e.key))s.zoom=clamp(s.zoom*1.2,.4,8);else if(e.key==='-')s.zoom=clamp(s.zoom/1.2,.4,8);else if(e.key==='0')reset(s);else used=false;if(used){e.preventDefault();e.stopImmediatePropagation();s.redraw()}},{capture:true});
   return s;
  }
- function reset(s){s.yaw=-.48;s.pitch=.46;s.zoom=1;s.panX=s.panY=0;}
+ function reset(s){s.yaw=s.core?-1.02:-.48;s.pitch=.46;s.zoom=1;s.panX=s.panY=0;}
  function position(s,b){return s.axis==='X'?b[0]+s.fraction*(b[1]-b[0]):s.axis==='Z'?b[2]+s.fraction*(Math.max(b[3],s.mask?.top??b[3])-b[2]):(s.fraction-.5)*s.depth;}
  function minimap(canvas,s){
   if(!s.mini){const wrap=document.createElement('div');wrap.className='section-minimap';const mini=document.createElement('canvas');mini.id=canvas.id+'-minimap';mini.tabIndex=0;mini.setAttribute('role','slider');mini.setAttribute('aria-label','3D 미니맵 절단 위치');mini.setAttribute('aria-valuemin','0');mini.setAttribute('aria-valuemax','100');const label=document.createElement('div');wrap.append(mini,label);canvas.parentElement.append(wrap);s.mini={wrap,canvas:mini,label};
@@ -57,20 +60,41 @@
  function prepare(canvas,data,bounds,options,redraw){if(!data&&states.get(canvas.id)?.mini)states.get(canvas.id).mini.wrap.hidden=true;if(options.mini||!['section','r-current'].includes(canvas.id)||!data)return null;const s=mount(canvas,redraw);s.view=options.extrude?'3d':'2d';s.data=data;s.bounds=bounds;s.recipe=canvas.id==='section'?window.simulationEditor?.recipe():window.reverseLab?.recipe?.();
   s.doping=options.doping!==false;
   s.mask=PhotoPreview.build(options.maskPreview||data.photoMask||data.exposure,bounds,data);
+  if(s.coreSource!==data||s.coreDepth!==s.depth||s.coreId!==options.deviceId){
+   if(s.coreId!==options.deviceId)s.fullProcess=undefined;
+   s.coreSource=data;s.coreDepth=s.depth;s.coreId=options.deviceId;
+   s.coreModel=window.ChannelCutaway?.build(data,options.deviceId,s.depth,intervals);
+  }
+  const coreButton=s.bar.querySelector('.channel-toggle'),canShow=!!s.coreModel&&!s.mask&&!s.live&&!options.reference;
+  coreButton.hidden=!canShow;
+  const wasCore=!!s.core;
+  s.core=canShow&&(s.fullProcess===undefined?options.finalStep:!s.fullProcess)?s.coreModel:null;
+  if(wasCore!==!!s.core)s.yaw=s.core?-1.02:-.48;
+  coreButton.textContent=s.core?'전체 공정 보기':'게이트 절개 보기';
+  const modelLabel=s.bar.querySelector('.solid-model');
+  modelLabel.textContent=s.core?s.core.caption:'단면 기반 3D';
+  modelLabel.title=s.core?'계산 단면의 채널·막 두께와 게이트 길이로 재구성한 절개입니다. 폭과 절개 길이는 교육용 가정입니다.':'계산된 2D 단면을 일정 깊이로 확장한 3D 모델';
+  if(s.core){bounds=s.core.bounds;s.bounds=bounds;}
   if(s.mask){bounds=[...bounds];bounds[3]=Math.max(bounds[3],s.mask.top);s.bounds=bounds;}
   for(const node of s.bar.querySelectorAll('.slice-axis,.slice-position,.slice-value'))node.hidden=s.view==='3d';
   s.bar.querySelector('.explode-controls').hidden=s.view!=='3d';
   const liveButton=s.bar.querySelector('.live-toggle');liveButton.disabled=s.view==='3d'&&s.exploded;
   if(liveButton.disabled&&s.live){s.live=false;cancelAnimationFrame(s.raf);liveButton.setAttribute('aria-pressed','false');liveButton.textContent='▷ Live';}
-  const pos=position(s,bounds);s.bar.querySelector('output').textContent=Math.round(pos*1000)+' nm';s.bar.querySelector('.slice-position').disabled=false;s.bar.querySelector('.solid-depth').hidden=s.view!=='3d';s.bar.querySelector('.solid-model').hidden=s.view!=='3d';canvas.title=s.view==='3d'?'드래그: 회전 · Shift+드래그: 이동 · 휠: 확대/축소 · 0: 맞춤':'드래그: 이동 · 휠: 확대/축소';
+  const pos=position(s,bounds);s.bar.querySelector('output').textContent=Math.round(pos*1000)+' nm';s.bar.querySelector('.slice-position').disabled=false;s.bar.querySelector('.solid-depth').hidden=s.view!=='3d';modelLabel.hidden=s.view!=='3d'&&!s.core;canvas.title=s.view==='3d'?'드래그: 회전 · Shift+드래그: 이동 · 휠: 확대/축소 · 0: 맞춤':'드래그: 이동 · 휠: 확대/축소';
   minimap(canvas,s);
-  if(s.view==='3d')return {solid:s};return {...section(data,bounds,s.axis,pos,s.depth),state:s,position:pos,maskSlice:PhotoPreview.slice(s.mask,s.axis,pos,s.depth,data)};
+  if(s.view==='3d')return {solid:s};
+  if(s.core){
+   const cut=ChannelCutaway.section(s.core,s.axis,pos,s.depth,intervals);
+   const field=s.axis==='Y'?data.concentration:root.DopantView?.slice(data,cut.bounds,s.axis,pos,s.depth);
+   return {...cut,data:{...data,polygons:cut.polygons,concentration:field},state:s,position:pos,maskSlice:null};
+  }
+  return {...section(data,bounds,s.axis,pos,s.depth),state:s,position:pos,maskSlice:PhotoPreview.slice(s.mask,s.axis,pos,s.depth,data)};
  }
  function render(canvas,s,style){
   if(window.SolidGPU?.render(canvas,s,style))return;
   canvas.dataset.renderer='canvas';
   const r=canvas.getBoundingClientRect(),w=Math.max(80,r.width),h=Math.max(80,r.height),dpr=Math.min(devicePixelRatio||1,2);canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.scale(dpr,dpr);c.fillStyle='#fff';c.fillRect(0,0,w,h);
-  const rawBounds=s.bounds,clipped=s.data.polygons.map(p=>({...p,points:ProcessExtrusion.clipPolygon(p.points,rawBounds)})).filter(p=>p.points.length>=3),parts=SolidGeometry.parts(clipped),offsets=SolidGeometry.offsets(parts,s.explodeMode,s.exploded?s.explodeGap:0);
+  const rawBounds=s.bounds,clipped=s.core?[]:s.data.polygons.map(p=>({...p,points:ProcessExtrusion.clipPolygon(p.points,rawBounds)})).filter(p=>p.points.length>=3),parts=s.core?s.core.parts.flatMap(p=>SolidGeometry.parts(p.polygons).map(body=>({...body,lo:p.lo,hi:p.hi}))):SolidGeometry.parts(clipped),offsets=SolidGeometry.offsets(parts,s.explodeMode,s.exploded?s.explodeGap:0);
   const b=[...rawBounds];b[3]=Math.max(b[3]+Math.max(0,...offsets),!s.exploded&&s.mask?s.mask.top:-Infinity);
   const cx=(b[0]+b[1])/2,cz=(b[2]+b[3])/2,scale=s.zoom*Math.min((w-(s.isMinimap?20:100))/Math.hypot(b[1]-b[0],s.depth),(h-(s.isMinimap?20:85))/Math.hypot(b[3]-b[2],s.depth));
   const transform=([x,y,z])=>{x-=cx;z-=cz;const a=x*Math.cos(s.yaw)-y*Math.sin(s.yaw),d=x*Math.sin(s.yaw)+y*Math.cos(s.yaw);return [w/2+a*scale+s.panX,h/2-(z*Math.cos(s.pitch)-d*Math.sin(s.pitch))*scale+s.panY,d*Math.cos(s.pitch)+z*Math.sin(s.pitch)]};
@@ -78,12 +102,15 @@
   const faces=[];
   for(let partIndex=0;partIndex<parts.length;partIndex++){
    const id=parts[partIndex].material,polys=parts[partIndex].polygons.map(p=>({...p,points:p.points.map(([x,z])=>[x,z+offsets[partIndex]])}));
-   for(const y of [-s.depth/2,s.depth/2]){const paths=polys.map(p=>p.points.map(([x,z])=>transform([x,y,z])));faces.push({id,paths,z:paths.flat().reduce((sum,p)=>sum+p[2],0)/paths.flat().length,light:y<0?1:.8,cap:y,offset:offsets[partIndex]});}
-   for(const p of polys)for(let i=0;i<p.points.length;i++){const a=p.points[i],q=p.points[(i+1)%p.points.length];if(Math.hypot(a[0]-q[0],a[1]-q[1])<1e-7)continue;const pts=[transform([a[0],-s.depth/2,a[1]]),transform([q[0],-s.depth/2,q[1]]),transform([q[0],s.depth/2,q[1]]),transform([a[0],s.depth/2,a[1]])];faces.push({id,paths:[pts],z:pts.reduce((v,p)=>v+p[2],0)/4,light:.85});}
+   const part=parts[partIndex],lo=s.core?part.lo:-s.depth/2,hi=s.core?part.hi:s.depth/2;
+   const point=(u,v,z)=>transform(s.core?[v,u,z]:[u,v,z]);
+   for(const y of [lo,hi]){const paths=polys.map(p=>p.points.map(([x,z])=>point(x,y,z)));faces.push({id,paths,z:paths.flat().reduce((sum,p)=>sum+p[2],0)/paths.flat().length,light:y<0?1:.8,cap:y,offset:offsets[partIndex]});}
+   for(const p of polys)for(let i=0;i<p.points.length;i++){const a=p.points[i],q=p.points[(i+1)%p.points.length];if(Math.hypot(a[0]-q[0],a[1]-q[1])<1e-7)continue;const pts=[point(a[0],lo,a[1]),point(q[0],lo,q[1]),point(q[0],hi,q[1]),point(a[0],hi,a[1])];faces.push({id,paths:[pts],z:pts.reduce((v,p)=>v+p[2],0)/4,light:.85,planeY:s.core&&Math.abs(a[0]-q[0])<1e-8?a[0]:undefined,offset:offsets[partIndex]});}
   }
   if(s.mask&&!s.exploded)for(const [a,e] of s.mask.solid){const m=s.mask;for(const y of [-s.depth/2,s.depth/2]){const ps=[[a,y,m.y],[e,y,m.y],[e,y,m.y+m.t],[a,y,m.y+m.t]].map(transform);faces.push({id:-1,paths:[ps],z:ps.reduce((v,p)=>v+p[2],0)/4,light:1});}for(const z of [m.y,m.y+m.t]){const ps=[[a,-s.depth/2,z],[e,-s.depth/2,z],[e,s.depth/2,z],[a,s.depth/2,z]].map(transform);faces.push({id:-1,paths:[ps],z:ps.reduce((v,p)=>v+p[2],0)/4,light:.85});}}
   faces.sort((a,b)=>b.z-a.z);for(const f of faces){c.beginPath();for(const ps of f.paths){ps.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath()}const doping=s.doping&&s.data.materialDoping?.[f.id],hex=doping?'#'+DopantView.rgb((doping.type==='p'?-1:1)*doping.concentration).map(v=>v.toString(16).padStart(2,'0')).join(''):f.id===-1?'#959DA9':style(f.id).color;c.fillStyle=shadeColor(hex,f.light);c.fill('evenodd');
-   if(s.doping&&s.data.concentration&&[10,11,13].includes(f.id)&&f.cap!==undefined){const tex=DopantView.texture(s.data,rawBounds,hex,undefined,f.id),a=transform([rawBounds[0],f.cap,rawBounds[3]+f.offset]),e=transform([rawBounds[1],f.cap,rawBounds[3]+f.offset]),d=transform([rawBounds[0],f.cap,rawBounds[2]+f.offset]);c.save();c.clip('evenodd');c.transform((e[0]-a[0])/tex.width,(e[1]-a[1])/tex.width,(d[0]-a[0])/tex.height,(d[1]-a[1])/tex.height,a[0],a[1]);c.drawImage(tex,0,0);c.restore();}
+   const planeY=s.core?f.planeY:f.cap;
+   if(s.doping&&s.data.concentration&&[10,11,13].includes(f.id)&&planeY!==undefined){const tex=DopantView.texture(s.data,rawBounds,hex,undefined,f.id),a=transform([rawBounds[0],planeY,rawBounds[3]+f.offset]),e=transform([rawBounds[1],planeY,rawBounds[3]+f.offset]),d=transform([rawBounds[0],planeY,rawBounds[2]+f.offset]);c.save();c.clip('evenodd');c.transform((e[0]-a[0])/tex.width,(e[1]-a[1])/tex.width,(d[0]-a[0])/tex.height,(d[1]-a[1])/tex.height,a[0],a[1]);c.drawImage(tex,0,0);c.restore();}
    c.strokeStyle=shadeColor(hex,.78);c.lineWidth=.35;c.stroke();}
   if(s.mask?.arrows&&!s.exploded)for(const ray of PhotoPreview.rays(s.mask)){const u=transform([ray.x,0,ray.start]),v=transform([ray.x,0,ray.end]);c.strokeStyle=ray.blocked?'#7D8798':s.mask.species==='B'?'#c2185b':s.mask.species?'#1255cd':'#c99b35';c.beginPath();c.moveTo(u[0],u[1]);c.lineTo(v[0],v[1]);c.lineTo(v[0]-3,v[1]-6);c.moveTo(v[0],v[1]);c.lineTo(v[0]+3,v[1]-6);c.stroke();}
   if(s.miniMapPlane){const {axis,at}=s.miniMapPlane,a=axis==='X'?0:axis==='Y'?1:2,others=[0,1,2].filter(i=>i!==a),ranges=[[b[0],b[1]],[-s.depth/2,s.depth/2],[b[2],b[3]]];c.beginPath();for(const [n,[j,k]] of [[0,0],[1,0],[1,1],[0,1]].entries()){const p=[0,0,0];p[a]=at;p[others[0]]=ranges[others[0]][j];p[others[1]]=ranges[others[1]][k];const q=transform(p);n?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]);}c.closePath();c.fillStyle='#e19c364d';c.fill();c.strokeStyle='#b46b15';c.stroke();}

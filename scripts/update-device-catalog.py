@@ -25,7 +25,7 @@ for spec in catalog['examples']:
     if spec['id']=='mbcfet':
         fields += [n('sheets','Si 채널 수',3,2,4,'층',1),n('thickness','Si 채널 두께',.04,.03,.05,'µm',.005),n('gap','SiGe 간격',.06,.05,.07,'µm',.01)]
     if spec['id']=='cfet':fields += [n('isolation','층간 SiO₂ 두께',.10,.08,.14,'µm',.01)]
-    fields += [n('sd_dose','S/D 주입량',1e13,1e12,1e14,'ions/cm²',1e12),n('sd_anneal','950 °C 활성화 시간',5,1,20,'s',1)]
+    fields += [n('sd_dose','S/D 주입량',1e13,1e12,1e14,'ions/cm²',1e12),n('sd_anneal','950 °C 활성화 시간',2,1,20,'s',1)]
     descriptions={'length':'길이 방향 게이트 PR의 폭입니다. 식각에 따라 실제 게이트 길이가 달라질 수 있습니다.','depth':'Fin 양 끝 격리부의 식각 깊이입니다.','oxide':'HfO₂ 등각 성장량입니다.','gate':'TiN 명목 성장량입니다.','channel':'S/D 지지부를 잇는 Si 채널의 성장량입니다.','sheets':'S/D에 연결된 수평 Si 채널의 수입니다.','thickness':'적층 Si 채널 하나의 성장량입니다.','gap':'채널 사이에서 제거할 SiGe 성장량입니다.','isolation':'상하 트랜지스터 사이 SiO₂ 성장량입니다.','sd_dose':'노출된 S/D Si에 주입할 dose입니다.','sd_anneal':'950 °C에서 확산·활성화하는 시간입니다.'}
     if spec['id']=='mbcfet':descriptions['sd_dose']='30·100·200 keV에 균등 분할하는 총 S/D 주입량입니다. 각 시트 높이에 도핑이 분포하도록 계산합니다.'
     for f in fields:f['description']=descriptions[f['key']]

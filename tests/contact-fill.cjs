@@ -5,8 +5,11 @@ function measureContactFill(data,n=420){
  if(!indices.length)return null;
  return indices.flatMap((index,tier)=>{
  const pattern=data.steps.slice(0,index).findLast(s=>s.op==='photo'&&['Pattern','Patterning'].includes(s.params.action)).params;
- const pre=data.frames[index],post=data.frames.at(-1),top=pre.highest;
- const b=[-.72,.72,Math.min(0,pre.lowest),top-.015],a=raster(pre,b,n),z=raster(post,b,n);
+ const pre=data.frames[index],post=data.frames.at(-1);
+ // The section removed by this tier's CMP is no longer part of its contact.
+ const planarized=data.steps[index+1]?.op==='cmp'?data.frames[index+2]?.metrics?.cutHeightUm:undefined;
+ const top=Math.min(pre.highest-.015,Number.isFinite(planarized)?planarized:Infinity);
+ const b=[-.72,.72,Math.min(0,pre.lowest),top],a=raster(pre,b,n),z=raster(post,b,n);
  const centers=pattern.pattern==='Double'?[-pattern.pitch/2,pattern.pitch/2]:[-pattern.pitch,0,pattern.pitch];
  const contacts=centers.map(center=>({center,cavityPixels:0,voidPixels:0,metalPixels:0}));
  for(const c of contacts){

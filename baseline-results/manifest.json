@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "modelHash": "97c243898945fd981c23f0e481c185f5fc38dedbd2b81138db8964ac23139897",
+  "modelHash": "20f4a76172bfac3caca4e0e01e3511d8e68926ccdf9c215591e5c852e9bd0c20",
   "entries": [
     {
       "target": "sti",
       "file": "sti.json.gz",
-      "sha256": "d490d99df9768230fabd9d10565e739d3ba4a30da54468e58a0e8aec6bfab6a7",
+      "sha256": "753bd9d1e365bc365532479586dd7178a2ef75e6617ef9e06da8bfefbdc6ba9c",
       "steps": [
         {
           "op": "deposition",
@@ -21,6 +21,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -47,6 +48,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -243,6 +245,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -263,6 +266,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Ceria oxide",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -297,13 +301,13 @@
           "depth": 0.22,
           "fill_time": 6.25
         },
-        "sha256": "32fca692a482630cc72cb11e7fa2ec5ee6acc3787fe36976f6d9ce10796875ec"
+        "sha256": "c7d743729a94dd10651b269f5c959cc18247a3ef942a3456c99f53b185b83e22"
       }
     },
     {
       "target": "fin",
       "file": "fin.json.gz",
-      "sha256": "100c59c3807fd2679bb9e487eabcee3f8939c9cd6ca8e759659aaf505d9a4fba",
+      "sha256": "9000654f4656251e5dd2201452206c73ee2225ab11131d6cc34b27015545b0fd",
       "steps": [
         {
           "op": "photo",
@@ -447,6 +451,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -467,6 +472,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Ceria oxide",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -501,13 +507,13 @@
           "depth": 0.35,
           "exposed": 0.6285714285714287
         },
-        "sha256": "12259f0ef4eaf9b6dba7343a937b9438006be4057b5e589de9bdc311d62c6522"
+        "sha256": "baaf4bf7a3c7f2b170b85836e0e0d7b43deee99a07365f47957928933caad4b9"
       }
     },
     {
       "target": "locos",
       "file": "locos.json.gz",
-      "sha256": "edbf32d170f22d3cedc44e202c924ac967982757f2c910ac448d6e53b5bd4933",
+      "sha256": "76538174e332220db9e7258888a42531d72408b3cb5fd42c152eecb0cf99c7c2",
       "steps": [
         {
           "op": "deposition",
@@ -523,6 +529,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -549,6 +556,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -737,13 +745,13 @@
           "temperature": 1000,
           "duration": 0.8
         },
-        "sha256": "9b9024e51d1a8f48f4080b57c6333ed6e42b34373ad69bec599edb6e5659e799"
+        "sha256": "de8d908224717db8a56ad56b2e4cb0337f14365be21197fbcc7dd7fcefc24889"
       }
     },
     {
       "target": "pn-junction",
       "file": "pn-junction.json.gz",
-      "sha256": "9bd41f0a1c7464694bacb7f1543c322c162a3110f99f44a2312425cf30c24b6e",
+      "sha256": "fc98d5269f7266532f97076454af2a65e042132dcac59cc47b18f0bdf251af2b",
       "steps": [
         {
           "op": "photo",
@@ -1038,6 +1046,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -1195,6 +1204,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -1216,6 +1226,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica tungsten",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -1231,13 +1242,13 @@
           "temperature": 1000,
           "time": 30
         },
-        "sha256": "4b8376f57f9d15940dbd59e5efab6712b0a0d580dd8007d139585fdc367a1924"
+        "sha256": "d78604eb0d9e26c7f3c5379daa6fe766e70d18b270090f65ee14cb1ebea77490"
       }
     },
     {
       "target": "mosfet",
       "file": "mosfet.json.gz",
-      "sha256": "a15e1fe92fc91aff5a516385ed8ba9afb1ef7531dbc21d236770cba6959c2912",
+      "sha256": "1b8aa9500629157070ab93821930a29a94d3524ce2304feef5e8934b3fb45ce0",
       "steps": [
         {
           "op": "deposition",
@@ -1253,6 +1264,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -1279,6 +1291,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 0.2,
@@ -1497,6 +1510,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -1544,6 +1558,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -1565,6 +1580,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Ceria oxide",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -1586,6 +1602,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -1743,6 +1760,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -1764,6 +1782,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica tungsten",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -1778,13 +1797,13 @@
           "oxide": 0.025,
           "spacer": 0.04
         },
-        "sha256": "0a1c706bed8763eea5495cbf2b2369a1d3c3579a9e3c0c7c75272ec513ac24a3"
+        "sha256": "bb6d7e1d5ef5a86a469005837c4bcb859efeb63fbb342017f2c9a59ee9d8c5e2"
       }
     },
     {
       "target": "fdsoi",
       "file": "fdsoi.json.gz",
-      "sha256": "6ad1a82056f9c65f817aad782c628af8d64c6015f3651f703f1b0ba49dc1f46b",
+      "sha256": "df4746c3805dd86a8eee42dfcf6395f1768a38de61ef7fbbe0466c59f070890b",
       "steps": [
         {
           "op": "deposition",
@@ -1800,6 +1819,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -1827,6 +1847,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 0.2,
@@ -2006,6 +2027,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -2097,6 +2119,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -2118,6 +2141,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Ceria oxide",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -2139,6 +2163,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -2296,6 +2321,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -2317,6 +2343,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica tungsten",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -2331,13 +2358,13 @@
           "length": 0.32,
           "oxide": 0.02
         },
-        "sha256": "79187fe174b360726f0e92ba3f3cfc3f16a54082c95fed9a8f259e1a71f4a753"
+        "sha256": "e9d40a4fe49352aed2db7ca81c9e8df1b0601fb3376fc99625d06a770e8bc184"
       }
     },
     {
       "target": "pdsoi",
       "file": "pdsoi.json.gz",
-      "sha256": "16e8afd69cb90a6f41218a092a28149db3ae6575a2519b62b654e0c79627d929",
+      "sha256": "cf5b882e873ec8e6ef2f188a867d6471ffd233423f92ceadeff55ee11e00dd76",
       "steps": [
         {
           "op": "deposition",
@@ -2353,6 +2380,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -2380,6 +2408,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 0.2,
@@ -2559,6 +2588,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -2650,6 +2680,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -2671,6 +2702,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Ceria oxide",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -2692,6 +2724,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -2849,6 +2882,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -2870,6 +2904,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica tungsten",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -2884,13 +2919,13 @@
           "length": 0.32,
           "oxide": 0.02
         },
-        "sha256": "386b06e4c5df9fb898f144a19ca071bfe7bf0977a533257cd4fadd0c10066f25"
+        "sha256": "63f86baa0a568222e050fe0e0460fe81312fba408e36923ee55128cc69dd6310"
       }
     },
     {
       "target": "rcat",
       "file": "rcat.json.gz",
-      "sha256": "11a4cccc311a11b889d4480f9f75336da06021b85a8c30de22dcebf9bb410eee",
+      "sha256": "6f0e0997bbf14319ac8a73b239e5d7c38aac879516feb5df0b52066c6a6b6e6c",
       "steps": [
         {
           "op": "deposition",
@@ -2906,6 +2941,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -3085,6 +3121,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -3112,6 +3149,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 0.2,
@@ -3335,6 +3373,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -3426,6 +3465,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -3447,6 +3487,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Ceria oxide",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -3468,6 +3509,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -3625,6 +3667,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -3646,6 +3689,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica tungsten",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -3660,13 +3704,13 @@
           "depth": 0.28,
           "oxide": 0.02
         },
-        "sha256": "127620aa649806de94599880ba261e97561d9674998d524371bc5ff911b6e136"
+        "sha256": "82ebaf91af8bc5870a56f05fd71917847b630e117855a463624c372c9b03c1d2"
       }
     },
     {
       "target": "bcat",
       "file": "bcat.json.gz",
-      "sha256": "6740192579f0881febcc4ff2d7a84b2617a535fede8418f639f5231bb48d8375",
+      "sha256": "274d7367ca529a6bf263cb66ee1bf61605d313efbe5ec4fa09a0447eb24d95d0",
       "steps": [
         {
           "op": "photo",
@@ -3832,6 +3876,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -4011,6 +4056,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -4038,6 +4084,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -4059,6 +4106,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica tungsten",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -4102,6 +4150,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -4123,6 +4172,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica nitride",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -4144,6 +4194,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -4165,6 +4216,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Ceria oxide",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -4186,6 +4238,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -4409,6 +4462,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -4430,6 +4484,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica tungsten",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -4444,13 +4499,13 @@
           "depth": 0.28,
           "burial": 0.16
         },
-        "sha256": "7125563377e3d68630f051753699c0a426cbcc540c10734529fee3b8bb9902dc"
+        "sha256": "227ecdbb57c0a04443f31a632d349b9d9b2066de9517c3c4d95fc6590282e422"
       }
     },
     {
       "target": "finfet",
       "file": "finfet.json.gz",
-      "sha256": "2b5f9d07cb045c2c08e40397c5104358db7e51fc9d17a80913a453d2d21b189a",
+      "sha256": "6c97ff8469c0304c4fd845004fd35e28b8d4f74c13d00aa6b2a8234be76211d8",
       "steps": [
         {
           "op": "photo",
@@ -4596,6 +4651,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -4617,6 +4673,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Ceria oxide",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -4660,6 +4717,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -4687,6 +4745,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -4887,6 +4946,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -4978,6 +5038,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -4999,6 +5060,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Ceria oxide",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -5020,6 +5082,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -5177,6 +5240,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -5198,6 +5262,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Cobalt formulated",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -5215,13 +5280,13 @@
           "sd_dose": 10000000000000,
           "sd_anneal": 2
         },
-        "sha256": "db3373a3d9116084c61ac8141468050327661104ce6c2bed8c95f4c8ad0dcd94"
+        "sha256": "c077701da3039a768ae18a46c30cf5d080f05023f860d118ebd90fee63de93db"
       }
     },
     {
       "target": "gaafet",
       "file": "gaafet.json.gz",
-      "sha256": "5584184dfa1643aa9ed652429adf448d3a56dec6b75ddf846ff1413c78dc898d",
+      "sha256": "d67d053f2b2dbe75c6c2c0824d4594992680e156ec3ddd6f8bdac5dbb7faf1b4",
       "steps": [
         {
           "op": "photo",
@@ -5367,6 +5432,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -5388,6 +5454,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica SiGe",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -5409,6 +5476,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -5608,6 +5676,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Section sides",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -5635,6 +5704,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Section sides",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -5814,6 +5884,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -5835,6 +5906,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Ceria oxide",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -5856,6 +5928,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -6013,6 +6086,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -6034,6 +6108,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica molybdenum",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -6049,28 +6124,29 @@
           "sd_dose": 10000000000000,
           "sd_anneal": 2
         },
-        "sha256": "3ce34a9bad24e9c9415fc38a0421adab6673718d0d6168e0c6eee0e55f9868a4"
+        "sha256": "642bb1567090e1117e19e1f7f4bd76f9d23113c0fd5710e0fbdf2c3750eab2f6"
       }
     },
     {
       "target": "mbcfet",
       "file": "mbcfet.json.gz",
-      "sha256": "261e04db8aa9cc1079b4f67e692325a3f65799646efa82503650d06fd02e98ec",
+      "sha256": "366ab1e12cb6833d275566ad523f51163df7e06d352d7ddad6ee2b3270faf419",
       "steps": [
         {
           "op": "deposition",
           "params": {
             "input_mode": "Effective",
-            "method": "PVD",
+            "method": "CVD",
             "material": "SiGe",
             "rate": 0.08,
             "time": 0.75,
-            "sticking": 1,
-            "exponent": 30,
+            "sticking": 0.15,
+            "exponent": 1,
             "cycles": 300,
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Section sides",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -6088,16 +6164,17 @@
           "op": "deposition",
           "params": {
             "input_mode": "Effective",
-            "method": "PVD",
+            "method": "CVD",
             "material": "Si",
             "rate": 0.08,
             "time": 0.5,
-            "sticking": 1,
-            "exponent": 30,
+            "sticking": 0.15,
+            "exponent": 1,
             "cycles": 300,
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Section sides",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -6115,16 +6192,17 @@
           "op": "deposition",
           "params": {
             "input_mode": "Effective",
-            "method": "PVD",
+            "method": "CVD",
             "material": "SiGe",
             "rate": 0.08,
             "time": 0.75,
-            "sticking": 1,
-            "exponent": 30,
+            "sticking": 0.15,
+            "exponent": 1,
             "cycles": 300,
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Section sides",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -6142,16 +6220,17 @@
           "op": "deposition",
           "params": {
             "input_mode": "Effective",
-            "method": "PVD",
+            "method": "CVD",
             "material": "Si",
             "rate": 0.08,
             "time": 0.5,
-            "sticking": 1,
-            "exponent": 30,
+            "sticking": 0.15,
+            "exponent": 1,
             "cycles": 300,
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Section sides",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -6169,16 +6248,17 @@
           "op": "deposition",
           "params": {
             "input_mode": "Effective",
-            "method": "PVD",
+            "method": "CVD",
             "material": "SiGe",
             "rate": 0.08,
             "time": 0.75,
-            "sticking": 1,
-            "exponent": 30,
+            "sticking": 0.15,
+            "exponent": 1,
             "cycles": 300,
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Section sides",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -6196,16 +6276,17 @@
           "op": "deposition",
           "params": {
             "input_mode": "Effective",
-            "method": "PVD",
+            "method": "CVD",
             "material": "Si",
             "rate": 0.08,
             "time": 0.5,
-            "sticking": 1,
-            "exponent": 30,
+            "sticking": 0.15,
+            "exponent": 1,
             "cycles": 300,
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Section sides",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -6307,7 +6388,7 @@
             "material": "Si",
             "method": "Directional",
             "rate": 0.1,
-            "time": 0.55,
+            "time": 1,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
@@ -6329,7 +6410,7 @@
             "material": "SiGe",
             "method": "Directional",
             "rate": 0.1,
-            "time": 0.75,
+            "time": 1.2,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
@@ -6351,7 +6432,7 @@
             "material": "Si",
             "method": "Directional",
             "rate": 0.1,
-            "time": 0.55,
+            "time": 1,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
@@ -6373,7 +6454,7 @@
             "material": "SiGe",
             "method": "Directional",
             "rate": 0.1,
-            "time": 0.75,
+            "time": 1.2,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
@@ -6395,7 +6476,7 @@
             "material": "Si",
             "method": "Directional",
             "rate": 0.1,
-            "time": 0.55,
+            "time": 1,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
@@ -6417,7 +6498,7 @@
             "material": "SiGe",
             "method": "Directional",
             "rate": 0.1,
-            "time": 0.75,
+            "time": 1.2,
             "isotropic": 0,
             "access": "Exposed",
             "cycles": 100,
@@ -6473,6 +6554,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -6494,6 +6576,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica silicon",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -6729,6 +6812,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Section sides",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -6756,6 +6840,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Section sides",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -6935,6 +7020,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -6956,6 +7042,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Ceria oxide",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -6977,6 +7064,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -7134,6 +7222,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -7155,6 +7244,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica molybdenum",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -7172,13 +7262,13 @@
           "sd_dose": 10000000000000,
           "sd_anneal": 2
         },
-        "sha256": "4f41c6be240144cf6b1720839005eb0bafb223cdc8821cdddbd6ed7f9635d874"
+        "sha256": "d03ce8ea9011aa23e9d8cfcca350e846cd2d2ef6e5916aba3eeb2a189fe33d35"
       }
     },
     {
       "target": "charge-trap",
       "file": "charge-trap.json.gz",
-      "sha256": "94ab58f088e9647107f09bc96b6884d6ca34ee81dba20eb65b005ff017a27852",
+      "sha256": "fd76889bf9e62899602335abb67f51b61bbd8d10f21a5bfd2ae51bd52ddc2c55",
       "steps": [
         {
           "op": "deposition",
@@ -7194,6 +7284,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -7221,6 +7312,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -7248,6 +7340,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -7275,6 +7368,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 0.2,
@@ -7540,6 +7634,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -7561,6 +7656,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Ceria oxide",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -7582,6 +7678,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -7739,6 +7836,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -7760,6 +7858,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica tungsten",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -7775,13 +7874,13 @@
           "block": 0.03,
           "length": 0.4
         },
-        "sha256": "85d18608c99a1bc6162f54e2bc4a9135401207982060904108285acd4fa76221"
+        "sha256": "727644f76ba9160c9e230cd6f9ea1d006ec5be34260e3bb5b5b46e40cf6919f5"
       }
     },
     {
       "target": "cfet",
       "file": "cfet.json.gz",
-      "sha256": "c3d2430a1c0d128f4568d7995acb66ffd7200f1db2a6614f38ce072b6ea1f7c1",
+      "sha256": "765cf7616f5f2f2e5238a5ffb9994945d6fe3ff1dea620402538033be2ba2872",
       "steps": [
         {
           "op": "photo",
@@ -7927,6 +8026,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -7948,6 +8048,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica SiGe",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -7969,6 +8070,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -8168,6 +8270,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Section sides",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -8195,6 +8298,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Section sides",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -8374,6 +8478,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -8395,6 +8500,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Ceria oxide",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -8416,6 +8522,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -8573,6 +8680,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -8594,6 +8702,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica molybdenum",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -8615,6 +8724,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -8642,6 +8752,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -8799,6 +8910,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -8820,6 +8932,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica SiGe",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -8841,6 +8954,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -9040,6 +9154,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Section sides",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -9067,6 +9182,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Section sides",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -9246,6 +9362,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -9267,6 +9384,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Ceria oxide",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -9288,6 +9406,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -9445,6 +9564,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -9466,6 +9586,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Silica molybdenum",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -9482,13 +9603,13 @@
           "sd_dose": 10000000000000,
           "sd_anneal": 2
         },
-        "sha256": "93cf074eca76beef74b8789b1ea3ca2611fb77a582f73fd38fff86b249a32492"
+        "sha256": "3c7347cd6e7e3c4137b3a4fd28fa9eb983a17e0637551389d2225dd7a26addf0"
       }
     },
     {
       "target": "photo-lithography",
       "file": "photo-lithography.json.gz",
-      "sha256": "447664bc8a80e5c9b34ba59cef2225a8009cd561d6823dff60ecf61ee591b72e",
+      "sha256": "375fe1cdcc49053e94d87b6f661a328074639da31bb9aad0b3fdf15e6ce72fea",
       "steps": [
         {
           "op": "deposition",
@@ -9504,6 +9625,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -9657,13 +9779,13 @@
           "oxide": 0.1,
           "etch_time": 1.2
         },
-        "sha256": "30b3a0bb99534359dff34fef7648a3a12a25aded448527590945ec8ed08506dd"
+        "sha256": "c2b4e7f969d315d03877c06c3846c095a31e1747a8fff9a90ecf9a2514144b4d"
       }
     },
     {
       "target": "pvd",
       "file": "pvd.json.gz",
-      "sha256": "7fda0ae8f943b9e070acff51873f08fb9fc92db16134fceb1d7a67cda014d40b",
+      "sha256": "e99dea50805108243b07e234636eb638f71abf39b699ad19cedf43f0ce3d5b91",
       "steps": [
         {
           "op": "photo",
@@ -9809,6 +9931,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -9836,6 +9959,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -9863,6 +9987,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -9885,13 +10010,13 @@
           "sticking": 1,
           "exponent": 20
         },
-        "sha256": "6a84c805bd20f160f41b577713f15a845715feb591ece03124f852b4cbf605ea"
+        "sha256": "b75d63e533896233570bc2f483e5dc1bd4f583979c8b190b33e161b80b8a99be"
       }
     },
     {
       "target": "sadp",
       "file": "sadp.json.gz",
-      "sha256": "dabdaa16a55ca3412b714b4f2d34af7040d321b5074180fca0da83d0525b8d2f",
+      "sha256": "422d52c40f4583d39e67a2dbbb01d195d7ad1c8219a927cce2bde9610dd33e03",
       "steps": [
         {
           "op": "deposition",
@@ -9907,6 +10032,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -9934,6 +10060,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 0.2,
@@ -10091,6 +10218,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -10199,13 +10327,13 @@
           "mandrel": 0.12,
           "spacer": 0.04
         },
-        "sha256": "1666b2c71db647d391c364a0572940a6efbd5c22c1606f4d23a029bf7a5c1989"
+        "sha256": "a451a5c8be9de27f58f1bc9fc6537bd21f71f8941330b18d8cdf12b890e63361"
       }
     },
     {
       "target": "planarization",
       "file": "planarization.json.gz",
-      "sha256": "dd8550a50338e524647c61d011af58ae0fe1edebd85ebb0bdea2e60810093824",
+      "sha256": "07eadab4eea028b857dd42c625484f94206d642dafa7c5d79944108b2555a57b",
       "steps": [
         {
           "op": "deposition",
@@ -10221,6 +10349,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -10378,6 +10507,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -10399,6 +10529,7 @@
             "rate": 0.01,
             "time": 120,
             "slurry": "Ceria oxide",
+            "overpolish_nm": 30,
             "down_force": 3,
             "platen_speed": 60,
             "chemical": "SC-1",
@@ -10412,13 +10543,13 @@
           "height": 0.18,
           "film": 0.24
         },
-        "sha256": "a3f8fa20060db2d55c148c709cc3308f965eff4ec9990df5a3f18137290c2578"
+        "sha256": "3eedef9b625d4ef8146cd702544721fef9ba125f5b417317d0c4abbd4f5f6e9e"
       }
     },
     {
       "target": "wet",
       "file": "wet.json.gz",
-      "sha256": "8ee4801026465d6765ec6a53bda4e32adc759c077bdb777b1c79153a691dbd00",
+      "sha256": "05874b4c41814cce46ad53d7385decf36e77a17efb9d64c2458a715c4496e76e",
       "steps": [
         {
           "op": "deposition",
@@ -10434,6 +10565,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -10603,13 +10735,13 @@
           "width": 0.6,
           "duration": 1
         },
-        "sha256": "9deaf99815b63948809ddd916f1057faf85b62d184e34c2a1706f47db83fc677"
+        "sha256": "418ca7a7e75856add14da1b252dcce7c5f7620310a319fdd0e4771412a651225"
       }
     },
     {
       "target": "regrowth",
       "file": "regrowth.json.gz",
-      "sha256": "947eb06b4c2d294a3fc14a0be42fb3cbe1fbd760c2b13caacb736673a89d2d62",
+      "sha256": "2dd2c1d94236347927935f134bcb57d4992243887eadd2cca6a0fa47db482457",
       "steps": [
         {
           "op": "deposition",
@@ -10625,6 +10757,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -10652,6 +10785,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -10679,6 +10813,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -10706,6 +10841,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -10733,6 +10869,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -10760,6 +10897,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -10787,6 +10925,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -10814,6 +10953,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -11146,6 +11286,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -11166,13 +11307,13 @@
           "duration": 240,
           "redeposition": 0.01
         },
-        "sha256": "d86686e18401de481c987d8ef65f4310fa0c99c650df7f5dc1c43d0a5dfd41fe"
+        "sha256": "a206a01af15edac43b4b87e29265d0d507dcb358eb96c8565581d96182a647ff"
       }
     },
     {
       "target": "sf6",
       "file": "sf6.json.gz",
-      "sha256": "85ce54925d6cc1fea8243ea8fc51777c15f1b867833c3a06fe1e5ba5957fc609",
+      "sha256": "c634f977e91e584a8d53733267917e4daf082ccc07e6cf6eee99068e7a31c428",
       "steps": [
         {
           "op": "deposition",
@@ -11188,6 +11329,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -11359,13 +11501,13 @@
           "energy": 100,
           "duration": 0.05
         },
-        "sha256": "1b6f77ac757fcdbc57d634598ea42bc99de78a66fbbaec7f33817ba6f4549e59"
+        "sha256": "c89fa30596bedeaca6c16b64ec4ea89af21e6772316c0b939cf3cbbec839fb4a"
       }
     },
     {
       "target": "stack",
       "file": "stack.json.gz",
-      "sha256": "31d332cac16de03a60688cdfb96d26662bc8543470eb06ef9e03f87f6a7fb2a7",
+      "sha256": "2508662e23514dd95e092e28ef2b6aab04621f7b57c4de8c59d2df0299783bfa",
       "steps": [
         {
           "op": "deposition",
@@ -11381,6 +11523,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -11408,6 +11551,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -11435,6 +11579,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -11462,6 +11607,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -11489,6 +11635,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -11516,6 +11663,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -11776,13 +11924,13 @@
           "duration": 2.8,
           "ratio": 0.8
         },
-        "sha256": "fa4a4b3abcff7611119d712e71fec7db9961be47f6b7e9e1390848e9eba48afb"
+        "sha256": "23e18fae2f3c94d56c63bfde9f101251ec2baed1e4f49f764b32103aea532ac4"
       }
     },
     {
       "target": "bosch",
       "file": "bosch.json.gz",
-      "sha256": "ea1378c90962ef2528983788cc438ca0cead3d5a146778f09951c5402e29eafa",
+      "sha256": "445010d0eecbc77620cd4ce4674d5a3ed96c8f7db47b1f3f5149092ee64f6fe9",
       "steps": [
         {
           "op": "deposition",
@@ -11798,6 +11946,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -11975,6 +12124,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -12046,6 +12196,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -12117,6 +12268,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -12188,6 +12340,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -12259,6 +12412,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -12302,13 +12456,13 @@
           "etch_time": 0.8,
           "coating": 0.08
         },
-        "sha256": "8c46132297f3c16a447ec7d9e613750c69ff5f03acdeb70eaa5ef3691984cc29"
+        "sha256": "a6bc961a3130960c92820d6f6f4ee912d4fd70faee2e3c2429f8ce447e5f60c7"
       }
     },
     {
       "target": "ale-har",
       "file": "ale-har.json.gz",
-      "sha256": "ca5a17edd5e8688ab54d11f89ed6f47af655d4cb5f01c8f2d4c120ac660e1581",
+      "sha256": "9c2b928bac0614f53cbf0a5dcda4986ef856b4cd838c61d071d5f3892f3c1c41",
       "steps": [
         {
           "op": "deposition",
@@ -12324,6 +12478,7 @@
             "gpc": 0.0001,
             "pulse": 0.1,
             "ald_sticking": 0.00005,
+            "cvd_access": "Top surface",
             "pvd_pressure": 5,
             "argon_flow": 50,
             "cvd_pressure": 1,
@@ -12582,7 +12737,7 @@
           "cycles": 300,
           "epc": 0.002
         },
-        "sha256": "d9791f538d078dead6e11917b4469e71a3aca1c85976ef1ba189cb4839abfa9c"
+        "sha256": "2d8c51e4a97ada34930414d41713dfca7111c8ddd4138d29dbc2a83c3b6bea3b"
       }
     }
   ]

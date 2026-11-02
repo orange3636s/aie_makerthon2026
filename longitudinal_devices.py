@@ -23,8 +23,13 @@ def recipe(kind, p=None):
                 L(prefix+' · activation anneal', step('diffusion', method='Anneal', temperature=950, time=thermal_time))]
 
     def gate_stack(prefix, material='TiN', thickness=.05):
-        return [L(prefix+' · HfO₂ conformal dielectric', dep('HfO2', p.get('oxide', .02),'Conformal')),
-                L(prefix+' · '+material+' wrap gate', dep(material, thickness,'PVD' if kind=='finfet' else 'Conformal')),
+        dielectric=dep('HfO2', p.get('oxide', .02),'Conformal')
+        electrode=dep(material, thickness,'PVD' if kind=='finfet' else 'Conformal')
+        if kind!='finfet':
+            for layer in (dielectric,electrode):
+                layer['params']['cvd_access']='Section sides'
+        return [L(prefix+' · HfO₂ conformal dielectric', dielectric),
+                L(prefix+' · '+material+' wrap gate', electrode),
                 L(prefix+' · gate length pattern', photo(length)),
                 L(prefix+' · gate electrode etch', etch(material, thickness+.03,.25 if kind=='finfet' else 0)),
                 L(prefix+' · gate PR strip', strip()),
@@ -65,12 +70,16 @@ def recipe(kind, p=None):
         sheets=int(p.get('sheets', 3));gap=p.get('gap', .06);thickness=p.get('thickness', .04)
         r=[]
         for i in range(sheets):
-            r += [L(f'Stack {i+1} · SiGe', dep('SiGe', gap, 'PVD')),
-                  L(f'Stack {i+1} · Si nanosheet', dep('Si', thickness, 'PVD'))]
+            for mat,height in [('SiGe',gap),('Si',thickness)]:
+                layer=dep(mat,height,'CVD')
+                layer['params']['cvd_access']='Section sides'
+                r.append(L(f'Stack {i+1} · '+('Si nanosheet' if mat=='Si' else mat),layer))
         r += [L('Nanosheet stack mask', photo(length+.16))]
         for layer in range(sheets):
             for material,depth in (('Si',thickness),('SiGe',gap)):
-                r += [L(f'S/D recess {layer+1} · '+material, etch(material,depth+.015))]
+                # Clear the exposed layer down to its selective stop despite
+                # stack roughness, before building the silicon S/D anchors.
+                r += [L(f'S/D recess {layer+1} · '+material, etch(material,depth+.06))]
         fill=dep('Si', min(.60, sheets*(gap+thickness)+.15));fill['params'].update(sticking=.02, exponent=10.)
         r += [L('Stack PR strip', strip()), L('Si source/drain support fill', fill),
               L('S/D support planarization', step('cmp'))]
@@ -95,5 +104,6 @@ def configure(target):
                   roi=[-.72,.72,-.25,1.05 if kind=='cfet' else .7],
                   section='S/D–채널 길이 방향 단면',recipe=recipe(kind),projectedMask=True)
     target.pop('sections',None)
-    target['assumptions']='S/D 지지부·채널·게이트·컨택이 함께 보이는 2D 길이 방향 학습 단면입니다. Si 채움은 S/D 에피택시의 형상 근사입니다. 게이트 박막은 낮은 부착확률의 CVD 유효 입자 모델로 계산합니다. 방향성 식각은 PR 수직 투영을 보존합니다. 결정 성장·strain·3D 게이트·전기 특성을 계산하지 않습니다.'
+    target['assumptions']='S/D 지지부·채널·게이트·컨택이 함께 보이는 2D 길이 방향 학습 단면입니다. Si 채움은 S/D 에피택시의 형상 근사입니다. 방향성 식각은 PR 수직 투영을 보존합니다. 결정 성장·strain·3D 게이트·전기 특성을 계산하지 않습니다.'
     if kind=='cfet':target['assumptions']+=' 하부 n형/상부 p형의 순차 적층 예시이며 상부 Si는 준비된 결정층의 형상 근사입니다.'
+    if kind!='finfet':target['assumptions']+=' 방출된 채널의 게이트 적층은 단면 밖 측면으로 공급되는 등각 성장으로 근사합니다.'

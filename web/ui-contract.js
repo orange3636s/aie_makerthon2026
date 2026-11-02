@@ -10,6 +10,7 @@
  const label=x=>lightSource(x)?.label||labels[x]||String(x);
  Object.assign(labels,{Effective:'유효 속도',Equipment:'장비 조건 · 학습 모델',Thickness:'두께 지정',Spin:'Spin coating',HMDS:'HMDS coating',Exposure:'Alignment & Exposure',Ashing:'PR ashing',Exposed:'노출 표면','Section sides':'단면 밖 측면 접근',Existing:'현재 구조 마스크',Pattern:'Patterning · 기존 통합 단계',Patterning:'Patterning',Coat:'PR coating',Develop:'Developing',Strip:'PR strip',PolySi:'Poly Si',Al2O3:'Al₂O₃',HfZrO2:'HZO (Hf₀.₅Zr₀.₅O₂)',Anneal:'Annealing',Directional:'Dry Etch',Isotropic:'Wet Etch',Conformal:'기존 예제 · 기하 성장',Metal:'기존 재료 · Metal',Dielectric:'기존 재료 · Dielectric',
  Unspecified:'미지정','Ceria oxide':'CeO₂ (SiO₂ slurry)','Silica oxide':'SiO₂ abrasive (SiO₂ slurry)','Silica silicon':'Colloidal SiO₂ (Si slurry)','Silica polysilicon':'Colloidal SiO₂ (Poly Si slurry)','Silica nitride':'Colloidal SiO₂ (Si₃N₄ slurry)','Silica SiGe':'SiO₂ (SiGe slurry)','Silica tungsten':'SiO₂ 기반 (W slurry)','Cobalt formulated':'Co slurry','Silica molybdenum':'SiO₂ (Mo slurry)','Silica TiN':'SiO₂ (TiN slurry)','Silica hafnia':'SiO₂ (HfO₂ slurry)','Unverified alumina':'Al₂O₃ slurry · 미설정','Unverified HZO':'HZO slurry · 미설정'});
+ labels['Top surface']='상부 입사';
  const legacy=v=>['Conformal','Selective removal','Pattern transfer','Metal','Dielectric','Pattern'].includes(v);
  const optionsFor=(f,value)=>(f.options||[]).filter(v=>!legacy(v)||v===value);
  // Separate process pickers, while retaining the validated native thermal adapter.
