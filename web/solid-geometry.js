@@ -60,5 +60,19 @@
    mesh.userData.materialId=id;const zs=ring.points.map(p=>p[1]);mesh.userData.part={material:id,min:Math.min(...zs),max:Math.max(...zs),center:(Math.min(...zs)+Math.max(...zs))/2};group.add(mesh);
   }}return group;
  }
- const api={inside,area,rings,parts,offsets,explode,finish,build};if(typeof module==='object'&&module.exports)module.exports=api;else root.SolidGeometry=api;
+ function referenceEdges(part,alongX){
+  const vertices=[],world=(p,v)=>alongX?[v,p[0],p[1]]:[p[0],v,p[1]];
+  for(const ring of part.polygons){
+   const points=ring.points.slice(),first=points[0],last=points.at(-1);
+   if(first[0]===last[0]&&first[1]===last[1])points.pop();
+   for(let i=0;i<points.length;i++){
+    const p=points[i],next=points[(i+1)%points.length],prev=points[(i+points.length-1)%points.length];
+    for(const v of [part.lo,part.hi])vertices.push(...world(p,v),...world(next,v));
+    const a=[p[0]-prev[0],p[1]-prev[1]],b=[next[0]-p[0],next[1]-p[1]];
+    if(a[0]*b[0]+a[1]*b[1]<Math.cos(38*Math.PI/180)*Math.hypot(...a)*Math.hypot(...b))vertices.push(...world(p,part.lo),...world(p,part.hi));
+   }
+  }
+  return vertices;
+ }
+ const api={inside,area,rings,parts,offsets,explode,finish,build,referenceEdges};if(typeof module==='object'&&module.exports)module.exports=api;else root.SolidGeometry=api;
 })(typeof window==='object'?window:globalThis);

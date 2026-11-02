@@ -4,15 +4,41 @@
  const states=new Map(),clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
  function intervals(polys,axis,at){const hits=[];for(const p of polys){const q=p.points;for(let i=0,j=q.length-1;i<q.length;j=i++){const a=q[j],b=q[i];if((a[axis]>at)!==(b[axis]>at))hits.push(a[1-axis]+(at-a[axis])*(b[1-axis]-a[1-axis])/(b[axis]-a[axis]));}}hits.sort((a,b)=>a-b);const out=[];for(let i=0;i+1<hits.length;i+=2)if(hits[i+1]-hits[i]>1e-8)out.push([hits[i],hits[i+1]]);return out;}
  function groups(data){const g=new Map();for(const p of data.polygons||[]){if(!g.has(p.material))g.set(p.material,[]);g.get(p.material).push(p)}return g;}
- function section(data,bounds,axis,position,depth){
+ function section(data,bounds,axis,position,depth,withDoping=true){
   if(axis==='Y')return {data,bounds,labels:['X','Z']};
   const polygons=[];for(const [material,ps] of groups(data))for(const [a,b] of intervals(ps,axis==='X'?0:1,position)){
    const points=axis==='X'?[[-depth/2,a],[depth/2,a],[depth/2,b],[-depth/2,b]]:[[a,-depth/2],[b,-depth/2],[b,depth/2],[a,depth/2]];polygons.push({material,points,closed:true});
   }
   const nextBounds=axis==='X'?[-depth/2,depth/2,bounds[2],bounds[3]]:[bounds[0],bounds[1],-depth/2,depth/2];
-  return {data:{...data,polygons,concentration:root.DopantView?.slice(data,nextBounds,axis,position,depth)||null,photoMask:null,exposure:null,metrics:{}},bounds:nextBounds,labels:axis==='X'?['Y','Z']:['X','Y']};
+  return {data:{...data,polygons,concentration:withDoping?root.DopantView?.slice(data,nextBounds,axis,position,depth)||null:null,photoMask:null,exposure:null,metrics:{}},bounds:nextBounds,labels:axis==='X'?['Y','Z']:['X','Y']};
  }
  function get(id){return states.get(id)}
+ // Resolve the saved geometry at the same physical slice as the current device.
+ function referenceSection(frame,model,bounds,axis,at,depth){
+  if(!frame)return null;
+  return model?root.ChannelCutaway.section(model,axis,at,depth,intervals):section(frame,bounds,axis,at,depth,false).data;
+ }
+ function modelParts(frame,model,bounds,depth){
+  if(model)return model.parts.flatMap(p=>SolidGeometry.parts(p.polygons).map(body=>({...body,lo:p.lo,hi:p.hi})));
+  const clipped=frame.polygons.map(p=>({...p,points:ProcessExtrusion.clipPolygon(p.points,bounds)})).filter(p=>p.points.length>=3);
+  return SolidGeometry.parts(clipped).map(body=>({...body,lo:-depth/2,hi:depth/2}));
+ }
+ function paintReference(c,s){
+  if(!s.reference||s.isMinimap)return;
+  const parts=s.referenceBodies,offsets=SolidGeometry.offsets(parts,s.explodeMode,s.exploded?s.explodeGap:0);
+  c.save();c.strokeStyle='#a85b00';c.lineWidth=1.25;c.setLineDash([5,4]);
+  for(const [i,part] of parts.entries()){
+   // Draw the end facing the camera. Rear outlines would obscure the channel.
+   const world=(u,v,z)=>s.referenceCore?[v,u,z+offsets[i]]:[u,v,z+offsets[i]];
+   const near=s.projectWorld(world(0,part.lo,0))[2]<s.projectWorld(world(0,part.hi,0))[2]?part.lo:part.hi;
+   for(const ring of part.polygons){
+    c.beginPath();
+    ring.points.forEach(([u,z],j)=>{const [x,y]=s.projectWorld(world(u,near,z));if(j)c.lineTo(x,y);else c.moveTo(x,y);});
+    c.closePath();c.stroke();
+   }
+  }
+  c.restore();
+ }
  function mount(canvas,redraw){
   let s=states.get(canvas.id);if(s){s.redraw=redraw;return s;}
   s={id:canvas.id,axis:'Y',fraction:.5,depth:.8,view:'2d',yaw:-.48,pitch:.46,zoom:1,panX:0,panY:0,exploded:false,explodeMode:'layer',explodeGap:.12,redraw};states.set(canvas.id,s);
@@ -67,10 +93,18 @@
    s.coreSource=data;s.coreDepth=s.depth;s.coreId=options.deviceId;
    s.coreModel=window.ChannelCutaway?.build(data,options.deviceId,s.depth,intervals);
   }
-  const coreButton=s.bar.querySelector('.channel-toggle'),canShow=!!s.coreModel&&!s.mask&&!s.live&&!options.reference;
+  const coreButton=s.bar.querySelector('.channel-toggle'),canShow=!!s.coreModel&&!s.mask&&!s.live;
   coreButton.hidden=!canShow;
   const wasCore=!!s.core;
   s.core=canShow&&(s.fullProcess===undefined?options.finalStep:!s.fullProcess)?s.coreModel:null;
+  const reference=options.reference||null,rawRef=options.referenceFrame||reference;
+  const refKey=[options.deviceId,s.depth,!!s.core,...bounds].join('|');
+  if(s.reference!==reference||s.referenceFrame!==rawRef||s.referenceKey!==refKey){
+   s.reference=reference;s.referenceFrame=rawRef;s.referenceKey=refKey;
+   s.referenceCore=s.core&&reference?(rawRef===data?s.core:root.ChannelCutaway?.build(rawRef,options.deviceId,s.depth,intervals)):null;
+   s.referenceBodies=null;
+  }
+  if(reference&&s.view==='3d'&&!s.referenceBodies)s.referenceBodies=modelParts(reference,s.referenceCore,bounds,s.depth);
   if(deviceChanged||wasCore!==!!s.core)s.yaw=defaultYaw(s);
   coreButton.textContent=s.core?'전체 공정 보기':'게이트 절개 보기';
   const modelLabel=s.bar.querySelector('.solid-model');
@@ -85,18 +119,19 @@
   const pos=position(s,bounds);s.bar.querySelector('output').textContent=Math.round(pos*1000)+' nm';s.bar.querySelector('.slice-position').disabled=false;s.bar.querySelector('.solid-depth').hidden=s.view!=='3d';modelLabel.hidden=s.view!=='3d'&&!s.core;canvas.title=s.view==='3d'?'드래그: 회전 · Shift+드래그: 이동 · 휠: 확대/축소 · 0: 맞춤':'드래그: 이동 · 휠: 확대/축소';
   minimap(canvas,s);
   if(s.view==='3d')return {solid:s};
+  const comparison=referenceSection(reference,s.referenceCore,bounds,s.axis,pos,s.depth);
   if(s.core){
    const cut=ChannelCutaway.section(s.core,s.axis,pos,s.depth,intervals);
    const field=s.axis==='Y'?data.concentration:root.DopantView?.slice(data,cut.bounds,s.axis,pos,s.depth);
-   return {...cut,data:{...data,polygons:cut.polygons,concentration:field},state:s,position:pos,maskSlice:null};
+   return {...cut,data:{...data,polygons:cut.polygons,concentration:field},reference:comparison,state:s,position:pos,maskSlice:null};
   }
-  return {...section(data,bounds,s.axis,pos,s.depth),state:s,position:pos,maskSlice:PhotoPreview.slice(s.mask,s.axis,pos,s.depth,data)};
+  return {...section(data,bounds,s.axis,pos,s.depth),reference:comparison,state:s,position:pos,maskSlice:PhotoPreview.slice(s.mask,s.axis,pos,s.depth,data)};
  }
  function render(canvas,s,style){
   if(window.SolidGPU?.render(canvas,s,style))return;
   canvas.dataset.renderer='canvas';
   const r=canvas.getBoundingClientRect(),w=Math.max(80,r.width),h=Math.max(80,r.height),dpr=Math.min(devicePixelRatio||1,2);canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.scale(dpr,dpr);c.fillStyle='#fff';c.fillRect(0,0,w,h);
-  const rawBounds=s.bounds,clipped=s.core?[]:s.data.polygons.map(p=>({...p,points:ProcessExtrusion.clipPolygon(p.points,rawBounds)})).filter(p=>p.points.length>=3),parts=s.core?s.core.parts.flatMap(p=>SolidGeometry.parts(p.polygons).map(body=>({...body,lo:p.lo,hi:p.hi}))):SolidGeometry.parts(clipped),offsets=SolidGeometry.offsets(parts,s.explodeMode,s.exploded?s.explodeGap:0);
+  const rawBounds=s.bounds,parts=modelParts(s.data,s.core,rawBounds,s.depth),offsets=SolidGeometry.offsets(parts,s.explodeMode,s.exploded?s.explodeGap:0);
   const b=[...rawBounds];b[3]=Math.max(b[3]+Math.max(0,...offsets),!s.exploded&&s.mask?s.mask.top:-Infinity);
   const cx=(b[0]+b[1])/2,cz=(b[2]+b[3])/2,scale=s.zoom*Math.min((w-(s.isMinimap?20:100))/Math.hypot(b[1]-b[0],s.depth),(h-(s.isMinimap?20:85))/Math.hypot(b[3]-b[2],s.depth));
   const transform=([x,y,z])=>{x-=cx;z-=cz;const a=x*Math.cos(s.yaw)-y*Math.sin(s.yaw),d=x*Math.sin(s.yaw)+y*Math.cos(s.yaw);return [w/2+a*scale+s.panX,h/2-(z*Math.cos(s.pitch)-d*Math.sin(s.pitch))*scale+s.panY,d*Math.cos(s.pitch)+z*Math.sin(s.pitch)]};
@@ -118,6 +153,7 @@
   if(s.miniMapPlane){const {axis,at}=s.miniMapPlane,a=axis==='X'?0:axis==='Y'?1:2,others=[0,1,2].filter(i=>i!==a),ranges=[[b[0],b[1]],[-s.depth/2,s.depth/2],[b[2],b[3]]];c.beginPath();for(const [n,[j,k]] of [[0,0],[1,0],[1,1],[0,1]].entries()){const p=[0,0,0];p[a]=at;p[others[0]]=ranges[others[0]][j];p[others[1]]=ranges[others[1]][k];const q=transform(p);n?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]);}c.closePath();c.fillStyle='#e19c364d';c.fill();c.strokeStyle='#b46b15';c.stroke();}
   c.font='12px ProcessSans, sans-serif';
   for(const [name,v,color] of [['X',[.15,0,0],'#c55c44'],['Y',[0,.15,0],'#157f77'],['Z',[0,0,.15],'#536eb1']]){const o=transform([cx,0,cz]),e=transform([cx+v[0],v[1],cz+v[2]]);c.strokeStyle=c.fillStyle=color;c.beginPath();c.moveTo(w-70,h-55);c.lineTo(w-70+(e[0]-o[0])*.7,h-55+(e[1]-o[1])*.7);c.stroke();c.fillText(name,w-70+(e[0]-o[0])*.8,h-55+(e[1]-o[1])*.8);}
+  paintReference(c,s);
   if(s.live&&!s.exploded)particles(c,s,w,h,(x,z)=>transform([x,0,z]));
  }
  function shadeColor(hex,f){return '#'+hex.slice(1).match(/../g).map(x=>Math.round(parseInt(x,16)*f).toString(16).padStart(2,'0')).join('');}
@@ -130,5 +166,5 @@
   c.fillStyle='#476771';c.font='11px ProcessSans';c.fillText(`Live · ${dep?(p.method==='PVD'?'타겟 원자 이동':'기상종 이동·표면 부착'):impl?'이온 주입':light?'노광 · 마스크 차폐':'식각종 이동'} · 개념 애니메이션`,18,20);
  }
  function overlay(canvas,c,px,py){const s=get(canvas.id);if(s?.live&&s.view==='2d'&&s.axis==='Y')particles(c,s,canvas.clientWidth,canvas.clientHeight,(x,z)=>[px(x),py(z)]);}
- const api={intervals,section,prepare,render,get,overlay,particles};if(typeof module==='object'&&module.exports)module.exports=api;else root.SolidView=api;
+ const api={intervals,section,referenceSection,prepare,render,get,overlay,particles};if(typeof module==='object'&&module.exports)module.exports=api;else root.SolidView=api;
 })(typeof window==='object'?window:globalThis);

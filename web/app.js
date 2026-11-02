@@ -70,7 +70,7 @@ function draw(canvas,data,bounds,options={}){
  const redraw=()=>draw(canvas,source.data,source.bounds,source.options);
  const solid=window.SolidView?.prepare(canvas,data,bounds,options,redraw);
  if(solid?.solid){window.SectionViewport?.attach(canvas,()=>draw(canvas,data,bounds,options),selected?.id||'');SolidView.render(canvas,solid.solid,materialStyle);return;}
- if(solid){data=solid.data;bounds=solid.bounds;options={...options,axisLabels:solid.labels};if(solid.state.axis!=='Y'){options.maskPreview=null;if(options.reference)options.reference=SolidView.section(options.reference,source.bounds,solid.state.axis,solid.position,solid.state.depth).data;}}
+ if(solid){data=solid.data;bounds=solid.bounds;options={...options,axisLabels:solid.labels,reference:solid.reference};if(solid.state.axis!=='Y')options.maskPreview=null;}
  if(options.mini&&!canvas.getClientRects().length)return;
  const rect=canvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2),w=Math.max(rect.width,80),h=Math.max(rect.height,50);
  if(options.mini&&data&&bounds){

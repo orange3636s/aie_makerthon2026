@@ -1,9 +1,10 @@
 'use strict';
 const assert = require('node:assert/strict');
-const { intervals } = require('../web/solid-view');
+const { intervals, referenceSection } = require('../web/solid-view');
 const cutaway = require('../web/channel-cutaway');
 const geometry = require('../web/solid-geometry');
 const THREE = require('three');
+global.ChannelCutaway = cutaway;
 
 const expected = {
   finfet: [32, 79], gaafet: [32, 32, 79], mbcfet: [32, 32, 32, 32, 79],
@@ -20,9 +21,16 @@ for (const id of [...Object.keys(expected), 'mosfet', 'pn-junction']) {
   if (!expected[id]) continue;
   assert.equal(cutaway.build(frames[0], id, .8, intervals), null, id + ' bare wafer');
   const model = cutaway.build(frame, id, .8, intervals);
+  for (const axis of ['X','Y','Z']) for (const at of [-.1,0,.1]) {
+    const baseline = referenceSection(frame,model,model.bounds,axis,at,.8);
+    assert.deepEqual(baseline.polygons,cutaway.section(model,axis,at,.8,intervals).polygons,id+' aligned '+axis);
+  }
   const ids = model.parts.map(p => p.material);
   assert.deepEqual(ids.filter(m => expected[id].includes(m)), expected[id], id);
   for (const part of model.parts) {
+    const edges=geometry.referenceEdges(part,true);
+    assert(edges.length && edges.every(Number.isFinite) && edges.length%6===0);
+    assert(edges.every((v,i)=>i%3!==0||v===part.lo||v===part.hi),id+' world-space reference ends');
     const solid = geometry.build(THREE, part.polygons, part.hi - part.lo, () => '#aaaaaa');
     assert(solid.children.length > 0, id + ' closed body');
     for (const mesh of solid.children) {
@@ -56,4 +64,11 @@ for (const id of [...Object.keys(expected), 'mosfet', 'pn-junction']) {
     assert(ono.every((layer,i) => !i || Math.abs(layer[0]-ono[i-1][1]) < .002));
   }
 }
+const saved=require('../references/fdsoi.json').frames.at(-1);
+const edited=require('../references/pdsoi.json').frames.at(-1);
+const savedModel=cutaway.build(saved,'fdsoi',.8,intervals),editedModel=cutaway.build(edited,'fdsoi',.8,intervals);
+const ref=referenceSection(saved,savedModel,savedModel.bounds,'X',0,.8);
+const current=cutaway.section(editedModel,'X',0,.8,intervals);
+const bodyNm=cut=>{const [a,b]=intervals(cut.polygons.filter(p=>p.material===10),0,0).at(-1);return Math.round((b-a)*1000);};
+assert.deepEqual([bodyNm(ref),bodyNm(current)],[40,160],'keep saved film thickness when current geometry changes');
 console.log('Nine contact layouts and seven gate-region cutaways passed.');

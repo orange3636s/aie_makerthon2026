@@ -71,7 +71,26 @@
     }r.scene.add(r.plane);
    }
    SolidGeometry.explode(r.group,s.explodeMode,s.exploded?s.explodeGap:0);
-   const box=new T.Box3().setFromObject(r.group);if(r.mask.children.length)box.union(new T.Box3().setFromObject(r.mask));const center=box.isEmpty()?new T.Vector3():box.getCenter(new T.Vector3()),aspect=w/h,camera=r.camera;
+   const refParts=s.isMinimap?null:s.referenceBodies;
+   if(r.refParts!==refParts){
+    if(r.outline){r.scene.remove(r.outline);r.outline.children.forEach(line=>line.geometry.dispose());r.outlineMaterial.dispose();}
+    r.refParts=refParts;r.outline=null;
+    if(refParts){
+     r.outline=new T.Group();
+     r.outlineMaterial=new T.LineDashedMaterial({color:0xa85b00,dashSize:.012,gapSize:.009,depthWrite:false,toneMapped:false});
+     for(const part of refParts){
+      const geometry=new T.BufferGeometry();
+      geometry.setAttribute('position',new T.Float32BufferAttribute(SolidGeometry.referenceEdges(part,!!s.referenceCore),3));
+      const line=new T.LineSegments(geometry,r.outlineMaterial);line.computeLineDistances();line.renderOrder=3;r.outline.add(line);
+     }
+     r.scene.add(r.outline);
+    }
+   }
+   if(r.outline){
+    const offsets=SolidGeometry.offsets(refParts,s.explodeMode,s.exploded?s.explodeGap:0);
+    r.outline.children.forEach((line,i)=>line.position.z=offsets[i]);
+   }
+   const box=new T.Box3().setFromObject(r.group);if(r.mask.children.length)box.union(new T.Box3().setFromObject(r.mask));if(r.outline)box.union(new T.Box3().setFromObject(r.outline));const center=box.isEmpty()?new T.Vector3():box.getCenter(new T.Vector3()),aspect=w/h,camera=r.camera;
    const lightingKey=[...box.min,...box.max,s.exploded,s.explodeMode,s.explodeGap,maskKey].join('|');if(r.lightingKey!==lightingKey){fitStudio(r,box,s.isMinimap);r.lightingKey=lightingKey;}
    camera.up.set(0,0,1);camera.position.copy(center).add(new T.Vector3(Math.sin(s.yaw)*Math.cos(s.pitch),-Math.cos(s.yaw)*Math.cos(s.pitch),Math.sin(s.pitch)).multiplyScalar(Math.max(8,box.getSize(new T.Vector3()).length()*3)));camera.lookAt(center);camera.updateMatrixWorld();
    let extentX=.01,extentY=.01;
