@@ -43,7 +43,8 @@
   canvas.addEventListener('keydown',e=>{if(s.view!=='3d')return;let used=true;if(e.key==='ArrowLeft')s.yaw-=.1;else if(e.key==='ArrowRight')s.yaw+=.1;else if(e.key==='ArrowUp')s.pitch=clamp(s.pitch-.1,-1.3,1.3);else if(e.key==='ArrowDown')s.pitch=clamp(s.pitch+.1,-1.3,1.3);else if(['+','='].includes(e.key))s.zoom=clamp(s.zoom*1.2,.4,8);else if(e.key==='-')s.zoom=clamp(s.zoom/1.2,.4,8);else if(e.key==='0')reset(s);else used=false;if(used){e.preventDefault();e.stopImmediatePropagation();s.redraw()}},{capture:true});
   return s;
  }
- function reset(s){s.yaw=s.core?-1.02:-.48;s.pitch=.46;s.zoom=1;s.panX=s.panY=0;}
+ function defaultYaw(s){return s.core&&['finfet','gaafet','mbcfet','cfet'].includes(s.coreId)?-1.02:-.48;}
+ function reset(s){s.yaw=defaultYaw(s);s.pitch=.46;s.zoom=1;s.panX=s.panY=0;}
  function position(s,b){return s.axis==='X'?b[0]+s.fraction*(b[1]-b[0]):s.axis==='Z'?b[2]+s.fraction*(Math.max(b[3],s.mask?.top??b[3])-b[2]):(s.fraction-.5)*s.depth;}
  function minimap(canvas,s){
   if(!s.mini){const wrap=document.createElement('div');wrap.className='section-minimap';const mini=document.createElement('canvas');mini.id=canvas.id+'-minimap';mini.tabIndex=0;mini.setAttribute('role','slider');mini.setAttribute('aria-label','3D 미니맵 절단 위치');mini.setAttribute('aria-valuemin','0');mini.setAttribute('aria-valuemax','100');const label=document.createElement('div');wrap.append(mini,label);canvas.parentElement.append(wrap);s.mini={wrap,canvas:mini,label};
@@ -60,8 +61,9 @@
  function prepare(canvas,data,bounds,options,redraw){if(!data&&states.get(canvas.id)?.mini)states.get(canvas.id).mini.wrap.hidden=true;if(options.mini||!['section','r-current'].includes(canvas.id)||!data)return null;const s=mount(canvas,redraw);s.view=options.extrude?'3d':'2d';s.data=data;s.bounds=bounds;s.recipe=canvas.id==='section'?window.simulationEditor?.recipe():window.reverseLab?.recipe?.();
   s.doping=options.doping!==false;
   s.mask=PhotoPreview.build(options.maskPreview||data.photoMask||data.exposure,bounds,data);
-  if(s.coreSource!==data||s.coreDepth!==s.depth||s.coreId!==options.deviceId){
-   if(s.coreId!==options.deviceId)s.fullProcess=undefined;
+  const deviceChanged=s.coreId!==options.deviceId;
+  if(s.coreSource!==data||s.coreDepth!==s.depth||deviceChanged){
+   if(deviceChanged)s.fullProcess=undefined;
    s.coreSource=data;s.coreDepth=s.depth;s.coreId=options.deviceId;
    s.coreModel=window.ChannelCutaway?.build(data,options.deviceId,s.depth,intervals);
   }
@@ -69,7 +71,7 @@
   coreButton.hidden=!canShow;
   const wasCore=!!s.core;
   s.core=canShow&&(s.fullProcess===undefined?options.finalStep:!s.fullProcess)?s.coreModel:null;
-  if(wasCore!==!!s.core)s.yaw=s.core?-1.02:-.48;
+  if(deviceChanged||wasCore!==!!s.core)s.yaw=defaultYaw(s);
   coreButton.textContent=s.core?'전체 공정 보기':'게이트 절개 보기';
   const modelLabel=s.bar.querySelector('.solid-model');
   modelLabel.textContent=s.core?s.core.caption:'단면 기반 3D';
