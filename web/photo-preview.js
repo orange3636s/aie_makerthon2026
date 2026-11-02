@@ -7,7 +7,7 @@
   for(const [a,b] of spans){const last=out.at(-1);if(last&&a<=last[1])last[1]=Math.max(last[1],b);else out.push([a,b]);}return out;
  }
  function build(p,bounds,data){
-  if(!p||!bounds||!data)return null;let open=windows(p,bounds);if(!open.length)return null;
+  if(!p||!bounds||!data||(!p.implant&&data.metrics?.development))return null;let open=windows(p,bounds);if(!open.length)return null;
   if(p.species&&p.tone==='Negative'){const inverse=[];let x=bounds[0];for(const [a,b] of open){if(a>x)inverse.push([x,a]);x=b;}if(x<bounds[1])inverse.push([x,bounds[1]]);open=inverse;}
   const width=bounds[1]-bounds[0],surface=data.highest??Math.max(...data.polygons.flatMap(q=>q.points.map(p=>p[1]))),y=surface+(p.implant?.05:width*.12),t=p.implant?.1:width*.014;
   const solid=[];let end=bounds[0];for(const [a,b] of open){if(a>end)solid.push([end,a]);end=b;}if(end<bounds[1])solid.push([end,bounds[1]]);
@@ -35,7 +35,7 @@
  function slice(mask,axis,at,depth,data){
   if(!mask||axis==='Y')return mask;
   if(axis==='Z')return at>=mask.y&&at<=mask.y+mask.t?{...mask,y:-depth/2,t:depth,top:depth/2,arrows:false}:null;
-  const covered=mask.solid.some(([a,b])=>at>=a&&at<=b),hit=mask.implant?impact(mask,data,at):{end:mask.surface+.008,blocked:covered};
+  const covered=mask.solid.some(([a,b])=>at>=a&&at<=b),hit=mask.implant?impact(mask,data,at):{end:covered?mask.y+mask.t:mask.surface+.008,blocked:covered};
   return {...mask,solid:covered?[[-depth/2,depth/2]]:[],open:covered?[]:[[-depth/2,depth/2]],rays:hit?Array.from({length:5},(_,i)=>({x:depth*((i+.5)/5-.5),start:mask.top,end:hit.end,blocked:hit.blocked})):[],arrows:mask.arrows};
  }
  function context(row,rows,frame){

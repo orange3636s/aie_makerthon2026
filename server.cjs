@@ -23,7 +23,7 @@ for(const f of ['implant-controls.js','poly-gate-doping.js','wafer-doping.js','v
 if(host==='127.0.0.1'){assets['/qa.html']='qa.html';assets['/qa.js']='qa.js';assets['/qa-frame.html']='qa-frame.html';}
 function send(res,status,data,type='application/json; charset=utf-8'){
  if(!Buffer.isBuffer(data)){if(data?.frames)data=WaferBackground.apply(data,data.substrateDoping);else if(data?.result?.frames)data={...data,result:WaferBackground.apply(data.result,data.result.substrateDoping)};}
- let body=Buffer.isBuffer(data)?data:Buffer.from(JSON.stringify(data));if(res.canGzip&&body.length>32000){body=zlib.gzipSync(body);res.setHeader('Content-Encoding','gzip');res.setHeader('Vary','Accept-Encoding')}
+ let body=Buffer.isBuffer(data)?data:Buffer.from(JSON.stringify(data));if(res.canGzip&&body.length>32000){body=zlib.gzipSync(body,{level:zlib.constants.Z_BEST_SPEED});res.setHeader('Content-Encoding','gzip');res.setHeader('Vary','Accept-Encoding')}
  res.writeHead(status,{'Content-Type':type,'Content-Length':body.length,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'same-origin','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'self'"});res.end(body);
 }
 function httpError(status,message){return Object.assign(Error(message),{status})}

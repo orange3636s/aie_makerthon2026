@@ -17,7 +17,14 @@
  el('reverse-lab').insertAdjacentHTML('beforeend',`<dialog id="spec-dialog" class="review-dialog" aria-labelledby="spec-title"><header class="review-header"><div><span class="review-kicker">TARGET SPECIFICATION</span><h2 id="spec-title">설계 스펙</h2></div><button id="spec-close" aria-label="목표 사양 닫기">×</button></header><div id="spec-content"></div></dialog>`);
  el('spec-close').onclick=()=>el('spec-dialog').close();
  const specKey=()=>`processtrace.design-spec.v1.${target.id}.${sectionView}`;
- const specBase=()=>LearningScore.specification(reference.frames.at(-1),target.roi||reference.bounds,target);
+ let briefReference,briefTarget,briefSpec;
+ function specBase(){
+  if(briefReference!==reference||briefTarget!==target){
+   briefSpec=LearningScore.specification(reference.frames.at(-1),target.roi||reference.bounds,target);
+   briefReference=reference;briefTarget=target;
+  }
+  return briefSpec;
+ }
  const specFormat=(v,unit)=>unit==='cm⁻³'?Number(v).toExponential(3):Number(v.toFixed(2)).toString();
  function brief(){
   if(!reference)return;
@@ -115,7 +122,7 @@
  }
  function renderFlow(){window.FlowWorkspace?.park('reverse');const holder=el('r-flow'),left=holder.scrollLeft,keepFocus=holder.contains(document.activeElement);holder.innerHTML=Array.from({length:steps.length+1},(_,i)=>`<div class="flow-card"><button class="flow-step ${chosen===i?'selected':''} ${i>valid?'pending':''} ${result?.failure?.step===i?'failed':''}" data-step="${i}" aria-pressed="${i===chosen}"><small>${i?'STEP '+String(i).padStart(2,'0'):'START'}</small>${i<=valid?'<canvas aria-hidden="true"></canvas>':'<span class="pending-shape">◇</span>'}<strong>${esc(title(steps[i-1]))}</strong></button>${i?`<button class="flow-remove" data-remove="${i}" aria-label="STEP ${i} 삭제" title="이 공정만 삭제" ${working?'disabled':''}>×</button>`:''}</div>`).join('')+`<button class="flow-add" id="r-add" aria-label="공정 추가" ${working||steps.length>=96?'disabled':''}>+</button>`;
   holder.scrollLeft=left;if(keepFocus)holder.querySelector(`[data-step="${chosen}"]`)?.focus({preventScroll:true});
-  holder.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{chosen=Number(b.dataset.step);renderFlow();editor();refresh()});holder.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>removeStep(Number(b.dataset.remove)-1));el('r-add').onclick=()=>{el('r-picker').hidden=!el('r-picker').hidden;if(!el('r-picker').hidden)el('r-picker').querySelector('button')?.focus()};
+  holder.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{chosen=Number(b.dataset.step);renderFlow();editor()});holder.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>removeStep(Number(b.dataset.remove)-1));el('r-add').onclick=()=>{el('r-picker').hidden=!el('r-picker').hidden;if(!el('r-picker').hidden)el('r-picker').querySelector('button')?.focus()};
   el('r-flow-count').textContent=`${steps.length} 공정 · ${valid} 계산 완료`;refresh();
  }
  function revealStep(){const holder=el('r-flow'),card=holder.querySelector(`[data-step="${chosen}"]`)?.parentElement;if(!card)return;const left=card.offsetLeft-holder.offsetLeft;if(left<holder.scrollLeft)holder.scrollLeft=left;else if(left+card.offsetWidth>holder.scrollLeft+holder.clientWidth)holder.scrollLeft=left+card.offsetWidth-holder.clientWidth}

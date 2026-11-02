@@ -27,19 +27,30 @@ function apply(raw,setting,target=raw.target||raw.example,view=raw.view||'gate',
   const n=grid.nx*grid.ny,fields=Object.fromEntries(Object.entries(source?.fields||{}).map(([k,a])=>[k,a.slice()])),mask=Array(n).fill(0);
   const types=new Set([d.type,...bodies.map(b=>b.type)]);
   for(const type of types)if(type!=='intrinsic')for(const kind of ['total','active'])fields[(type==='n'?'P':'B')+'_'+kind]??=Array(n).fill(0);
+  const fieldArrays=Object.values(fields),speciesFields={};
+  for(const type of types)if(type!=='intrinsic'){
+   const species=type==='n'?'P':'B';
+   speciesFields[type]=[fields[species+'_total'],fields[species+'_active']];
+  }
   for(let i=0;i<grid.nx;i++){
    const x=grid.origin[0]+(i+.5)*grid.dx,si=L.intervals(frame,10,1,x),wafer=initialSpans(x);
    const layers=bodies.map(b=>{const key=x.toFixed(7);if(!b.columns.has(key))b.columns.set(key,{before:L.intervals(b.before,10,1,x),after:L.intervals(b.after,10,1,x)});return {...b.columns.get(key),type:b.type};});
    for(let j=0;j<grid.ny;j++){
     const k=j*grid.nx+i,y=grid.origin[1]+(j+.5)*grid.dx;
-    if(!inside(si,y)){for(const a of Object.values(fields))a[k]=0;continue;}
+    if(!inside(si,y)){if(source)for(const a of fieldArrays)a[k]=0;continue;}
     mask[k]=1;
     let type=inside(wafer,y)?d.type:'intrinsic';
     for(const layer of layers)if(inside(layer.after,y)&&!inside(layer.before,y))type=layer.type;
-    if(type!=='intrinsic')for(const kind of ['total','active'])fields[(type==='n'?'P':'B')+'_'+kind][k]+=d.concentration;
+    if(type!=='intrinsic'){const [total,active]=speciesFields[type];total[k]+=d.concentration;active[k]+=d.concentration;}
    }
   }
-  for(const kind of ['total','active'])if(fields['P_'+kind]||fields['B_'+kind])fields['net_'+kind]=Array.from({length:n},(_,k)=>(fields['P_'+kind]?.[k]||0)-(fields['B_'+kind]?.[k]||0));
+  for(const kind of ['total','active']){
+   const donor=fields['P_'+kind],acceptor=fields['B_'+kind];
+   if(!donor&&!acceptor)continue;
+   const net=Array(n);
+   for(let k=0;k<n;k++)net[k]=(donor?.[k]||0)-(acceptor?.[k]||0);
+   fields['net_'+kind]=net;
+  }
   const background={...d,upperBodyType:target==='cfet'&&siliconDepositions>1?'n':undefined,model:'uniform fully active wafer/prepared Si body background; linear compensation; no background redistribution'};
   // Background is not an implant or activation operation: retain native evidence.
   // Conductive poly gates use an in-situ doped film approximation. Keep this

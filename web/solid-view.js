@@ -81,6 +81,9 @@
    mini.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key))return;e.preventDefault();s.fraction=e.key==='Home'?0:e.key==='End'?1:clamp(s.fraction+(['ArrowRight','ArrowUp'].includes(e.key)?.02:-.02),0,1);s.bar.querySelector('.slice-position').value=s.fraction*1000;s.redraw();};
   }
   s.mini.wrap.hidden=s.view!=='2d';if(s.mini.wrap.hidden)return;
+  const miniKey=[s.axis,s.fraction,s.depth,s.doping,s.mini.canvas.clientWidth,s.mini.canvas.clientHeight,devicePixelRatio,...s.bounds,JSON.stringify(s.mask)].join('|');
+  if(s.mini.key===miniKey&&s.mini.state?.data===s.data&&s.mini.state?.core===s.core)return;
+  s.mini.key=miniKey;
   const m={...s,id:s.mini.canvas.id,view:'3d',isMinimap:true,miniMapPlane:{axis:s.axis,at:position(s,s.bounds)},live:false,mask:s.mask,mini:null,exploded:false,zoom:.95,panX:0,panY:0,yaw:-.65,pitch:.45,redraw:s.redraw};s.mini.state=m;
   s.mini.label.textContent=s.axis+' 단면 · '+Math.round(position(s,s.bounds)*1000)+' nm';s.mini.canvas.setAttribute('aria-valuenow',String(Math.round(s.fraction*100)));s.mini.canvas.setAttribute('aria-valuetext',s.mini.label.textContent);
   render(s.mini.canvas,m,materialStyle);
@@ -88,6 +91,11 @@
  function prepare(canvas,data,bounds,options,redraw){if(!data&&states.get(canvas.id)?.mini)states.get(canvas.id).mini.wrap.hidden=true;if(options.mini||!['section','r-current'].includes(canvas.id)||!data)return null;const s=mount(canvas,redraw);s.view=options.extrude?'3d':'2d';s.data=data;s.bounds=bounds;s.recipe=canvas.id==='section'?window.simulationEditor?.recipe():window.reverseLab?.recipe?.();
   s.doping=options.doping!==false;
   s.mask=PhotoPreview.build(options.maskPreview||data.photoMask||data.exposure,bounds,data);
+  const liveButton=s.bar.querySelector('.live-toggle'),op=s.recipe?.op,params=s.recipe?.params;
+  const animated=op==='deposition'||op==='etch'||(op==='diffusion'&&params?.method==='Ion implantation')||(op==='photo'&&['Exposure','Develop'].includes(params?.action));
+  liveButton.disabled=!animated||(s.view==='3d'?s.exploded:s.axis!=='Y');
+  liveButton.title=!animated?'이 단계에는 입자 애니메이션이 없습니다.':s.view==='2d'&&s.axis!=='Y'?'Y 단면에서 재생할 수 있습니다.':s.exploded?'원래 구조에서 재생할 수 있습니다.':'공정 애니메이션 재생';
+  if(liveButton.disabled&&s.live){s.live=false;cancelAnimationFrame(s.raf);liveButton.setAttribute('aria-pressed','false');liveButton.textContent='▷ Live';}
   const deviceChanged=s.coreId!==options.deviceId;
   if(s.coreSource!==data||s.coreDepth!==s.depth||deviceChanged){
    if(deviceChanged)s.fullProcess=undefined;
@@ -116,8 +124,7 @@
   for(const node of s.bar.querySelectorAll('.slice-axis,.slice-position,.slice-value'))node.hidden=s.view==='3d';
   s.bar.querySelector('.explode-controls').hidden=s.view!=='3d';
   s.explodeSummary.hidden=s.view!=='3d'||!s.exploded;
-  const liveButton=s.bar.querySelector('.live-toggle');liveButton.disabled=s.view==='3d'&&s.exploded;
-  if(liveButton.disabled&&s.live){s.live=false;cancelAnimationFrame(s.raf);liveButton.setAttribute('aria-pressed','false');liveButton.textContent='▷ Live';}
+
   const pos=position(s,bounds);s.bar.querySelector('output').textContent=Math.round(pos*1000)+' nm';s.bar.querySelector('.slice-position').disabled=false;s.bar.querySelector('.solid-depth').hidden=s.view!=='3d';modelLabel.hidden=s.view!=='3d'&&!s.core;canvas.title=s.view==='3d'?'드래그: 회전 · Shift+드래그: 이동 · 휠: 확대/축소 · 0: 맞춤':'드래그: 이동 · 휠: 확대/축소';
   minimap(canvas,s);
   function syncLegend(parts){
@@ -126,15 +133,22 @@
    for(const item of legend?.querySelectorAll('[data-material]')||[])item.hidden=!ids.has(Number(item.dataset.material));
   }
   if(s.view==='3d'){syncLegend(s.core?.parts||data.polygons);return {solid:s};}
-  const comparison=referenceSection(reference,s.referenceCore,bounds,s.axis,pos,s.depth);
-  if(s.core){
-   const cut=ChannelCutaway.section(s.core,s.axis,pos,s.depth,intervals);
-   syncLegend(cut.polygons);
-   const field=s.axis==='Y'?data.concentration:root.DopantView?.slice(data,cut.bounds,s.axis,pos,s.depth);
-   return {...cut,data:{...data,polygons:cut.polygons,concentration:field},reference:comparison,state:s,position:pos,maskSlice:null};
+  const sliceKey=[s.coreId,s.axis,pos,s.depth,!!s.core,...bounds].join('|');
+  if(s.sliceKey===sliceKey&&s.sliceData===data&&s.sliceRef===reference&&s.sliceRefModel===s.referenceCore&&s.sliceResult){
+   syncLegend(s.sliceResult.data.polygons);
+   return {...s.sliceResult,state:s,maskSlice:s.core?null:PhotoPreview.slice(s.mask,s.axis,pos,s.depth,data)};
   }
-  const cut=section(data,bounds,s.axis,pos,s.depth);syncLegend(cut.data.polygons);
-  return {...cut,reference:comparison,state:s,position:pos,maskSlice:PhotoPreview.slice(s.mask,s.axis,pos,s.depth,data)};
+  const comparison=referenceSection(reference,s.referenceCore,bounds,s.axis,pos,s.depth);
+  s.sliceKey=sliceKey;s.sliceData=data;s.sliceRef=reference;s.sliceRefModel=s.referenceCore;
+  let cut;
+  if(s.core){
+   const shape=ChannelCutaway.section(s.core,s.axis,pos,s.depth,intervals);
+   const field=s.axis==='Y'?data.concentration:root.DopantView?.slice(data,shape.bounds,s.axis,pos,s.depth);
+   cut={...shape,data:{...data,polygons:shape.polygons,concentration:field}};
+  }else cut=section(data,bounds,s.axis,pos,s.depth);
+  syncLegend(cut.data.polygons);
+  s.sliceResult={...cut,reference:comparison,position:pos};
+  return {...s.sliceResult,state:s,maskSlice:s.core?null:PhotoPreview.slice(s.mask,s.axis,pos,s.depth,data)};
  }
  function render(canvas,s,style){
   if(window.SolidGPU?.render(canvas,s,style))return;
@@ -168,12 +182,12 @@
  }
  function shadeColor(hex,f){return '#'+hex.slice(1).match(/../g).map(x=>Math.round(parseInt(x,16)*f).toString(16).padStart(2,'0')).join('');}
  function particles(c,s,w,h,project){
-  const row=s.recipe,p=row?.params||{},b=s.bounds;if(!row)return;const t=(performance.now()-s.start)/1000,dep=row.op==='deposition',etch=row.op==='etch',impl=row.op==='diffusion'&&p.method==='Ion implantation',light=row.op==='photo'&&['Exposure','Develop'].includes(p.action);
-  if(!dep&&!etch&&!impl&&!light){c.fillStyle='#476771';c.font='11px ProcessSans';c.fillText('Live · 단계 관찰',18,20);return;}
+  const row=s.recipe,p=row?.params||{},b=s.bounds;if(!row)return;const t=(performance.now()-s.start)/1000,dep=row.op==='deposition',etch=row.op==='etch',impl=row.op==='diffusion'&&p.method==='Ion implantation',light=row.op==='photo'&&p.action==='Exposure',develop=row.op==='photo'&&p.action==='Develop';
+  if(!dep&&!etch&&!impl&&!light&&!develop){c.fillStyle='#476771';c.font='11px ProcessSans';c.fillText('Live · 단계 관찰',18,20);return;}
   const ps=s.data.polygons,topAt=x=>{let top=b[2];for(const poly of ps)for(const [a,z] of intervals([poly],0,x))top=Math.max(top,z);return top;};
-  c.fillStyle=light?'#d3aa43':impl?(p.species==='B'?'#c05e7f':'#428ad0'):etch?'#d28c42':'#268c9b';const n=48,sticking=p.method==='PVD'?1:clamp(p.sticking||.2,.01,1);
+  c.fillStyle=light?'#d3aa43':develop?'#449da9':impl?(p.species==='B'?'#c05e7f':'#428ad0'):etch?'#d28c42':'#268c9b';const n=48,sticking=p.method==='PVD'?1:clamp(p.sticking||.2,.01,1);
   for(let i=0;i<n;i++){const seed=(i*.61803398875)%1,x=b[0]+seed*(b[1]-b[0]),blocked=s.mask?.solid.some(([a,e])=>x>=a&&x<=e),surface=impl?(PhotoPreview.impact(s.mask,s.data,x)?.end??topAt(x)):blocked?s.mask.y+s.mask.t:topAt(x),phase=(t*.45+i/n)%1;let z=surface+(Math.max(b[3],s.mask?.top||b[3])-surface+.15)*(1-phase),xx=x;if(dep&&p.method!=='PVD')xx+=Math.sin(phase*13+i)*.015*(1-sticking);const xy=project(xx,z);c.beginPath();c.arc(xy[0],xy[1],2.2,0,Math.PI*2);c.fill();if(phase>.9){c.globalAlpha=(1-phase)*10;c.beginPath();c.arc(xy[0],xy[1],4,0,Math.PI*2);c.stroke();c.globalAlpha=1;}}
-  c.fillStyle='#476771';c.font='11px ProcessSans';c.fillText(`Live · ${dep?(p.method==='PVD'?'타겟 원자 이동':'기상종 이동·표면 부착'):impl?'이온 주입':light?'노광 · 마스크 차폐':'식각종 이동'} · 개념 애니메이션`,18,20);
+  c.fillStyle='#476771';c.font='11px ProcessSans';c.fillText(`Live · ${dep?(p.method==='PVD'?'타겟 원자 이동':'기상종 이동·표면 부착'):impl?'이온 주입':light?'노광 · 마스크 차폐':develop?'현상액 도포':'식각종 이동'} · 개념 애니메이션`,18,20);
  }
  function overlay(canvas,c,px,py){const s=get(canvas.id);if(s?.live&&s.view==='2d'&&s.axis==='Y')particles(c,s,canvas.clientWidth,canvas.clientHeight,(x,z)=>[px(x),py(z)]);}
  function showGroups(s,labels){

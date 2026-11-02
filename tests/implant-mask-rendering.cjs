@@ -22,6 +22,10 @@ for(const pattern of ['Central','Double','Triple','Repeat']){
  assert(m.rays.every(r=>Number.isFinite(r.start)&&Number.isFinite(r.end)&&r.start>r.end));
  for(const r of m.rays){const covered=m.solid.some(([a,b])=>r.x>=a&&r.x<=b);if(covered)assert.equal(r.end,m.y+m.t);}
 }
+const exposure={pattern:'Central',width:.3,pitch:.6,offset:0,arrows:true};
+const optical=P.build(exposure,bounds,frame);
+assert(P.slice(optical,'X',.5,.8,frame).rays.every(ray=>ray.blocked&&ray.end===optical.y+optical.t));
+assert.equal(P.build(exposure,bounds,{...frame,metrics:{development:{fraction:1}}}),null,'developer step has no photomask or UV rays');
 const existingPR={...frame,highest:.3,polygons:[...frame.polygons,rect(300,-.8,-.3,.2,.3)]};
 assert(P.impact(null,existingPR,-.5).blocked,'actual PR blocks without a virtual overlay');
 assert(!I.sdMask({polygons:[]},bounds),'no guessed gate mask');

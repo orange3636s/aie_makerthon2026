@@ -18,6 +18,13 @@ for(const target of catalog.targets){
  assert.equal(lookup({...input,substrateRoughness:.001}),null);
  assert.equal(lookup({...input,view:'sd'}),null);
  assert.equal(lookup({...input,steps:input.steps.slice(1)}),null);
+ for(const n of [1,Math.ceil(input.steps.length/2),input.steps.length-1]){
+  const prefix=lookup({...input,steps:input.steps.slice(0,n)});
+  assert.equal(prefix.steps.length,n);assert.equal(prefix.frames.length,n+1);
+  assert.equal(prefix.frames.at(-1).progress,1);assert.equal(prefix.previewFrame,n);
+  assert.deepEqual(prefix.frames.at(-1).polygons,result.frames[n].polygons);
+  assert.equal(result.frames[n].progress,n/input.steps.length,'full result stays immutable');
+ }
  const changed=structuredClone(input),p=changed.steps.find(s=>Object.values(s.params).some(x=>typeof x==='number')).params;
  const key=Object.keys(p).find(k=>typeof p[k]==='number');p[key]+=.0001;assert.equal(lookup(changed),null,target.id+' changed input');
 }
