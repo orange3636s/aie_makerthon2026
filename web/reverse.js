@@ -107,9 +107,9 @@
  function currentFrame(){return result?.frames[Math.min(chosen,valid)]||base()}
  function refresh(){if(!active||!reference)return;const data=ParameterPreview.frame('r-current',currentFrame());let bounds=[...reference.bounds];if(result?.bounds){bounds[2]=Math.min(bounds[2],result.bounds[2]);bounds[3]=Math.max(bounds[3],result.bounds[3])}
   bounds=SectionViewport.fit(data,bounds,reference.frames.at(-1));
+  const ids=[...new Set([...data.polygons].map(p=>p.material))];el('r-legend').innerHTML=ids.map(id=>{const m=materialStyle(id);return`<span class="legend-item" data-material="${id}"><i style="background:${m.color}"></i>${esc(m.name)}</span>`}).join('');el('r-legend').insertAdjacentHTML('beforeend',DopantView.legend(data));
   brief();draw(el('r-target'),reference.frames.at(-1),reference.bounds,{mini:true,doping:true,deviceId:target.id,finalStep:true});draw(el('r-current'),data,bounds,{deviceId:target.id,finalStep:chosen===steps.length&&valid>=chosen&&chosen>0,fitted:true,maskPreview:PhotoPreview.context(steps[chosen-1],steps.slice(0,chosen-1),data),extrude:view==='2.5d',neutralSilicon:el('r-doping').checked&&!!reference.frames.at(-1).concentration,referenceFrame:el('r-overlay').checked?reference.frames.at(-1):null,reference:el('r-overlay').checked?DesignGuide.build(reference.frames.at(-1),{curved:target.id==='locos'}):null,doping:el('r-doping').checked,dopingField:undefined});
   el('r-doping-label').hidden=true;el('r-doping-kind').textContent='농도 표시';
-  const ids=[...new Set([...data.polygons].map(p=>p.material))];el('r-legend').innerHTML=ids.map(id=>{const m=materialStyle(id);return`<span class="legend-item"><i style="background:${m.color}"></i>${esc(m.name)}</span>`}).join('');el('r-legend').insertAdjacentHTML('beforeend',DopantView.legend(data));
   el('r-grade').disabled=false;
   el('r-flow').querySelectorAll('[data-step] canvas').forEach((c,i)=>{const f=i<=valid?result?.frames[i]||(!i?base():null):null;if(f)draw(c,f,bounds,{mini:true,deviceId:target.id,finalStep:i===steps.length,doping:true,dopingField:'net_total'})});
  }

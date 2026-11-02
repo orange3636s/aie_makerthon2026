@@ -120,14 +120,21 @@
   if(liveButton.disabled&&s.live){s.live=false;cancelAnimationFrame(s.raf);liveButton.setAttribute('aria-pressed','false');liveButton.textContent='▷ Live';}
   const pos=position(s,bounds);s.bar.querySelector('output').textContent=Math.round(pos*1000)+' nm';s.bar.querySelector('.slice-position').disabled=false;s.bar.querySelector('.solid-depth').hidden=s.view!=='3d';modelLabel.hidden=s.view!=='3d'&&!s.core;canvas.title=s.view==='3d'?'드래그: 회전 · Shift+드래그: 이동 · 휠: 확대/축소 · 0: 맞춤':'드래그: 이동 · 휠: 확대/축소';
   minimap(canvas,s);
-  if(s.view==='3d')return {solid:s};
+  function syncLegend(parts){
+   const ids=new Set(parts.map(p=>p.material));
+   const legend=document.getElementById(canvas.id==='section'?'legend':'r-legend');
+   for(const item of legend?.querySelectorAll('[data-material]')||[])item.hidden=!ids.has(Number(item.dataset.material));
+  }
+  if(s.view==='3d'){syncLegend(s.core?.parts||data.polygons);return {solid:s};}
   const comparison=referenceSection(reference,s.referenceCore,bounds,s.axis,pos,s.depth);
   if(s.core){
    const cut=ChannelCutaway.section(s.core,s.axis,pos,s.depth,intervals);
+   syncLegend(cut.polygons);
    const field=s.axis==='Y'?data.concentration:root.DopantView?.slice(data,cut.bounds,s.axis,pos,s.depth);
    return {...cut,data:{...data,polygons:cut.polygons,concentration:field},reference:comparison,state:s,position:pos,maskSlice:null};
   }
-  return {...section(data,bounds,s.axis,pos,s.depth),reference:comparison,state:s,position:pos,maskSlice:PhotoPreview.slice(s.mask,s.axis,pos,s.depth,data)};
+  const cut=section(data,bounds,s.axis,pos,s.depth);syncLegend(cut.data.polygons);
+  return {...cut,reference:comparison,state:s,position:pos,maskSlice:PhotoPreview.slice(s.mask,s.axis,pos,s.depth,data)};
  }
  function render(canvas,s,style){
   if(window.SolidGPU?.render(canvas,s,style))return;
