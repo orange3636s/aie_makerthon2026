@@ -74,9 +74,18 @@ function draw(canvas,data,bounds,options={}){
  if(options.mini&&!canvas.getClientRects().length)return;
  const rect=canvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2),w=Math.max(rect.width,80),h=Math.max(rect.height,50);
  if(options.mini&&data&&bounds){
-  const cache=draw.thumbnailCache||(draw.thumbnailCache=new WeakMap()),key=[w,h,dpr,...bounds,options.doping,options.dopingField].join('|'),old=cache.get(canvas);
+  const cache=draw.thumbnailCache||(draw.thumbnailCache=new WeakMap()),key=[w,h,dpr,...bounds,options.deviceId,options.finalStep,options.doping,options.dopingField].join('|'),old=cache.get(canvas);
   if(old?.data===data&&old.key===key)return;
   cache.set(canvas,{data,key});
+  if(options.finalStep&&options.deviceId){
+   const depth=.8,model=ChannelCutaway.build(data,options.deviceId,depth,SolidView.intervals);
+   if(model){
+    const axis=['finfet','gaafet','mbcfet','cfet'].includes(options.deviceId)?'X':'Y';
+    const cut=ChannelCutaway.section(model,axis,0,depth,SolidView.intervals);
+    data={...data,polygons:cut.polygons,concentration:axis==='X'?DopantView.slice(data,cut.bounds,axis,0,depth):data.concentration};
+    bounds=cut.bounds;
+   }
+  }
  }
  canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);const c=canvas.getContext('2d');c.scale(dpr,dpr);c.fillStyle='#ffffff';c.fillRect(0,0,w,h);
  if(!data||!bounds){c.fillStyle='#536981';c.font='12px ProcessSans, Segoe UI';c.textAlign='center';c.fillText('조건을 선택하고 실행해 주세요',w/2,h/2);return}
@@ -167,7 +176,7 @@ function updateFrame(){if(!current)return;const f=current.frames[frame];$('legen
 function updateAll(){if(!current)return;window.simulationEditor?.result();$('download-image').disabled=false;$('export-json').disabled=false;$('play').disabled=false;$('pin-reference').disabled=false;$('metric-frames').innerHTML=`${current.frames.length}<em>단계</em>`;$('metric-time').innerHTML=`${current.elapsed.toFixed(2)}<em>s</em>`;
  window.FlowWorkspace?.park('observation');
  $('timeline').innerHTML=current.frames.map((f,i)=>`<button class="frame-card" data-frame="${i}" aria-label="${i+1}단계 ${i===0?'Wafer':ProcessUI.text(f.label)}" aria-pressed="false"><canvas aria-hidden="true"></canvas><span class="frame-index">${String(i+1).padStart(2,'0')}</span><span class="frame-name">${i===0?'Wafer':ProcessUI.text(f.label)}</span></button>`).join('');
- document.querySelectorAll('.frame-card').forEach((el,i)=>{draw(el.querySelector('canvas'),current.frames[i],current.bounds,{mini:true,doping:true,dopingField:'net_total'});el.addEventListener('click',()=>{stop();frame=i;updateFrame();window.simulationEditor?.selectFrame(i)})});
+ document.querySelectorAll('.frame-card').forEach((el,i)=>{draw(el.querySelector('canvas'),current.frames[i],current.bounds,{mini:true,deviceId:selected?.id,finalStep:i===current.frames.length-1,doping:true,dopingField:'net_total'});el.addEventListener('click',()=>{stop();frame=i;updateFrame();window.simulationEditor?.selectFrame(i)})});
  const change=current.frames.at(-1).lowest-current.frames[0].lowest;$('insight-title').textContent='실행 결과에서 무엇이 달라졌나요?';$('insight').textContent=`초기 구조와 비교해 표면 최저점이 ${Math.abs(ProcessUI.displayValue(current,change)).toFixed(1)} ${ProcessUI.displayUnit(current.unit)} ${change>=0?'상승':'하강'}했습니다. ${current.example==='regrowth'?'이 예제는 측방 변화가 중요하므로 적층 사이의 경계도 확인하세요.':'한 가지 조건만 바꾸고 기준 단면과 겹쳐 비교해 보세요.'}`;
  $('reference-status').textContent='예제별 기준 결과 저장됨';$('phase-note').textContent=selected.mode==='geometry'?'공정 순서별 상태입니다. 시간 간격은 균일하지 않습니다.':selected.mode==='mask'?'GDS 원본 → 블러·임계값 적용':'시간 간격으로 저장한 계산 상태입니다.';
  if(selected.group==='소자'){$('insight-title').textContent=selected.description||'소자 단면';$('insight').textContent=ProcessUI.displayText(selected.note);}
@@ -184,7 +193,7 @@ for(const [id,next] of [['view2d','2d'],['view25d','2.5d']])$(id).addEventListen
 $('play').addEventListener('click',()=>{if(timer){stop();return}if(!current)return;if(frame>=current.frames.length-1)frame=0;updateFrame();$('play').textContent='Ⅱ 일시정지';timer=setInterval(()=>{if(frame>=current.frames.length-1){stop();return}frame++;updateFrame();revealFrame()},850)});
 $('download-image').addEventListener('click',()=>{$('section').toBlob(blob=>{if(blob)download(blob,`ProcessTrace-${selected.id}-step-${frame+1}.png`)});});
 $('export-json').addEventListener('click',()=>{if(window.reverseLab?.active){window.reverseLab.save();return}if(current)download(new Blob([JSON.stringify(current,null,2)],{type:'application/json'}),`ProcessTrace-${selected.id}.json`)});
-new ResizeObserver(()=>{drawMain();if(current)document.querySelectorAll('.frame-card').forEach((el,i)=>draw(el.querySelector('canvas'),current.frames[i],current.bounds,{mini:true,doping:true,dopingField:'net_total'}))}).observe($('section').parentElement);
+new ResizeObserver(()=>{drawMain();if(current)document.querySelectorAll('.frame-card').forEach((el,i)=>draw(el.querySelector('canvas'),current.frames[i],current.bounds,{mini:true,deviceId:selected?.id,finalStep:i===current.frames.length-1,doping:true,dopingField:'net_total'}))}).observe($('section').parentElement);
 (async()=>{try{const info=await request('/api/catalog');catalog=info.examples;$('example-total').textContent=catalog.length;$('library-count').textContent=catalog.length;$('engine').innerHTML=info.engine;const requested=location.hash.slice(1);await select(catalog.some(s=>s.id===requested)?requested:'mosfet')}catch(e){$('loading').hidden=true;status('서버에 연결하지 못했습니다. 시작 파일을 실행해 주세요.',true);toast(e.message)}})();
 
 window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(!busy&&id!==selected?.id&&catalog.some(s=>s.id===id))select(id)});

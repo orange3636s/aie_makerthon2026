@@ -12,14 +12,23 @@ try{
   const original=await p.evaluate(()=>JSON.stringify(reverseLab.context().frame));
   await p.locator('#r25d').click();await p.waitForFunction(()=>document.getElementById('r-current').dataset.renderer==='webgl');
   assert(await p.evaluate(()=>SolidView.get('r-current').data===reverseLab.context().frame),id+' same source geometry');
+  const coreToggle=p.locator('.reverse-view .channel-toggle');
+  if(await coreToggle.isVisible()&&await p.evaluate(()=>!SolidView.get('r-current').core))await coreToggle.click();
   const controls=p.locator('.reverse-view .explode-controls');await controls.locator('.explode-toggle').click();
   for(const mode of ['layer','material']){
    await controls.locator('select').selectOption(mode);
    const within=await p.evaluate(()=>{
-    const s=SolidView.get('r-current'),polys=s.data.polygons.map(p=>({...p,points:ProcessExtrusion.clipPolygon(p.points,s.bounds)})).filter(p=>p.points.length>=3),parts=SolidGeometry.parts(polys),ds=SolidGeometry.offsets(parts,s.explodeMode,s.explodeGap),c=document.getElementById('r-current');
-    return parts.every((part,i)=>part.polygons.every(p=>p.points.every(([x,z])=>[-s.depth/2,s.depth/2].every(y=>{const [u,v]=s.projectWorld([x,y,z+ds[i]]);return u>=-1&&u<=c.clientWidth+1&&v>=-1&&v<=c.clientHeight+1}))));
+    const s=SolidView.get('r-current'),c=document.getElementById('r-current');
+    const bodies=s.core?s.core.parts:[{lo:-s.depth/2,hi:s.depth/2,polygons:s.data.polygons.map(p=>({...p,points:ProcessExtrusion.clipPolygon(p.points,s.bounds)})).filter(p=>p.points.length>=3)}];
+    const parts=bodies.flatMap(b=>SolidGeometry.parts(b.polygons).map(p=>({...p,lo:b.lo,hi:b.hi})));
+    const plan=SolidGeometry.layout(parts,s.explodeMode,s.explodeGap,s.coreId);
+    return plan.labels.every(label=>s.explodeSummary.textContent.includes(label))&&parts.every((part,i)=>part.polygons.every(p=>p.points.every(([x,z])=>[part.lo,part.hi].every(y=>{
+     const pos=s.core?[y,x,z+plan.shifts[i]]:[x,y,z+plan.shifts[i]], [u,v]=s.projectWorld(pos);
+     return u>=-1&&u<=c.clientWidth+1&&v>=-1&&v<=c.clientHeight+1;
+    }))));
    });
    assert(within,id+' '+mode+' fits viewport');
+   if(mode==='layer'&&['mbcfet','cfet'].includes(id))await p.locator('.reverse-view').screenshot({path:'.runtime/exploded-'+id+'.png'});
   }
   await controls.locator('.explode-reset').click();
   if(['finfet','mbcfet','bosch','locos'].includes(id))await p.locator('.reverse-view').screenshot({path:'.runtime/studio-3d-'+id+'.png'});

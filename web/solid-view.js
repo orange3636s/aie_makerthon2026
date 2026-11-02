@@ -25,7 +25,7 @@
  }
  function paintReference(c,s){
   if(!s.reference||s.isMinimap)return;
-  const parts=s.referenceBodies,offsets=SolidGeometry.offsets(parts,s.explodeMode,s.exploded?s.explodeGap:0);
+  const parts=s.referenceBodies,offsets=SolidGeometry.offsets(parts,s.explodeMode,s.exploded?s.explodeGap:0,s.coreId);
   c.save();c.strokeStyle='#a85b00';c.lineWidth=1.25;c.setLineDash([5,4]);
   for(const [i,part] of parts.entries()){
    // Draw the end facing the camera. Rear outlines would obscure the channel.
@@ -41,10 +41,10 @@
  }
  function mount(canvas,redraw){
   let s=states.get(canvas.id);if(s){s.redraw=redraw;return s;}
-  s={id:canvas.id,axis:'Y',fraction:.5,depth:.8,view:'2d',yaw:-.48,pitch:.46,zoom:1,panX:0,panY:0,exploded:false,explodeMode:'layer',explodeGap:.12,redraw};states.set(canvas.id,s);
+  s={id:canvas.id,axis:'Y',fraction:.5,depth:.8,view:'2d',yaw:-.48,pitch:.46,zoom:1,panX:0,panY:0,exploded:false,explodeMode:'layer',explodeGap:.25,redraw};states.set(canvas.id,s);
   const box=canvas.closest('.viewer,.reverse-view'),bar=document.createElement('div');bar.className='solid-controls';bar.innerHTML='<div class="slice-axis" role="group" aria-label="절단 축">'+['X','Y','Z'].map(a=>`<button type="button" data-axis="${a}" aria-pressed="${a==='Y'}">${a} 단면</button>`).join('')+'</div><input class="slice-position" type="range" min="0" max="1000" value="500" aria-label="절단 위치"><output class="slice-value">0 nm</output><label class="solid-depth">깊이 <input type="number" min="100" max="2000" step="10" value="800" aria-label="3D 확장 깊이 nm"> nm</label><button type="button" class="live-toggle" aria-pressed="false">▷ Live</button><span class="solid-model" title="계산된 2D 단면을 일정 깊이로 확장한 3D 모델">단면 기반 3D</span>';
   const explode=document.createElement('div');explode.className='explode-controls';explode.hidden=true;
-  explode.innerHTML='<button type="button" class="explode-toggle" aria-pressed="false">분리 보기</button><div class="explode-options" hidden><select aria-label="분리 기준"><option value="layer">층별</option><option value="material">재료별</option></select><label>표시 간격 <input type="range" min="20" max="300" step="10" value="120" aria-label="분리 간격 nm"></label><output>120 nm</output><button type="button" class="explode-reset">원래 구조</button></div>';
+  explode.innerHTML='<button type="button" class="explode-toggle" aria-pressed="false">분리 보기</button><div class="explode-options" hidden><select aria-label="분리 기준"><option value="layer">기능별</option><option value="material">재료별</option></select><label>표시 간격 <input type="range" min="60" max="600" step="10" value="250" aria-label="분리 간격 nm"></label><output>250 nm</output><button type="button" class="explode-reset">원래 구조</button></div>';
   const mode=document.createElement('button');mode.type='button';mode.className='channel-toggle';mode.hidden=true;
   mode.title='게이트 절개와 전체 공정 단면 전환 · 절개 높이와 길이는 계산 단면에서 추출하며 폭 방향은 교육용 가정입니다.';
   mode.onclick=()=>{s.fullProcess=!!s.core;s.redraw();};
@@ -55,6 +55,7 @@
   explode.querySelector('input').oninput=e=>{s.explodeGap=+e.target.value/1000;explode.querySelector('output').textContent=e.target.value+' nm';s.redraw()};
   explode.querySelector('.explode-reset').onclick=()=>{s.exploded=false;syncExplode()};
   box.querySelector('.panel-heading').after(bar);s.bar=bar;
+  s.explodeSummary=document.createElement('div');s.explodeSummary.className='explode-groups';s.explodeSummary.hidden=true;bar.after(s.explodeSummary);
   bar.querySelectorAll('[data-axis]').forEach(b=>b.onclick=()=>{s.axis=b.dataset.axis;s.fraction=.5;bar.querySelector('.slice-position').value=500;bar.querySelectorAll('[data-axis]').forEach(x=>x.setAttribute('aria-pressed',x===b));s.redraw()});
   bar.querySelector('.slice-position').oninput=e=>{s.fraction=+e.target.value/1000;s.redraw()};
   bar.querySelector('.solid-depth input').onchange=e=>{const v=+e.target.value;if(!Number.isFinite(v)||v<100||v>2000){e.target.value=s.depth*1000;return;}s.depth=v/1000;s.redraw()};
@@ -114,6 +115,7 @@
   if(s.mask){bounds=[...bounds];bounds[3]=Math.max(bounds[3],s.mask.top);s.bounds=bounds;}
   for(const node of s.bar.querySelectorAll('.slice-axis,.slice-position,.slice-value'))node.hidden=s.view==='3d';
   s.bar.querySelector('.explode-controls').hidden=s.view!=='3d';
+  s.explodeSummary.hidden=s.view!=='3d'||!s.exploded;
   const liveButton=s.bar.querySelector('.live-toggle');liveButton.disabled=s.view==='3d'&&s.exploded;
   if(liveButton.disabled&&s.live){s.live=false;cancelAnimationFrame(s.raf);liveButton.setAttribute('aria-pressed','false');liveButton.textContent='▷ Live';}
   const pos=position(s,bounds);s.bar.querySelector('output').textContent=Math.round(pos*1000)+' nm';s.bar.querySelector('.slice-position').disabled=false;s.bar.querySelector('.solid-depth').hidden=s.view!=='3d';modelLabel.hidden=s.view!=='3d'&&!s.core;canvas.title=s.view==='3d'?'드래그: 회전 · Shift+드래그: 이동 · 휠: 확대/축소 · 0: 맞춤':'드래그: 이동 · 휠: 확대/축소';
@@ -131,7 +133,8 @@
   if(window.SolidGPU?.render(canvas,s,style))return;
   canvas.dataset.renderer='canvas';
   const r=canvas.getBoundingClientRect(),w=Math.max(80,r.width),h=Math.max(80,r.height),dpr=Math.min(devicePixelRatio||1,2);canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.scale(dpr,dpr);c.fillStyle='#fff';c.fillRect(0,0,w,h);
-  const rawBounds=s.bounds,parts=modelParts(s.data,s.core,rawBounds,s.depth),offsets=SolidGeometry.offsets(parts,s.explodeMode,s.exploded?s.explodeGap:0);
+  const rawBounds=s.bounds,parts=modelParts(s.data,s.core,rawBounds,s.depth),plan=SolidGeometry.layout(parts,s.explodeMode,s.exploded?s.explodeGap:0,s.coreId),offsets=plan.shifts;
+  showGroups(s,plan.labels);
   const b=[...rawBounds];b[3]=Math.max(b[3]+Math.max(0,...offsets),!s.exploded&&s.mask?s.mask.top:-Infinity);
   const cx=(b[0]+b[1])/2,cz=(b[2]+b[3])/2,scale=s.zoom*Math.min((w-(s.isMinimap?20:100))/Math.hypot(b[1]-b[0],s.depth),(h-(s.isMinimap?20:85))/Math.hypot(b[3]-b[2],s.depth));
   const transform=([x,y,z])=>{x-=cx;z-=cz;const a=x*Math.cos(s.yaw)-y*Math.sin(s.yaw),d=x*Math.sin(s.yaw)+y*Math.cos(s.yaw);return [w/2+a*scale+s.panX,h/2-(z*Math.cos(s.pitch)-d*Math.sin(s.pitch))*scale+s.panY,d*Math.cos(s.pitch)+z*Math.sin(s.pitch)]};
@@ -166,5 +169,10 @@
   c.fillStyle='#476771';c.font='11px ProcessSans';c.fillText(`Live · ${dep?(p.method==='PVD'?'타겟 원자 이동':'기상종 이동·표면 부착'):impl?'이온 주입':light?'노광 · 마스크 차폐':'식각종 이동'} · 개념 애니메이션`,18,20);
  }
  function overlay(canvas,c,px,py){const s=get(canvas.id);if(s?.live&&s.view==='2d'&&s.axis==='Y')particles(c,s,canvas.clientWidth,canvas.clientHeight,(x,z)=>[px(x),py(z)]);}
- const api={intervals,section,referenceSection,prepare,render,get,overlay,particles};if(typeof module==='object'&&module.exports)module.exports=api;else root.SolidView=api;
+ function showGroups(s,labels){
+  if(!s.exploded||s.isMinimap||!s.explodeSummary)return;
+  const caption=labels.length>1?'아래부터　'+labels.join(' · '):labels[0]||'';
+  if(s.explodeSummary.textContent!==caption)s.explodeSummary.textContent=caption;
+ }
+ const api={showGroups,intervals,section,referenceSection,prepare,render,get,overlay,particles};if(typeof module==='object'&&module.exports)module.exports=api;else root.SolidView=api;
 })(typeof window==='object'?window:globalThis);

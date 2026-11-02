@@ -24,7 +24,23 @@
   for(const span of spans){const last=out.at(-1);if(last&&span[0]<=last[1]+1e-6)last[1]=Math.max(last[1],span[1]);else out.push(span.slice())}return out;
  }
  function closest(rows,anchor){return rows.reduce((best,row)=>!best||Math.abs((row[0]+row[1])/2-anchor)<Math.abs((best[0]+best[1])/2-anchor)?row:best,null)}
- function dimensionPlan(frame,roi,limit=3){
+ function deviceCuts(frame,device){
+  const rows=id=>intervals(frame,id,1,0),cuts=[];
+  function add(id,span,kind){
+   if(span&&span[1]-span[0]>.001)cuts.push({id,kind,axis:1,at:0,anchor:(span[0]+span[1])/2,target:(span[1]-span[0])*1000,deviceCut:true});
+  }
+  if(['fdsoi','pdsoi'].includes(device)){
+   add(10,rows(10).at(-1),'활성 몸체 두께');add(30,rows(30)[0],'BOX 두께');
+  }else if(['gaafet','mbcfet','cfet'].includes(device)){
+   const oxide=rows(32),channels=rows(10).filter(([a,b])=>oxide.some(q=>Math.abs(q[1]-a)<.003)&&oxide.some(q=>Math.abs(q[0]-b)<.003));
+   channels.forEach((span,i)=>add(10,span,device==='cfet'?(i?'상부 pFET':'하부 nFET')+' 채널 두께':device==='gaafet'?'와이어 지름':(i+1)+'단 시트 두께'));
+  }else if(device==='finfet')add(32,rows(32)[0],'핀 상단 절연막 두께');
+  else if(device==='charge-trap'){
+   const oxide=rows(30);add(30,oxide[0],'터널 산화막 두께');add(16,rows(16)[0],'전하 저장막 두께');add(30,oxide[1],'차단 산화막 두께');
+  }
+  return cuts;
+ }
+ function dimensionPlan(frame,roi,limit=3,device){
   const priority=[11,79,32,30,16,70,72,80,13,31,201,0],ids=new Set(frame.polygons.map(p=>p.material)),plan=[];
   for(const id of priority.filter(id=>ids.has(id)).slice(0,limit)){
    const points=frame.polygons.filter(p=>p.material===id).flatMap(p=>p.points).filter(p=>p[1]>=roi[2]&&p[1]<=roi[3]);if(!points.length)continue;
@@ -46,10 +62,11 @@
   // Bare etched silicon needs a depth measurement, not the full wafer thickness.
   const top=intervals(frame,10,1,0).at(-1)?.[1];
   if(top<-.01)plan.push({id:10,kind:'중앙 식각 깊이',axis:1,at:0,depth:true,target:-top*1000});
-  return plan.filter(p=>p.target>1);
+  return [...plan.filter(p=>p.target>1),...deviceCuts(frame,device)];
  }
- function dimensions(target,actual,roi,limit=3){return dimensionPlan(target,roi,limit).map(p=>{
-  const span=p.depth?intervals(actual,p.id,1,0).at(-1):closest(intervals(actual,p.id,p.axis,p.at),p.anchor);
+ function dimensions(target,actual,roi,limit=3,device){return dimensionPlan(target,roi,limit,device).map(p=>{
+  const spans=intervals(actual,p.id,p.axis,p.at);
+  const span=p.depth?spans.at(-1):p.deviceCut?spans.find(([a,b])=>a<=p.anchor&&p.anchor<=b):closest(spans,p.anchor);
   const measured=span?(p.depth?Math.max(0,-span[1])*1000:(span[1]-span[0])*1000):0;
   const error=Math.abs(measured-p.target)/p.target,score=error<=.05?100:clamp(100*(.5-error)/.45);
   return {...p,actual:measured,error,score,pass:error<=.05};
@@ -69,20 +86,24 @@
  function cost(steps){return resources(steps).cost}
  // Editable assignments use fixed measurement cuts; the example shape is illustrative.
  function specification(frame,roi,options={}){
-  const cuts=dimensionPlan(frame,roi).map((m,i)=>({...m,key:`${i}:${m.id}:${m.axis}`}));
+  const cuts=dimensionPlan(frame,roi,3,options.id).map((m,i)=>({...m,key:m.deviceCut?'device:'+m.kind:`${i}:${m.id}:${m.axis}`}));
   const peaks=['B','P','As'].filter(s=>!frame.concentration?.background||(options.assessment?.species||frame.processEvidence?.dopedSpecies||[]).includes(s)).map(species=>({species,value:(frame.concentration?.fields?.[species+'_active']||[]).reduce((a,b)=>Math.max(a,b),0)})).filter(p=>p.value>0);
   return {version:1,targetId:options.id,dimensions:cuts.map(m=>({key:m.key,value:m.target})),peaks,tolerance:5,cuts};
  }
  function validateSpec(frame,roi,options,input){
   if(input==null)return null;
   const base=specification(frame,roi,options),fail=()=>{throw Error('설계 목표 형식 또는 값이 유효하지 않습니다. 목표를 다시 설정하세요.');};
+  const original=base.cuts.filter(m=>!m.deviceCut);
+  if(input.version===1&&Array.isArray(input.dimensions)&&original.length&&input.dimensions.length===original.length&&original.length<base.cuts.length){
+   input={...input,dimensions:[...input.dimensions,...base.dimensions.slice(original.length)]};
+  }
   if(input.version!==1||input.targetId!==options.id||!Array.isArray(input.dimensions)||!Array.isArray(input.peaks)||input.dimensions.length!==base.dimensions.length||input.peaks.length!==base.peaks.length||!Number.isFinite(input.tolerance)||input.tolerance<1||input.tolerance>20)fail();
   function values(rows,expected,key,min,max){return expected.map(e=>{const match=rows.filter(r=>r&&r[key]===e[key]);if(match.length!==1||typeof match[0].value!=='number'||!Number.isFinite(match[0].value)||match[0].value<min||match[0].value>max)fail();return {[key]:e[key],value:match[0].value};});}
   return {version:1,targetId:options.id,dimensions:values(input.dimensions,base.dimensions,'key',1,100000),peaks:values(input.peaks,base.peaks,'species',1e10,1e22),tolerance:input.tolerance};
  }
  function assess(target,actual,roi,options,referenceSteps,actualSteps){
   const spec=validateSpec(target,roi,options,options.designSpec),tolerance=(spec?.tolerance??5)/100;
-  const core=G.compare(target,actual,roi,options),measures=dimensions(target,actual,roi);
+  const core=G.compare(target,actual,roi,options),measures=dimensions(target,actual,roi,3,options.id);
   if(spec)measures.forEach((m,i)=>{m.target=spec.dimensions[i].value;m.error=Math.abs(m.actual-m.target)/m.target;m.pass=m.error<=tolerance;m.score=m.pass?100:clamp(100*(.5-m.error)/(.5-tolerance));});
   const cd=measures.length?measures.reduce((sum,m)=>sum+m.score,0)/measures.length:core.components.geometry*100;
   let doping=core.doping===null?null:core.doping*100;

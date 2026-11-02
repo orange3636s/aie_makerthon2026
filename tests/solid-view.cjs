@@ -28,6 +28,27 @@ const byLayer=G.offsets(pieces,'layer',.1),byMaterial=G.offsets(pieces,'material
 assert.equal(byLayer[2],byLayer[3],'same-height symmetric parts share a layer offset');
 assert.equal(byMaterial[0],byMaterial[1],'same material at different heights moves together');
 assert.notEqual(byLayer[0],byLayer[1],'disconnected layers of same material can separate');
+// A thin continuous film gets its own gap; etch residue travels with its host.
+const debris=G.parts([rect(0,-1,1,0),rect(0,0,.8,.001,30),rect(.81,.04,.812,.042,30),rect(.3,.002,.301,.003,72)]);
+for(const mode of ['layer','material']){
+ const plan=G.layout(debris,mode,.25);
+ assert.equal(plan.labels.length,2);assert.deepEqual(plan.shifts,[0,.25,.25,.25]);
+}
+const cutaway=require('../web/channel-cutaway');
+for(const [id,group] of Object.entries({finfet:'핀',gaafet:'와이어 채널',mbcfet:'나노시트 채널',cfet:'상부 pFET','charge-trap':'전하 저장 적층막',fdsoi:'활성 Si',pdsoi:'활성 Si'})){
+ const frame=require('../references/'+id+'.json').frames.at(-1);
+ const model=cutaway.build(frame,id,.8,V.intervals);
+ const bodies=model.parts.flatMap(p=>G.parts(p.polygons));
+ const byRole=G.layout(bodies,'layer',.25,id),byMat=G.layout(bodies,'material',.25,id);
+ assert(byRole.labels.includes(group),id+' role');
+ assert.equal(byRole.labels.length,new Set(bodies.map(p=>p.role)).size,id+' one band per role');
+ for(let i=0;i<bodies.length;i++)for(let j=0;j<i;j++){
+  assert.equal(byRole.shifts[i]===byRole.shifts[j],bodies[i].role===bodies[j].role,id+' rigid function');
+  assert.equal(byMat.shifts[i]===byMat.shifts[j],bodies[i].material===bodies[j].material,id+' rigid material');
+ }
+ if(id==='mbcfet')assert.equal(bodies.filter(p=>p.role===group).length,3);
+ if(id==='cfet')assert(byRole.labels.indexOf('하부 nFET')<byRole.labels.indexOf(group));
+}
 let count=0;
 for(const file of fs.readdirSync(path.join(__dirname,'../references')).filter(f=>f.endsWith('.json'))){
  const r=JSON.parse(fs.readFileSync(path.join(__dirname,'../references',file)));if(!r.frames||!r.bounds)continue;

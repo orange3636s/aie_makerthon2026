@@ -13,7 +13,12 @@ for(const {id} of require('../reverse-catalog.json').targets){
    assert(Math.abs(volume)>1e-12,'degenerate or uncapped solid');meshes++;
   }
   const before=new T.Box3().setFromObject(g).clone();
-  for(const mode of ['layer','material']){G.explode(g,mode,.12);assert(g.children.every(m=>Number.isFinite(m.position.z)&&m.position.z>=0));}
+  for(const mode of ['layer','material']){
+   const plan=G.explode(g,mode,.25,id);
+   assert(g.children.every(m=>Number.isFinite(m.position.z)&&m.position.z>=0));
+   assert.equal(new Set(plan.shifts).size,plan.labels.length,'one separation per named group');
+   if(mode==='material')assert(plan.labels.length<=new Set(polys.map(p=>p.material)).size);
+  }
   G.explode(g,'layer',0);assert(new T.Box3().setFromObject(g).equals(before),'explosion failed to restore');
   g.traverse(o=>{o.geometry?.dispose();o.material?.dispose()});
   for(const axis of ['X','Y','Z'])for(const t of [.1,.5,.9]){const at=axis==='X'?bounds[0]+t*(bounds[1]-bounds[0]):axis==='Z'?bounds[2]+t*(bounds[3]-bounds[2]):(t-.5)*.8;const section=V.section(f,bounds,axis,at,.8);assert(section.data.polygons.every(p=>p.points.every(v=>v.every(Number.isFinite))),'invalid section');slices++;}

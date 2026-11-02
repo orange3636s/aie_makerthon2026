@@ -70,7 +70,8 @@
      const edge=new T.LineSegments(new T.EdgesGeometry(geometry),new T.LineBasicMaterial({color:0xb46b15,depthTest:false}));edge.position.copy(plane.position);edge.renderOrder=11;r.plane.add(edge);
     }r.scene.add(r.plane);
    }
-   SolidGeometry.explode(r.group,s.explodeMode,s.exploded?s.explodeGap:0);
+   const plan=SolidGeometry.explode(r.group,s.explodeMode,s.exploded?s.explodeGap:0,s.coreId);
+   window.SolidView.showGroups(s,plan.labels);
    const refParts=s.isMinimap?null:s.referenceBodies;
    if(r.refParts!==refParts){
     if(r.outline){r.scene.remove(r.outline);r.outline.children.forEach(line=>line.geometry.dispose());r.outlineMaterial.dispose();}
@@ -87,7 +88,7 @@
     }
    }
    if(r.outline){
-    const offsets=SolidGeometry.offsets(refParts,s.explodeMode,s.exploded?s.explodeGap:0);
+    const offsets=SolidGeometry.offsets(refParts,s.explodeMode,s.exploded?s.explodeGap:0,s.coreId);
     r.outline.children.forEach((line,i)=>line.position.z=offsets[i]);
    }
    const box=new T.Box3().setFromObject(r.group);if(r.mask.children.length)box.union(new T.Box3().setFromObject(r.mask));if(r.outline)box.union(new T.Box3().setFromObject(r.outline));const center=box.isEmpty()?new T.Vector3():box.getCenter(new T.Vector3()),aspect=w/h,camera=r.camera;

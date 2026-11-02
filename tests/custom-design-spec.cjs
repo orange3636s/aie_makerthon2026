@@ -30,6 +30,28 @@ for(const t of targets){
   assert(L.assess(f,missing,t.roi,options,r.steps,[]).score<80,t.id+' missing implant cannot pass');
  }
 }
+// Catalog parameters and the shipped native frame must agree for every flow.
+for(const t of targets){
+ const r=require('../references/'+t.id+'.json');assert.equal(r.steps.length,t.recipe.length,t.id);
+ t.recipe.forEach((s,i)=>{
+  assert.equal(r.steps[i].op,s.op,t.id+' step '+i);
+  for(const [key,value] of Object.entries(s.params))assert.deepEqual(r.steps[i].params[key],value,t.id+' step '+i+' '+key);
+ });
+}
+for(const [id,expected] of Object.entries({fdsoi:[40,150],pdsoi:[160,150],mbcfet:[40,40,40],gaafet:[60],cfet:[60,60],finfet:[20],'charge-trap':[19,33,28]})){
+ const t=targets.find(t=>t.id===id),f=require('../references/'+id+'.json').frames.at(-1);
+ const base=L.specification(f,t.roi,t),specific=base.cuts.filter(m=>m.deviceCut);
+ assert.deepEqual(specific.map(m=>Math.round(m.target)),expected,id+' gate-region goals');
+ const old={...base,dimensions:base.dimensions.filter(d=>!d.key.startsWith('device:'))};old.dimensions[0]={...old.dimensions[0],value:321};
+ const migrated=L.validateSpec(f,t.roi,t,old);
+ assert.equal(migrated.dimensions[0].value,321);assert.equal(migrated.dimensions.length,base.dimensions.length);
+ if(id==='mbcfet'){
+  const outerSheets=L.intervals(f,10,1,0).filter(([a,b])=>a>0&&(b<.15||a>.21));
+  const gap={polygons:outerSheets.map(([a,b])=>({material:10,points:[[-.2,a],[.2,a],[.2,b],[-.2,b]]}))};
+  const measured=L.dimensions(f,gap,t.roi,3,id).filter(m=>m.deviceCut);
+  assert.deepEqual(measured.map(m=>Math.round(m.actual)),[40,0,40],'missing middle sheet cannot match a neighbor');
+ }
+}
 // Fixed cuts and tolerance must remain meaningful when target widths change.
 const box=w=>({polygons:[{material:11,points:[[-w/2,0],[w/2,0],[w/2,.1],[-w/2,.1]]}]}),t={id:'box'},roi=[-2,2,-.1,.3],f=box(1);
 const seq=[{op:'deposition',params:{method:'ALD',cycles:100}}];

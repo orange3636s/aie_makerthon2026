@@ -47,6 +47,7 @@
 .solid-model{color:#606b85;font-size:10px}.solid-depth[hidden],.solid-model[hidden]{display:none}
 .explode-controls,.explode-options,.explode-options label{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .explode-controls{border-left:1px solid #dfe3eb;padding-left:8px}
+.explode-groups:not([hidden]){margin:0 0 8px;color:#475371;font-size:.8rem;line-height:1.5;overflow-wrap:anywhere}
 .explode-toggle[aria-pressed="true"]{background:#e5e9f3;color:#08266e;border-color:#8595bd}
 .explode-options select{width:auto;min-height:30px;padding:4px 22px 4px 6px;font:inherit;border:1px solid #dfe3eb;border-radius:5px;background-color:white}
 .explode-options input[type="range"]{width:80px;min-height:24px;margin:0;accent-color:#082b7f}
