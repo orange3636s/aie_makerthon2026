@@ -47,7 +47,7 @@
   explode.innerHTML='<button type="button" class="explode-toggle" aria-pressed="false">분리 보기</button><div class="explode-options" hidden><select aria-label="분리 기준"><option value="layer">기능별</option><option value="material">재료별</option></select><label>표시 간격 <input type="range" min="60" max="600" step="10" value="250" aria-label="분리 간격 nm"></label><output>250 nm</output><button type="button" class="explode-reset">원래 구조</button></div>';
   const mode=document.createElement('button');mode.type='button';mode.className='channel-toggle';mode.hidden=true;
   mode.title='게이트 절개와 전체 공정 단면 전환 · 절개 높이와 길이는 계산 단면에서 추출하며 폭 방향은 교육용 가정입니다.';
-  mode.onclick=()=>{s.fullProcess=!!s.core;s.redraw();};
+  mode.onclick=()=>{s.cutawaySelected=!s.core;s.redraw();};
   bar.append(mode,explode);
   const syncExplode=()=>{explode.querySelector('.explode-toggle').setAttribute('aria-pressed',s.exploded);explode.querySelector('.explode-options').hidden=!s.exploded;s.redraw()};
   explode.querySelector('.explode-toggle').onclick=()=>{s.exploded=!s.exploded;syncExplode()};
@@ -98,14 +98,16 @@
   if(liveButton.disabled&&s.live){s.live=false;cancelAnimationFrame(s.raf);liveButton.setAttribute('aria-pressed','false');liveButton.textContent='▷ Live';}
   const deviceChanged=s.coreId!==options.deviceId;
   if(s.coreSource!==data||s.coreDepth!==s.depth||deviceChanged){
-   if(deviceChanged)s.fullProcess=undefined;
+   if(deviceChanged)s.cutawaySelected=false;
    s.coreSource=data;s.coreDepth=s.depth;s.coreId=options.deviceId;
    s.coreModel=window.ChannelCutaway?.build(data,options.deviceId,s.depth,intervals);
   }
   const coreButton=s.bar.querySelector('.channel-toggle'),canShow=!!s.coreModel&&!s.mask&&!s.live;
   coreButton.hidden=!canShow;
   const wasCore=!!s.core;
-  s.core=canShow&&(s.fullProcess===undefined?options.finalStep:!s.fullProcess)?s.coreModel:null;
+  if(!canShow)s.cutawaySelected=false;
+  s.core=s.cutawaySelected?s.coreModel:null;
+  coreButton.setAttribute('aria-pressed',String(!!s.core));
   const reference=options.reference||null,rawRef=options.referenceFrame||reference;
   const refKey=[options.deviceId,s.depth,!!s.core,...bounds].join('|');
   if(s.reference!==reference||s.referenceFrame!==rawRef||s.referenceKey!==refKey){
